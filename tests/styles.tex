@@ -1,0 +1,9 @@
+\documentclass{article}
+\usepackage[review,markup=underlined,addedmarkup=dashuline,deletedmarkup=xout,highlightmarkup=uwave,authormarkup=brackets,authormarkupposition=left,authormarkuptext=name]{texchanges}
+\txdefineauthor[name=Styler,color=violet]{s}
+\pagestyle{empty}
+\begin{document}
+\txadd[author=s,id=S1]{STYLEADD}
+\txremove[author=s,id=S2]{STYLEDELETE}
+\txhighlight[author=s,id=S3]{STYLEHIGHLIGHT}
+\end{document}

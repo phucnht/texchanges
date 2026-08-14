@@ -1,0 +1,19 @@
+\documentclass{article}
+\usepackage[review]{texchanges}
+\txdefineauthor[name={Phuc Nguyen},color=orange]{phuc}
+\txdefineauthor[name=Alice,color=green!50!black]{alice}
+\pagestyle{empty}
+\begin{document}
+PENDING: \txreplace[author=phuc,id=R1,comment={Explain this.}]{OLDPENDING}{NEWPENDING}.
+
+ACCEPTED: \txreplace[author=alice,id=R2,status=accepted]{OLDACCEPTED}{NEWACCEPTED}.
+
+REJECTED: \txreplace[author=phuc,id=R3,status=rejected]{OLDREJECTED}{NEWREJECTED}.
+
+\txadd[author=alice,id=A1]{ADDED}. \txremove[author=phuc,id=D1]{REMOVED}.
+
+\txhighlight[author=alice,id=H1]{HIGHLIGHTED}.
+\txcomment[author=phuc,id=C1]{COMMENTED}.
+
+\txlistofchanges[style=summary,title={SUMMARY}]
+\end{document}

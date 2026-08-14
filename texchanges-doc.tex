@@ -1,0 +1,184 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+
+\definecolor{txblue}{HTML}{0057B8}
+\definecolor{txred}{HTML}{C62828}
+\definecolor{txpaper}{HTML}{F7F3EA}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=txblue,
+  urlcolor=txblue,
+  pdftitle={Texchanges 0.2.2 Manual},
+  pdfauthor={Phuc Nguyen}
+}
+\setlength{\emergencystretch}{2em}
+\Urlmuskip=0mu plus 2mu\relax
+\lstdefinelanguage{Texchanges}{
+  language=[LaTeX]TeX,
+  moretexcs={txadd,txremove,txreplace,txhighlight,txcomment,txdefineauthor,txlistofchanges}
+}
+\lstset{
+  language=Texchanges,
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{txpaper},
+  frame=single,
+  rulecolor=\color{black!20},
+  columns=fullflexible,
+  keepspaces=true,
+  breaklines=true
+}
+
+\title{\textsf{texchanges}\\\large LaTeX-native track changes}
+\author{Phuc Nguyen}
+\date{Version 0.2.2, 14 August 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Texchanges records additions, removals, replacements, highlights, and comments
+directly in LaTeX source. The same document can show review markup, proposed
+final text, or the original text. Registered authors, stable change IDs, and
+decision statuses support human review and automated editing workflows.
+\end{abstract}
+
+\tableofcontents
+
+\section{Installation}
+
+After the package reaches your TeX distribution, install it with the normal
+package manager and load it with:
+
+\begin{lstlisting}
+\usepackage[review]{texchanges}
+\end{lstlisting}
+
+For Overleaf projects whose TeX Live version does not contain Texchanges,
+upload \path{texchanges.sty} beside the main document. The project can then
+use the same package line.
+
+\section{Core commands}
+
+The native API uses the source order ``old, new'' for replacements.
+
+\begin{lstlisting}
+\txadd{new text}
+\txremove{old text}
+\txreplace{old text}{new text}
+\txhighlight{important text}
+\txcomment{Check this claim.}
+\end{lstlisting}
+
+The short aliases \verb|\add|, \verb|\remove|, and \verb|\replace| are
+installed only when another package has not defined them.
+
+\section{Authors, IDs, and decisions}
+
+\begin{lstlisting}
+\txdefineauthor[name={Phuc Nguyen},color=orange]{phuc}
+
+\txreplace[
+  author=phuc,
+  id=R12,
+  comment={Clarify this claim.},
+  status=pending
+]{old text}{new text}
+\end{lstlisting}
+
+The optional keys are \texttt{author}, \texttt{id}, \texttt{comment}, and
+\texttt{status}. Status accepts \texttt{pending}, \texttt{accepted}, or
+\texttt{rejected}. Non-empty change IDs must be unique. A legacy optional
+label such as \path|\txadd[Reviewer]{text}| remains available for visual
+labels without structured author metadata.
+
+\section{Document modes}
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Mode & Pending & Accepted & Rejected \\
+\midrule
+\texttt{review} & marked change & proposed text & original text \\
+\texttt{final} & proposed text & proposed text & original text \\
+\texttt{original} & original text & original text & original text \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Final mode warns when pending changes remain. Change lists and summaries are
+review artifacts, so \verb|\txlistofchanges| produces no output in final or
+original mode.
+
+\section{Reports}
+
+Detailed reports include excerpts, IDs, page numbers, and links when
+\texttt{hyperref} is loaded. Summary reports group counts by author, type, and
+status. Run LaTeX twice after changes to refresh report data.
+
+\begin{lstlisting}
+\txlistofchanges
+\txlistofchanges[style=summary]
+\txlistofchanges[
+  title={Pending reviewer changes},
+  show={added,replaced,commented},
+  status={pending},
+  author={phuc}
+]
+\end{lstlisting}
+
+\section{Presentation and localization}
+
+Presets are \texttt{texchanges}, \texttt{default}, \texttt{underlined},
+\texttt{bfit}, and \texttt{nocolor}. Individual added, deleted, highlighted,
+comment, and author renderers can be selected through package options or
+replaced at runtime. English, British English, German, French, Italian, and
+Vietnamese report labels follow Babel or Polyglossia when their caption hooks
+are available.
+
+\section{Compatibility with \texttt{changes}}
+
+Compatibility is opt in because the replacement argument order differs.
+
+\begin{lstlisting}
+\usepackage[review,compat=changes]{texchanges}
+\definechangesauthor[name={Phuc Nguyen},color=orange]{phuc}
+\replaced[id=phuc,changeid=R12]{new text}{old text}
+\end{lstlisting}
+
+The compatibility option provides documented \texttt{changes} commands and
+setter aliases. Its \texttt{id} key identifies an author, while
+\texttt{changeid} stores the Texchanges change ID. The
+\texttt{commandname\allowbreak prefix} option accepts \texttt{none}, \texttt{ifneeded},
+or \texttt{always}.
+
+\section{Resolving source markup}
+
+The supplemental standard-library Python tool can update decisions or remove
+resolved markup permanently.
+
+\begin{lstlisting}[language=bash]
+python3 scripts/texchanges_merge.py paper.tex reviewed.tex --accept
+python3 scripts/texchanges_merge.py paper.tex final.tex --accept --merge
+python3 scripts/texchanges_merge.py paper.tex --reject --id R12 --in-place
+\end{lstlisting}
+
+In-place edits create a backup. The parser handles nested groups and skips
+comments and common verbatim-like environments. Malformed input fails before
+the destination is written.
+
+\section{Resources and license}
+
+Project documentation, examples, releases, and issue reporting are available
+at \url{https://phucnht.github.io/texchanges/} and
+\url{https://github.com/phucnht/texchanges}.
+
+Texchanges is maintained by Phuc Nguyen. It may be distributed
+and modified under the LaTeX Project Public License, version 1.3c or later.
+
+\end{document}

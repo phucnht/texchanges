@@ -1,0 +1,11 @@
+\documentclass{article}
+\usepackage[final]{texchanges}
+\pagestyle{empty}
+\begin{document}
+\txreplace[id=F1]{OLDPENDING}{NEWPENDING}
+\txreplace[id=F2,status=accepted]{OLDACCEPTED}{NEWACCEPTED}
+\txreplace[id=F3,status=rejected]{OLDREJECTED}{NEWREJECTED}
+\txadd[id=F4,status=rejected]{REJECTEDADD}
+\txremove[id=F5,status=rejected]{REJECTEDREMOVE}
+\txlistofchanges[title={HIDDEN FINAL REPORT}]
+\end{document}

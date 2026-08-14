@@ -1,0 +1,10 @@
+\documentclass{article}
+\usepackage[original]{texchanges}
+\pagestyle{empty}
+\begin{document}
+\txreplace[id=O1,status=accepted]{OLDACCEPTED}{NEWACCEPTED}
+\txreplace[id=O2,status=rejected]{OLDREJECTED}{NEWREJECTED}
+\txadd[id=O3,status=accepted]{ACCEPTEDADD}
+\txremove[id=O4,status=accepted]{ACCEPTEDREMOVE}
+\txlistofchanges[style=summary,title={HIDDEN ORIGINAL REPORT}]
+\end{document}

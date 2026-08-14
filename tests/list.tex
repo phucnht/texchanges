@@ -1,0 +1,10 @@
+\documentclass{article}
+\usepackage{hyperref}
+\usepackage[review]{texchanges}
+\txdefineauthor[name={Phuc Nguyen},color=orange]{phuc}
+\begin{document}
+\txadd[author=phuc,id=L1]{LISTADD}
+\txremove[author=phuc,id=L2,status=rejected]{LISTREMOVE}
+\txcomment[author=phuc,id=L3]{LISTCOMMENT}
+\txlistofchanges[style=list,title={DETAILED},show={added,commented},status={pending},author={phuc}]
+\end{document}

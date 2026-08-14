@@ -1,0 +1,46 @@
+<section class="mode-demo" aria-labelledby="mode-demo-title">
+  <div class="mode-demo__heading">
+    <p class="eyebrow">Compile one source three ways</p>
+    <h2 id="mode-demo-title">Review decisions without leaving LaTeX</h2>
+  </div>
+
+  <div class="mode-demo__controls" role="group" aria-label="Document mode">
+    <button type="button" data-mode="review" aria-pressed="true">Review</button>
+    <button type="button" data-mode="final" aria-pressed="false">Final</button>
+    <button type="button" data-mode="original" aria-pressed="false">Original</button>
+  </div>
+
+  <div class="mode-demo__paper" aria-live="polite">
+    <p class="mode-demo__label">Rendered document</p>
+    <p class="mode-demo__sentence" data-rendered-mode="review">
+      The simulation <span class="old">imitates</span><span class="new">reproduces</span>
+      collaborative decision-making.<sup class="author">phuc</sup>
+    </p>
+    <p class="mode-demo__comment">Clarify the claim before acceptance.</p>
+  </div>
+
+  <pre class="mode-demo__source"><code>{String.raw`\txreplace[
+  author=phuc,
+  id=R12,
+  status=pending
+]{imitates}{reproduces}`}</code></pre>
+</section>
+
+<script>
+  const demos = document.querySelectorAll<HTMLElement>('.mode-demo');
+
+  for (const demo of demos) {
+    const sentence = demo.querySelector<HTMLElement>('[data-rendered-mode]');
+    const comment = demo.querySelector<HTMLElement>('.mode-demo__comment');
+    const buttons = demo.querySelectorAll<HTMLButtonElement>('button[data-mode]');
+
+    for (const button of buttons) {
+      button.addEventListener('click', () => {
+        const mode = button.dataset.mode ?? 'review';
+        sentence?.setAttribute('data-rendered-mode', mode);
+        if (comment) comment.hidden = mode !== 'review';
+        for (const item of buttons) item.setAttribute('aria-pressed', String(item === button));
+      });
+    }
+  }
+</script>

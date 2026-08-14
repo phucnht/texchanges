@@ -1,0 +1,29 @@
+\documentclass{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[review]{texchanges}
+\txdefineauthor[name=Reviewer,color=orange]{reviewer}
+
+\title{Texchanges Explicit Review}
+\author{Example Author}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+Hello \txreplace[author=reviewer,id=R1]{World}{research community}.
+
+This paragraph contains \txadd{a newly proposed explanation}. It also contains
+\txremove[author=reviewer,id=R2]{an unnecessary phrase} and a
+\txhighlight[author=reviewer,id=R3]{claim to verify}.
+
+\txcomment[author=reviewer,id=R4]{Add a citation supporting the final claim.}
+
+The short API reads naturally too:
+\replace{the method is human-like}{the method follows documented strategies}.
+
+\txlistofchanges[style=compactsummary,title={Review summary}]
+
+\end{document}

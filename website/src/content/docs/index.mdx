@@ -1,0 +1,30 @@
+---
+title: Texchanges
+description: LaTeX-native track changes for human and AI-assisted review.
+template: splash
+hero:
+  tagline: Keep review decisions in readable LaTeX source, compile clear markup, and resolve the same document into final or original text.
+  actions:
+    - text: Start reviewing
+      link: /texchanges/getting-started/quick-start/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/phucnht/texchanges
+      icon: external
+      variant: minimal
+---
+
+import ModeDemo from '../../components/ModeDemo.astro';
+
+<ModeDemo />
+
+## A review protocol that stays in your source
+
+Texchanges gives authors, reviewers, and editing tools a shared vocabulary for additions, removals, replacements, highlights, comments, and decisions. Stable IDs make individual changes addressable without introducing a proprietary document format.
+
+```latex
+\txdefineauthor[name={Phuc Nguyen},color=orange]{phuc}
+\txreplace[author=phuc,id=R12,status=pending]{old text}{new text}
+```
+
+Use `review` while decisions remain open. Switch to `final` for the proposed document or `original` to recover its initial state.

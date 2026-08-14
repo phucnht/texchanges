@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f7f3ea"/>
+  <path d="M0 80h1200M0 550h1200" stroke="#ded8cc" stroke-width="2"/>
+  <text x="92" y="220" fill="#17202a" font-family="Georgia,serif" font-size="104">texchanges</text>
+  <text x="98" y="300" fill="#43505c" font-family="IBM Plex Sans,sans-serif" font-size="34">LaTeX-native track changes</text>
+  <text x="98" y="430" fill="#c62828" font-family="Georgia,serif" font-size="46" text-decoration="line-through">old text</text>
+  <text x="330" y="430" fill="#0057b8" font-family="Georgia,serif" font-size="46" text-decoration="underline">new text</text>
+  <circle cx="1090" cy="120" r="22" fill="#a54800"/>
+</svg>

@@ -1,0 +1,4 @@
+# Select review.tex as the Overleaf Main document. This command follows
+# Overleaf's documented latexdiff approach, while -jobname=%B ensures the
+# generated PDF has the name latexmk expects for review.tex.
+$pdflatex = 'latexdiff --flatten --type=UNDERLINE original.tex revised.tex > review-generated.tex; pdflatex %O -jobname=%B review-generated.tex';
