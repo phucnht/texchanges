@@ -16,7 +16,7 @@ export default defineConfig({
       customCss: ['./src/styles/custom.css'],
       head: [
         { tag: 'meta', attrs: { property: 'og:image', content: 'https://phucnht.github.io/texchanges/social-card.svg' } },
-        { tag: 'meta', attrs: { name: 'theme-color', content: '#f7f3ea' } }
+        { tag: 'meta', attrs: { name: 'theme-color', content: '#fbfbf9' } }
       ],
       sidebar: [
         { label: 'Overview', items: ['index', 'roadmap'] },
