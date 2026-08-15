@@ -1,6 +1,6 @@
 # Automatic latexdiff on Overleaf
 
-This example compares two complete LaTeX revisions and generates a visual PDF diff automatically. Use it when reviewers want a document-level comparison rather than explicit, source-level change IDs and decisions.
+This example compares two complete LaTeX revisions and generates a visual PDF diff automatically. It uses word-level matching, so a short shared phrase such as `system provides` remains unchanged while `new` is shown as a deletion.
 
 ## Files
 
@@ -18,7 +18,9 @@ This example compares two complete LaTeX revisions and generates a visual PDF di
 
 Edit the two filenames in `latexmkrc` to match a real project. Keep filenames free of shell metacharacters because they are part of a compile command.
 
-To compile either revision without diffing, temporarily comment out the `$pdflatex` line in `latexmkrc`, then select that revision as the Main document.
+The example covers a removed word, a replacement with shared context, a phrase insertion, an emphasized-word replacement, and a revised list. Keep changed math, complex floats, and custom verbatim-like environments outside an automatic diff example. Use explicit Texchanges markup or manual review for those cases.
+
+To compile either revision without diffing, select it as the Main document. The conditional `latexmkrc` runs `latexdiff` only for `texchanges-review.tex`.
 
 ## Visual walkthrough
 

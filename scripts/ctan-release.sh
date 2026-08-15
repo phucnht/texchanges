@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-VERSION="0.2.3"
+VERSION="0.2.4"
 ARCHIVE="$PROJECT_ROOT/dist/texchanges-$VERSION.zip"
 TASK_TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/texchanges-ctan.XXXXXX")"
 trap 'rm -rf "$TASK_TMP_DIR"' EXIT
@@ -11,6 +11,7 @@ trap 'rm -rf "$TASK_TMP_DIR"' EXIT
 PACKAGE_DIR="$TASK_TMP_DIR/texchanges"
 mkdir -p "$PACKAGE_DIR/examples/explicit-review"
 mkdir -p "$PACKAGE_DIR/examples/automatic-diff"
+mkdir -p "$PACKAGE_DIR/examples/overleaf-workflow"
 mkdir -p "$PACKAGE_DIR/scripts"
 
 cp "$PROJECT_ROOT/README.md" "$PROJECT_ROOT/LICENSE" \
@@ -28,6 +29,8 @@ cp "$PROJECT_ROOT/examples/automatic-diff/README.md" \
   "$PROJECT_ROOT/examples/automatic-diff/texchanges-review.tex" \
   "$PROJECT_ROOT/examples/automatic-diff/texchanges-revised.tex" \
   "$PACKAGE_DIR/examples/automatic-diff/"
+cp "$PROJECT_ROOT/examples/overleaf-workflow/README.md" \
+  "$PACKAGE_DIR/examples/overleaf-workflow/"
 cp "$PROJECT_ROOT/scripts/texchanges-merge.py" "$PACKAGE_DIR/scripts/"
 
 if find "$PACKAGE_DIR" -type f \( -name '*.aux' -o -name '*.log' -o -name '*.out' \
@@ -53,9 +56,11 @@ fi
 TEXINPUTS="$VERIFY_DIR/texchanges:" pdflatex -halt-on-error \
   -interaction=nonstopmode -output-directory="$VERIFY_DIR" \
   "$VERIFY_DIR/texchanges/examples/explicit-review/texchanges-explicit-review.tex" >/dev/null
+(cd "$VERIFY_DIR/texchanges/examples/automatic-diff" && \
+  latexmk -pdf -halt-on-error -interaction=nonstopmode texchanges-review.tex >/dev/null)
 ln -s "$VERIFY_DIR/texchanges/scripts/texchanges-merge.py" "$TASK_TMP_DIR/texchanges-merge"
 (cd "$TASK_TMP_DIR" && ./texchanges-merge --version) \
-  | grep -Fx 'texchanges-merge 0.2.3' >/dev/null
+  | grep -Fx 'texchanges-merge 0.2.4' >/dev/null
 (cd "$TASK_TMP_DIR" && COLUMNS=10 ./texchanges-merge --help) \
   | grep -F 'Resolve or merge Texchanges markup without third-party dependencies.' >/dev/null
 

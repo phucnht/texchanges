@@ -11,7 +11,7 @@ checkruns = 2
 
 uploadconfig = {
   pkg = "texchanges",
-  version = "0.2.3",
+  version = "0.2.4",
   author = "Phuc Nguyen",
   license = "lppl1.3c",
   summary = "LaTeX-native track changes for human and AI-assisted review",

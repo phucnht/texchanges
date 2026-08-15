@@ -14,7 +14,7 @@
   colorlinks=true,
   linkcolor=txblue,
   urlcolor=txblue,
-  pdftitle={Texchanges 0.2.3 Manual},
+  pdftitle={Texchanges 0.2.4 Manual},
   pdfauthor={Phuc Nguyen}
 }
 \setlength{\emergencystretch}{2em}
@@ -36,7 +36,7 @@
 
 \title{\textsf{texchanges}\\\large LaTeX-native track changes}
 \author{Phuc Nguyen}
-\date{Version 0.2.3, 15 August 2026}
+\date{Version 0.2.4, 15 August 2026}
 
 \begin{document}
 \maketitle
@@ -60,11 +60,24 @@ manager when needed and load it with:
 \end{lstlisting}
 
 For Overleaf projects whose TeX Live version does not contain Texchanges,
-upload \path{texchanges.sty} beside the main document. The project can then
-use the same package line. The distributable explicit example is named
-\path{texchanges-explicit-review.tex}; the automatic comparison example uses
-\path{texchanges-original.tex}, \path{texchanges-revised.tex}, and
-\path{texchanges-review.tex} with a top-level \path{latexmkrc}.
+upload \path{texchanges.sty} beside the main document. The unified
+\path{texchanges-overleaf.zip} bundle includes the package, the explicit
+review document, the two automatic comparison revisions, and a top-level
+\path{latexmkrc}. Select \path{texchanges-explicit-review.tex} as Main for
+explicit review, or \path{texchanges-review.tex} as Main for automatic diff.
+
+\section{Automatic \texttt{latexdiff}}
+
+The automatic example uses word-level matching. A removed word such as
+``new'' is marked separately while a short shared phrase such as ``system
+provides'' remains unchanged. The example also demonstrates phrase
+replacement, a sentence-end insertion, a change inside \verb|\emph{}|, and a
+revised \texttt{itemize} list. The conditional \path{latexmkrc} runs
+\texttt{latexdiff} only when \path{texchanges-review.tex} is selected as the
+Main document.
+
+Use explicit Texchanges markup or manual review for changed display math,
+complex floats, and custom verbatim-like environments.
 
 \section{Core commands}
 

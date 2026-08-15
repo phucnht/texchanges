@@ -1,9 +1,9 @@
 ---
 title: Feature parity
-description: Compare Texchanges 0.2.3 with changes 4.2.1.
+description: Compare Texchanges 0.2.4 with changes 4.2.1.
 ---
 
-| Capability | Texchanges 0.2.3 |
+| Capability | Texchanges 0.2.4 |
 |---|---|
 | Add, delete, replace, highlight, comment | Native, with old-to-new replacement order |
 | Review/draft and final output | Supported, plus `original` mode |

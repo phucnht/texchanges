@@ -55,7 +55,7 @@ class MergeTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(result.returncode, 0)
-        self.assertEqual(result.stdout, "texchanges-merge 0.2.3\n")
+        self.assertEqual(result.stdout, "texchanges-merge 0.2.4\n")
         self.assertEqual(result.stderr, "")
 
     def test_help_remains_readable_in_narrow_terminal(self):
@@ -93,7 +93,7 @@ class MergeTests(unittest.TestCase):
                 text=True,
             )
         self.assertEqual(result.returncode, 0)
-        self.assertEqual(result.stdout, "texchanges-merge 0.2.3\n")
+        self.assertEqual(result.stdout, "texchanges-merge 0.2.4\n")
 
     def test_native_nested_and_unicode(self):
         source = r"Before \txreplace[author=a,id=R1]{old {nested}}{mới {nested}} after"

@@ -167,7 +167,7 @@ done
 python3 -m unittest -v tests.test_merge
 
 test -x "$PROJECT_ROOT/scripts/texchanges-merge.py"
-test "$("$PROJECT_ROOT/scripts/texchanges-merge.py" --version)" = 'texchanges-merge 0.2.3'
+test "$("$PROJECT_ROOT/scripts/texchanges-merge.py" --version)" = 'texchanges-merge 0.2.4'
 COLUMNS=10 "$PROJECT_ROOT/scripts/texchanges-merge.py" --help \
   | grep -F 'Resolve or merge Texchanges markup without third-party dependencies.' >/dev/null
 
@@ -219,7 +219,7 @@ compile_style_case compat-none 'compat=changes,commandnameprefix=none' '\added{a
 compile_style_case compat-ifneeded 'compat=changes,commandnameprefix=ifneeded' '\added{added}\replaced{new}{old}'
 compile_style_case compat-always 'compat=changes,commandnameprefix=always' '\chadded{added}\chreplaced{new}{old}'
 
-latexdiff --flatten --type=UNDERLINE \
+latexdiff --flatten --type=UNDERLINE --config MINWORDSBLOCK=1 \
   "$PROJECT_ROOT/examples/automatic-diff/texchanges-original.tex" \
   "$PROJECT_ROOT/examples/automatic-diff/texchanges-revised.tex" \
   > "$TASK_TMP_DIR/automatic.tex"
@@ -229,8 +229,14 @@ pdflatex \
   -output-directory="$TASK_TMP_DIR" \
   "$TASK_TMP_DIR/automatic.tex" >/dev/null
 pdftotext "$TASK_TMP_DIR/automatic.pdf" "$TASK_TMP_DIR/automatic.txt"
-assert_contains "$TASK_TMP_DIR/automatic.txt" realistic
-assert_contains "$TASK_TMP_DIR/automatic.txt" approximates
+assert_contains "$TASK_TMP_DIR/automatic.tex" '\DIFdel{new }'
+assert_contains "$TASK_TMP_DIR/automatic.tex" '\DIFdel{a realistic representation }'
+assert_contains "$TASK_TMP_DIR/automatic.tex" '\DIFadd{selected characteristics }'
+assert_contains "$TASK_TMP_DIR/automatic.tex" '\emph{\DIFdelbegin'
+assert_contains "$TASK_TMP_DIR/automatic.tex" '\begin{itemize}'
+assert_contains "$TASK_TMP_DIR/automatic.txt" selected
+assert_contains "$TASK_TMP_DIR/automatic.txt" adaptive
+assert_contains "$TASK_TMP_DIR/automatic.txt" completion
 
 perl -c "$PROJECT_ROOT/examples/automatic-diff/latexmkrc" >/dev/null
 

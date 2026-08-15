@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.4, 2026-08-15
+
+- Replace the separate Overleaf archives with one bundle containing Texchanges,
+  explicit review, automatic `latexdiff`, and a conditional `latexmkrc`.
+- Expand the automatic comparison example with granular word, phrase,
+  formatting, and list changes.
+- Configure the automatic example for word-level matching so short shared
+  phrases remain unchanged in the generated diff.
+
 ## 0.2.3, 2026-08-15
 
 - Install the resolver as the user-level `texchanges-merge` command in TeX

@@ -10,7 +10,7 @@ Texchanges is distributed through TeX Live. Install it with the distribution's p
 \usepackage[review]{texchanges}
 ```
 
-For Overleaf projects whose TeX Live version does not include Texchanges, upload `texchanges.sty` beside the main document. The self-contained explicit example is `examples/explicit-review/texchanges-explicit-review.tex`. Overleaf updates TeX Live on its own release schedule, so a new CTAN package may take time to appear there.
+For Overleaf projects whose TeX Live version does not include Texchanges, upload `texchanges.sty` beside the main document. The unified `texchanges-overleaf.zip` bundle includes the package, an explicit review document, automatic comparison files, and `latexmkrc`. Overleaf updates TeX Live on its own release schedule, so a new CTAN package may take time to appear there.
 
 ## Overleaf fallback
 
@@ -129,7 +129,7 @@ In-place updates create a `.bak` file. Interactive mode, nested braces, Unicode,
 
 ## Automatic `latexdiff`
 
-`examples/automatic-diff/` compares `texchanges-original.tex` and `texchanges-revised.tex` through Overleaf's `latexmkrc` mechanism, with `texchanges-review.tex` as the Main document. It complements explicit semantic markup.
+`examples/automatic-diff/` compares `texchanges-original.tex` and `texchanges-revised.tex` through Overleaf's `latexmkrc` mechanism, with `texchanges-review.tex` as the Main document. It uses word-level matching, so short shared phrases remain unchanged. The same `latexmkrc` compiles `texchanges-explicit-review.tex` normally when that document is selected as Main.
 
 ## Examples
 
@@ -140,6 +140,8 @@ The repository includes two complete, visual walkthroughs:
 | Explicit review | You need author IDs, decisions, comments, review reports, and one source that compiles in three modes. | [Explicit review example](examples/explicit-review/README.md) |
 | Automatic `latexdiff` | You need a visual comparison between two complete document revisions. | [Automatic diff example](examples/automatic-diff/README.md) |
 
+Run `make dist` to build the single `dist/texchanges-overleaf.zip` upload bundle. Its [workflow guide](examples/overleaf-workflow/README.md) explains both Main-document choices.
+
 ### Explicit review at a glance
 
 ![Explicit review mode with marked changes and a review report.](website/public/examples/explicit-review-review.png)
@@ -147,6 +149,21 @@ The repository includes two complete, visual walkthroughs:
 ### Automatic diff at a glance
 
 ![Automatic latexdiff output with the original and revised wording marked visually.](website/public/examples/automatic-diff-review.png)
+
+## Roadmap to 1.0.0
+
+| Version | Focus | Planned outcome |
+|---|---|---|
+| 0.3.0 | Structured review data | Manifests, policies, external decisions, protected files, source locations, and Git conversion. |
+| 0.4.0 | Collaboration and automation | Review threads, contributor metadata, TexLua resolution, and GitHub annotations. |
+| 0.5.0 | Accessible and robust authoring | Accessible presets, tagged-PDF support where available, stronger document contexts, and math commands. |
+| 0.6.0 | Editor workflow | Language-server diagnostics and a thin VS Code client. |
+| 0.7.0 | Optional Overleaf assistance | A capability-detected browser extension with no telemetry. |
+| 0.8.0 | Interoperability hardening | Stable schemas, migration tooling, resolver parity, and real-project fixtures. |
+| 0.9.0 | Release candidate | API freeze, cross-engine verification, documentation audit, and pilot feedback. |
+| 1.0.0 | Stable review protocol | Compatibility guarantees for markup, decisions, CLI resolution, reports, and supported integrations. |
+
+See the [detailed roadmap](https://phucnht.github.io/texchanges/roadmap/) for capabilities, migration notes, and milestone status. Roadmap entries are planned work. Completed work appears in the changelog.
 
 ## Development
 

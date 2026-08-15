@@ -1,4 +1,7 @@
-# Select texchanges-review.tex as the Overleaf Main document. This command follows
-# Overleaf's documented latexdiff approach, while -jobname=%B ensures the
-# generated PDF has the name latexmk expects for texchanges-review.tex.
-$pdflatex = 'latexdiff --flatten --type=UNDERLINE texchanges-original.tex texchanges-revised.tex > review-generated.tex; pdflatex %O -jobname=%B review-generated.tex';
+# Select texchanges-review.tex as the Overleaf Main document to compile the
+# automatic comparison. Other Main documents, including
+# texchanges-explicit-review.tex, compile normally.
+#
+# MINWORDSBLOCK=1 preserves short shared phrases such as "system provides".
+# -jobname=%B ensures the generated PDF has the name latexmk expects.
+$pdflatex = q{if [ "%B" = "texchanges-review" ]; then latexdiff --flatten --type=UNDERLINE --config MINWORDSBLOCK=1 texchanges-original.tex texchanges-revised.tex > review-generated.tex; pdflatex -recorder %O -jobname=%B review-generated.tex; else pdflatex -recorder %O %S; fi};
