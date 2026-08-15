@@ -69,11 +69,15 @@ website:
 
 release-check: check overleaf-check ctan website
 	@for archive in $(DIST_DIR)/*.zip; do unzip -t "$$archive" >/dev/null; done
-	@if command -v sha256sum >/dev/null 2>&1; then \
-	  sha256sum $(DIST_DIR)/*.zip $(BUILD_DIR)/texchanges-doc.pdf; \
+	@task_tmp=$$(mktemp -d "$${TMPDIR:-/tmp}/texchanges-checksums.XXXXXX"); \
+	trap 'rm -rf "$$task_tmp"' EXIT; \
+	cp $(DIST_DIR)/*.zip $(BUILD_DIR)/texchanges-doc.pdf "$$task_tmp"/; \
+	cd "$$task_tmp" && \
+	if command -v sha256sum >/dev/null 2>&1; then \
+	  sha256sum *.zip texchanges-doc.pdf; \
 	else \
-	  shasum -a 256 $(DIST_DIR)/*.zip $(BUILD_DIR)/texchanges-doc.pdf; \
-	fi > $(DIST_DIR)/SHA256SUMS
+	  shasum -a 256 *.zip texchanges-doc.pdf; \
+	fi > "$(CURDIR)/$(DIST_DIR)/SHA256SUMS"
 	@printf 'Texchanges release artifacts verified.\n'
 
 clean:
