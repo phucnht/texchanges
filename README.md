@@ -142,28 +142,44 @@ The repository includes two complete, visual walkthroughs:
 
 Run `make dist` to build the single `dist/texchanges-overleaf.zip` upload bundle. Its [workflow guide](examples/overleaf-workflow/README.md) explains both Main-document choices.
 
-### Explicit review at a glance
-
-![Explicit review mode with marked changes and a review report.](website/public/examples/explicit-review-review.png)
-
-### Automatic diff at a glance
-
-![Automatic latexdiff output with the original and revised wording marked visually.](website/public/examples/automatic-diff-review.png)
+| Explicit review | Automatic `latexdiff` |
+|---|---|
+| [![Explicit review with marked changes and a review report.](website/public/examples/explicit-review-at-a-glance.png)](examples/explicit-review/README.md) | [![Automatic word-level diff with marked changes.](website/public/examples/automatic-diff-at-a-glance.png)](examples/automatic-diff/README.md) |
+| Keep authors, IDs, decisions, comments, and reports in one source file. [Open the example](examples/explicit-review/README.md) or [view the walkthrough](https://phucnht.github.io/texchanges/getting-started/examples/). | Compare two complete revisions with word-level `latexdiff`. [Open the example](examples/automatic-diff/README.md) or [view the walkthrough](https://phucnht.github.io/texchanges/getting-started/examples/). |
 
 ## Roadmap to 1.0.0
 
-| Version | Focus | Planned outcome |
-|---|---|---|
-| 0.3.0 | Structured review data | Manifests, policies, external decisions, protected files, source locations, and Git conversion. |
-| 0.4.0 | Collaboration and automation | Review threads, contributor metadata, TexLua resolution, and GitHub annotations. |
-| 0.5.0 | Accessible and robust authoring | Accessible presets, tagged-PDF support where available, stronger document contexts, and math commands. |
-| 0.6.0 | Editor workflow | Language-server diagnostics and a thin VS Code client. |
-| 0.7.0 | Optional Overleaf assistance | A capability-detected browser extension with no telemetry. |
-| 0.8.0 | Interoperability hardening | Stable schemas, migration tooling, resolver parity, and real-project fixtures. |
-| 0.9.0 | Release candidate | API freeze, cross-engine verification, documentation audit, and pilot feedback. |
-| 1.0.0 | Stable review protocol | Compatibility guarantees for markup, decisions, CLI resolution, reports, and supported integrations. |
+Features will be grouped into future minor releases only after implementation and testing. Completed work belongs in the changelog.
 
-See the [detailed roadmap](https://phucnht.github.io/texchanges/roadmap/) for capabilities, migration notes, and milestone status. Roadmap entries are planned work. Completed work appears in the changelog.
+- [ ] Review data and project policies
+  - [ ] JSONL manifests with stable source locations
+  - [ ] External decision files and policy checks
+  - [ ] Protected-file enforcement and Git revision conversion
+
+- [ ] Resolution and compatibility
+  - [ ] Expanded CLI commands for scanning, checking, deciding, and resolving
+  - [ ] TexLua resolver and Python parity fixtures
+  - [ ] Schema and migration tooling
+
+- [ ] Collaboration
+  - [ ] Categories, threads, replies, and contributor metadata
+  - [ ] GitHub review annotations and CI summaries
+
+- [ ] Robust and accessible authoring
+  - [ ] Safe markup in headings, captions, footnotes, floats, and math
+  - [ ] Accessible visual presets and tagged-PDF support where available
+  - [ ] Clear diagnostics for unsupported citation and verbatim contexts
+
+- [ ] Editor and optional browser tooling
+  - [ ] Standard-library language server and thin VS Code client
+  - [ ] Capability-detected Overleaf browser extension with no telemetry
+
+- [ ] 1.0.0 readiness
+  - [ ] Public compatibility commitments for markup, decisions, CLI, and reports
+  - [ ] Cross-engine, accessibility, archive, and real-project verification
+  - [ ] Complete migration guidance and pilot feedback resolution
+
+See the [detailed roadmap](https://phucnht.github.io/texchanges/roadmap/) for the synchronized public checklist.
 
 ## Development
 
