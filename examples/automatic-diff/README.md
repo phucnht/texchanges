@@ -1,15 +1,38 @@
 # Automatic latexdiff on Overleaf
 
-Upload all files in this directory to the top level of a new Overleaf project.
-Set `texchanges-review.tex` as the Main document and use pdfLaTeX. Each
-recompile runs `latexdiff` over `texchanges-original.tex` and
-`texchanges-revised.tex`, then displays the generated visual diff.
+This example compares two complete LaTeX revisions and generates a visual PDF diff automatically. Use it when reviewers want a document-level comparison rather than explicit, source-level change IDs and decisions.
 
-Edit the two filenames in `latexmkrc` to match a real project. Keep filenames
-free of shell metacharacters because they are part of a compile command.
+## Files
 
-To compile either revision without diffing, temporarily comment out the
-`$pdflatex` line in `latexmkrc`, then select that revision as the Main document.
+- [`texchanges-original.tex`](texchanges-original.tex), the earlier revision.
+- [`texchanges-revised.tex`](texchanges-revised.tex), the later revision.
+- [`texchanges-review.tex`](texchanges-review.tex), select this as the Overleaf Main document.
+- [`latexmkrc`](latexmkrc), runs `latexdiff` before pdfLaTeX compiles the generated review document.
+
+## Try it on Overleaf
+
+1. Upload all four files to a blank Overleaf project.
+2. Select `texchanges-review.tex` as the Main document.
+3. Compile with pdfLaTeX.
+4. Recompile after changing either revision to generate a fresh visual diff.
+
+Edit the two filenames in `latexmkrc` to match a real project. Keep filenames free of shell metacharacters because they are part of a compile command.
+
+To compile either revision without diffing, temporarily comment out the `$pdflatex` line in `latexmkrc`, then select that revision as the Main document.
+
+## Visual walkthrough
+
+### Earlier revision
+
+![Earlier revision before automatic comparison.](../../website/public/examples/automatic-diff-original.png)
+
+### Later revision
+
+![Later revision before automatic comparison.](../../website/public/examples/automatic-diff-revised.png)
+
+### Generated visual diff
+
+![Generated latexdiff PDF with removed and added text marked visually.](../../website/public/examples/automatic-diff-review.png)
 
 This workflow follows Overleaf's documented method:
 

@@ -1,0 +1,38 @@
+---
+const examplesHref = '/texchanges/getting-started/examples/';
+const githubBase = 'https://github.com/phucnht/texchanges/tree/main/examples';
+---
+
+<section class="example-cards" aria-labelledby="example-cards-title">
+  <div class="example-cards__heading">
+    <p class="eyebrow">Examples</p>
+    <h2 id="example-cards-title">Choose a review workflow</h2>
+    <p>Start with explicit markup when decisions belong in one source file, or compare two complete revisions with automatic <code>latexdiff</code>.</p>
+  </div>
+  <div class="example-cards__grid">
+    <article class="example-card">
+      <img src="/texchanges/examples/explicit-review-review.png" alt="Explicit review example with marked changes and a review report." loading="lazy" />
+      <div class="example-card__body">
+        <p class="eyebrow">Semantic source markup</p>
+        <h3>Explicit review</h3>
+        <p>Use author IDs, statuses, comments, and reports while compiling the same document in review, final, or original mode.</p>
+        <p class="example-card__actions">
+          <a href={examplesHref}>View examples <span aria-hidden="true">→</span></a>
+          <a href={`${githubBase}/explicit-review/`} target="_blank" rel="noreferrer">Open GitHub example <span class="sr-only">(opens in a new tab)</span><span aria-hidden="true">↗</span></a>
+        </p>
+      </div>
+    </article>
+    <article class="example-card">
+      <img src="/texchanges/examples/automatic-diff-review.png" alt="Automatic latexdiff example with removed and added text marked visually." loading="lazy" />
+      <div class="example-card__body">
+        <p class="eyebrow">Revision-to-revision comparison</p>
+        <h3>Automatic <code>latexdiff</code></h3>
+        <p>Generate a visual PDF comparison from earlier and later LaTeX revisions through an Overleaf-ready <code>latexmkrc</code> workflow.</p>
+        <p class="example-card__actions">
+          <a href={examplesHref}>View examples <span aria-hidden="true">→</span></a>
+          <a href={`${githubBase}/automatic-diff/`} target="_blank" rel="noreferrer">Open GitHub example <span class="sr-only">(opens in a new tab)</span><span aria-hidden="true">↗</span></a>
+        </p>
+      </div>
+    </article>
+  </div>
+</section>

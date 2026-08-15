@@ -20,7 +20,7 @@ export default defineConfig({
       ],
       sidebar: [
         { label: 'Overview', items: ['index', 'roadmap'] },
-        { label: 'Start here', items: ['getting-started/installation', 'getting-started/quick-start'] },
+        { label: 'Start here', items: ['getting-started/installation', 'getting-started/quick-start', 'getting-started/examples'] },
         { label: 'Guides', items: [{ autogenerate: { directory: 'guides' } }] },
         { label: 'Reference', items: [{ autogenerate: { directory: 'reference' } }] },
         { label: 'Migration', items: ['migration/from-changes'] }

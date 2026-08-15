@@ -1,0 +1,24 @@
+---
+title: Examples
+description: See the explicit-review and automatic-latexdiff workflows from source to rendered output.
+---
+
+import ExampleStudio from '../../../components/ExampleStudio.astro';
+
+Texchanges supports two complementary workflows. Use explicit review markup when decisions belong in the LaTeX source, or use automatic `latexdiff` to compare two complete revisions.
+
+## Explicit review
+
+The [explicit review example](https://github.com/phucnht/texchanges/tree/main/examples/explicit-review/) keeps additions, removals, replacements, and decisions in one LaTeX source file. Change `\texchangesexamplemode` to compile the same source for review, final, or original reading.
+
+Source: [`texchanges-explicit-review.tex`](https://github.com/phucnht/texchanges/blob/main/examples/explicit-review/texchanges-explicit-review.tex) · [Overleaf instructions](https://github.com/phucnht/texchanges/blob/main/examples/explicit-review/README.md)
+
+<ExampleStudio workflow="explicit" />
+
+## Automatic `latexdiff`
+
+The [automatic diff example](https://github.com/phucnht/texchanges/tree/main/examples/automatic-diff/) compares two complete revisions. Select `texchanges-review.tex` as the Overleaf Main document, then `latexmkrc` runs `latexdiff` before pdfLaTeX compiles the generated review document.
+
+Sources: [`texchanges-original.tex`](https://github.com/phucnht/texchanges/blob/main/examples/automatic-diff/texchanges-original.tex), [`texchanges-revised.tex`](https://github.com/phucnht/texchanges/blob/main/examples/automatic-diff/texchanges-revised.tex), [`latexmkrc`](https://github.com/phucnht/texchanges/blob/main/examples/automatic-diff/latexmkrc) · [Overleaf instructions](https://github.com/phucnht/texchanges/blob/main/examples/automatic-diff/README.md)
+
+<ExampleStudio workflow="automatic" />

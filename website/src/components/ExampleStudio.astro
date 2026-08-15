@@ -1,0 +1,278 @@
+---
+import explicitSource from '../../../examples/explicit-review/texchanges-explicit-review.tex?raw';
+import automaticOriginalSource from '../../../examples/automatic-diff/texchanges-original.tex?raw';
+import automaticRevisedSource from '../../../examples/automatic-diff/texchanges-revised.tex?raw';
+import automaticLatexmkrcSource from '../../../examples/automatic-diff/latexmkrc?raw';
+
+type Workflow = 'explicit' | 'automatic';
+
+interface Props {
+  workflow: Workflow;
+}
+
+interface Stage {
+  label: string;
+  caption: string;
+  image: string;
+  alt: string;
+}
+
+interface SourceFile {
+  label: string;
+  content: string;
+}
+
+const { workflow } = Astro.props;
+
+const studios: Record<Workflow, { title: string; stages: Stage[]; sources: SourceFile[]; compare: [number, number] }> = {
+  explicit: {
+    title: 'Explicit review studio',
+    stages: [
+      {
+        label: 'Review',
+        caption: 'Pending additions, removals, replacements, highlights, comments, and the review report remain visible.',
+        image: '/texchanges/examples/explicit-review-review.png',
+        alt: 'Review mode with additions, removals, replacements, highlights, comments, and a review report.'
+      },
+      {
+        label: 'Final',
+        caption: 'The proposed document text is ready for reading without visible review markup.',
+        image: '/texchanges/examples/explicit-review-final.png',
+        alt: 'Final mode with the proposed document text and no review markup.'
+      },
+      {
+        label: 'Original',
+        caption: 'The same source recovers the document state before marked changes.',
+        image: '/texchanges/examples/explicit-review-original.png',
+        alt: 'Original mode with the document text before marked changes.'
+      }
+    ],
+    sources: [{ label: 'texchanges-explicit-review.tex', content: explicitSource }],
+    compare: [0, 1]
+  },
+  automatic: {
+    title: 'Automatic latexdiff studio',
+    stages: [
+      {
+        label: 'Earlier revision',
+        caption: 'The source document before the revision.',
+        image: '/texchanges/examples/automatic-diff-original.png',
+        alt: 'Earlier revision before automatic comparison.'
+      },
+      {
+        label: 'Later revision',
+        caption: 'The revised document that will be compared.',
+        image: '/texchanges/examples/automatic-diff-revised.png',
+        alt: 'Later revision before automatic comparison.'
+      },
+      {
+        label: 'Generated diff',
+        caption: 'The comparison PDF produced by latexdiff.',
+        image: '/texchanges/examples/automatic-diff-review.png',
+        alt: 'Generated latexdiff PDF with removed and added text marked visually.'
+      }
+    ],
+    sources: [
+      { label: 'texchanges-original.tex', content: automaticOriginalSource },
+      { label: 'texchanges-revised.tex', content: automaticRevisedSource },
+      { label: 'latexmkrc', content: automaticLatexmkrcSource }
+    ],
+    compare: [0, 2]
+  }
+};
+
+const studio = studios[workflow];
+const studioId = `example-studio-${workflow}`;
+const initialStage = studio.stages[0];
+---
+
+<section class="example-studio" aria-labelledby={`${studioId}-title`} data-active-view="preview" data-stages={JSON.stringify(studio.stages)} data-default-compare={studio.compare.join(',')}>
+  <div class="example-studio__header">
+    <p class="eyebrow">Interactive walkthrough</p>
+    <h3 id={`${studioId}-title`}>{studio.title}</h3>
+    <p>Choose a stage to inspect it, compare two stages, or read the source that produces the example.</p>
+  </div>
+
+  <div class="example-studio__tabs" role="tablist" aria-label={`${studio.title} view`}>
+    <button type="button" role="tab" id={`${studioId}-tab-preview`} aria-selected="true" aria-controls={`${studioId}-panel-preview`} data-view="preview">Preview</button>
+    <button type="button" role="tab" id={`${studioId}-tab-compare`} aria-selected="false" aria-controls={`${studioId}-panel-compare`} data-view="compare">Compare</button>
+    <button type="button" role="tab" id={`${studioId}-tab-source`} aria-selected="false" aria-controls={`${studioId}-panel-source`} data-view="source">Source</button>
+  </div>
+
+  <div class="example-studio__workspace">
+    <ol class="example-studio__rail" aria-label={`${studio.title} stages`}>
+      {studio.stages.map((stage, index) => (
+        <li>
+          <button type="button" data-stage-index={index} aria-pressed={index === 0}>
+            <span class="example-studio__stage-number">{index + 1}</span>
+            <span>{stage.label}</span>
+          </button>
+        </li>
+      ))}
+    </ol>
+
+    <div class="example-studio__panels">
+      <section id={`${studioId}-panel-preview`} role="tabpanel" aria-labelledby={`${studioId}-tab-preview`} data-view-panel="preview">
+        <div class="example-studio__preview">
+          <div class="example-studio__preview-meta" aria-live="polite">
+            <p data-preview-caption>{initialStage.caption}</p>
+          </div>
+          <button type="button" class="example-studio__image-button" data-preview-open aria-label={`Open ${initialStage.label} image at full size`}>
+            <img data-preview-image src={initialStage.image} alt={initialStage.alt} />
+            <span aria-hidden="true">+</span>
+          </button>
+        </div>
+      </section>
+
+      <section id={`${studioId}-panel-compare`} role="tabpanel" aria-labelledby={`${studioId}-tab-compare`} data-view-panel="compare" hidden>
+        <div class="example-studio__compare-controls">
+          <label>Left stage <select data-compare-select="left">{studio.stages.map((stage, index) => <option value={index} selected={index === studio.compare[0]}>{stage.label}</option>)}</select></label>
+          <label>Right stage <select data-compare-select="right">{studio.stages.map((stage, index) => <option value={index} selected={index === studio.compare[1]}>{stage.label}</option>)}</select></label>
+        </div>
+        <div class="example-studio__compare-grid">
+          <figure>
+            <button type="button" class="example-studio__image-button" data-compare-open="left" aria-label={`Open ${studio.stages[studio.compare[0]].label} image at full size`}>
+              <img data-compare-image="left" src={studio.stages[studio.compare[0]].image} alt={studio.stages[studio.compare[0]].alt} />
+              <span aria-hidden="true">+</span>
+            </button>
+            <figcaption><strong data-compare-label="left">{studio.stages[studio.compare[0]].label}.</strong> <span data-compare-caption="left">{studio.stages[studio.compare[0]].caption}</span></figcaption>
+          </figure>
+          <figure>
+            <button type="button" class="example-studio__image-button" data-compare-open="right" aria-label={`Open ${studio.stages[studio.compare[1]].label} image at full size`}>
+              <img data-compare-image="right" src={studio.stages[studio.compare[1]].image} alt={studio.stages[studio.compare[1]].alt} />
+              <span aria-hidden="true">+</span>
+            </button>
+            <figcaption><strong data-compare-label="right">{studio.stages[studio.compare[1]].label}.</strong> <span data-compare-caption="right">{studio.stages[studio.compare[1]].caption}</span></figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id={`${studioId}-panel-source`} role="tabpanel" aria-labelledby={`${studioId}-tab-source`} data-view-panel="source" hidden>
+        <div class="example-studio__source-tabs" role="tablist" aria-label={`${studio.title} source files`}>
+          {studio.sources.map((source, index) => <button type="button" role="tab" aria-selected={index === 0} data-source-index={index}>{source.label}</button>)}
+        </div>
+        {studio.sources.map((source, index) => <pre data-source-panel={index} hidden={index !== 0}><code>{source.content}</code></pre>)}
+      </section>
+    </div>
+  </div>
+
+  <dialog class="example-studio__dialog" data-image-dialog aria-label={`${studio.title} full-size preview`}>
+    <div>
+      <button type="button" data-dialog-close aria-label="Close full-size preview">Close</button>
+      <img data-dialog-image src={initialStage.image} alt={initialStage.alt} />
+      <p data-dialog-caption>{initialStage.caption}</p>
+    </div>
+  </dialog>
+</section>
+
+<script>
+  const studios = document.querySelectorAll<HTMLElement>('.example-studio');
+
+  for (const studio of studios) {
+    const stages = JSON.parse(studio.dataset.stages ?? '[]');
+    const [defaultLeft, defaultRight] = (studio.dataset.defaultCompare ?? '0,1').split(',').map(Number);
+    let activeStage = 0;
+    let leftStage = defaultLeft;
+    let rightStage = defaultRight;
+
+    const stageButtons = [...studio.querySelectorAll<HTMLButtonElement>('[data-stage-index]')];
+    const viewButtons = [...studio.querySelectorAll<HTMLButtonElement>('[data-view]')];
+    const viewPanels = [...studio.querySelectorAll<HTMLElement>('[data-view-panel]')];
+    const previewImage = studio.querySelector<HTMLImageElement>('[data-preview-image]');
+    const previewOpen = studio.querySelector<HTMLButtonElement>('[data-preview-open]');
+    const previewCaption = studio.querySelector<HTMLElement>('[data-preview-caption]');
+    const compareSelects = {
+      left: studio.querySelector<HTMLSelectElement>('[data-compare-select="left"]'),
+      right: studio.querySelector<HTMLSelectElement>('[data-compare-select="right"]')
+    };
+    const dialog = studio.querySelector<HTMLDialogElement>('[data-image-dialog]');
+    const dialogImage = studio.querySelector<HTMLImageElement>('[data-dialog-image]');
+    const dialogCaption = studio.querySelector<HTMLElement>('[data-dialog-caption]');
+
+    const updateImage = (image: HTMLImageElement | null, stage: (typeof stages)[number]) => {
+      if (!image || !stage) return;
+      image.src = stage.image;
+      image.alt = stage.alt;
+    };
+
+    const updatePreview = (index: number) => {
+      activeStage = index;
+      const stage = stages[index];
+      updateImage(previewImage, stage);
+      if (previewOpen) previewOpen.setAttribute('aria-label', `Open ${stage.label} image at full size`);
+      if (previewCaption) previewCaption.textContent = stage.caption;
+      stageButtons.forEach((button, buttonIndex) => button.setAttribute('aria-pressed', String(buttonIndex === index)));
+    };
+
+    const updateCompare = (side: 'left' | 'right', index: number) => {
+      const stage = stages[index];
+      const image = studio.querySelector<HTMLImageElement>(`[data-compare-image="${side}"]`);
+      const open = studio.querySelector<HTMLButtonElement>(`[data-compare-open="${side}"]`);
+      const label = studio.querySelector<HTMLElement>(`[data-compare-label="${side}"]`);
+      const caption = studio.querySelector<HTMLElement>(`[data-compare-caption="${side}"]`);
+      updateImage(image, stage);
+      if (open) open.setAttribute('aria-label', `Open ${stage.label} image at full size`);
+      if (label) label.textContent = `${stage.label}.`;
+      if (caption) caption.textContent = stage.caption;
+    };
+
+    const setCompare = (side: 'left' | 'right', index: number) => {
+      if (side === 'left') {
+        leftStage = index;
+        if (leftStage === rightStage) rightStage = stages.findIndex((_: unknown, stageIndex: number) => stageIndex !== leftStage);
+      } else {
+        rightStage = index;
+        if (leftStage === rightStage) leftStage = stages.findIndex((_: unknown, stageIndex: number) => stageIndex !== rightStage);
+      }
+      if (compareSelects.left) compareSelects.left.value = String(leftStage);
+      if (compareSelects.right) compareSelects.right.value = String(rightStage);
+      updateCompare('left', leftStage);
+      updateCompare('right', rightStage);
+    };
+
+    const activateView = (view: string) => {
+      studio.dataset.activeView = view;
+      viewButtons.forEach((button) => button.setAttribute('aria-selected', String(button.dataset.view === view)));
+      viewPanels.forEach((panel) => { panel.hidden = panel.dataset.viewPanel !== view; });
+    };
+
+    const openDialog = (stageIndex: number) => {
+      const stage = stages[stageIndex];
+      if (!dialog || !stage) return;
+      updateImage(dialogImage, stage);
+      if (dialogCaption) dialogCaption.textContent = `${stage.label}. ${stage.caption}`;
+      dialog.showModal();
+    };
+
+    stageButtons.forEach((button, index) => button.addEventListener('click', () => updatePreview(index)));
+    viewButtons.forEach((button) => button.addEventListener('click', () => activateView(button.dataset.view ?? 'preview')));
+    studio.querySelectorAll<HTMLButtonElement>('[data-preview-open]').forEach((button) => button.addEventListener('click', () => openDialog(activeStage)));
+    studio.querySelectorAll<HTMLButtonElement>('[data-compare-open]').forEach((button) => button.addEventListener('click', () => openDialog(button.dataset.compareOpen === 'left' ? leftStage : rightStage)));
+    compareSelects.left?.addEventListener('change', () => setCompare('left', Number(compareSelects.left?.value)));
+    compareSelects.right?.addEventListener('change', () => setCompare('right', Number(compareSelects.right?.value)));
+
+    const sourceButtons = [...studio.querySelectorAll<HTMLButtonElement>('[data-source-index]')];
+    const sourcePanels = [...studio.querySelectorAll<HTMLElement>('[data-source-panel]')];
+    sourceButtons.forEach((button) => button.addEventListener('click', () => {
+      const index = button.dataset.sourceIndex;
+      sourceButtons.forEach((item) => item.setAttribute('aria-selected', String(item === button)));
+      sourcePanels.forEach((panel) => { panel.hidden = panel.dataset.sourcePanel !== index; });
+    }));
+
+    studio.querySelectorAll<HTMLElement>('[role="tablist"]').forEach((tablist) => tablist.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      const buttons = [...tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+      const currentIndex = buttons.indexOf(document.activeElement as HTMLButtonElement);
+      if (currentIndex === -1) return;
+      event.preventDefault();
+      const nextIndex = (currentIndex + (event.key === 'ArrowRight' ? 1 : -1) + buttons.length) % buttons.length;
+      buttons[nextIndex].focus();
+      buttons[nextIndex].click();
+    }));
+
+    studio.querySelector<HTMLButtonElement>('[data-dialog-close]')?.addEventListener('click', () => dialog?.close());
+    dialog?.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
+    updatePreview(0);
+    setCompare('left', defaultLeft);
+  }
+</script>
