@@ -1,11 +1,11 @@
 # CTAN submission notes
 
-Use these values for the `texchanges` 0.2.2 upload form.
+Use these values for the `texchanges` 0.2.3 update form.
 
 - **Package:** `texchanges`
-- **Version:** `0.2.2`
+- **Version:** `0.2.3`
 - **License:** LPPL 1.3c or later
-- **Archive:** `dist/texchanges-0.2.2.zip`
+- **Archive:** `dist/texchanges-0.2.3.zip`
 - **Summary:** LaTeX-native tracked changes with review decisions and reports
 - **Repository:** <https://github.com/phucnht/texchanges>
 - **Documentation:** <https://phucnht.github.io/texchanges/>
@@ -19,15 +19,15 @@ stable change IDs, decision statuses, filtered review reports, localization,
 visual presets, and an opt-in compatibility layer for the `changes` package.
 Native replacement commands use the readable old-to-new argument order.
 
-The distribution also includes a standard-library Python merge tool for
-accepting, rejecting, or permanently resolving marked changes.
+The distribution also includes the standard-library Python
+`texchanges-merge` tool for accepting, rejecting, or permanently resolving
+marked changes.
 
 ## Announcement
 
-Version 0.2.2 adds review-only change reports, a complete PDF manual, CTAN
-packaging, and public web documentation. Reports are now silent in `final` and
-`original` modes, which prevents stale auxiliary data from appearing in a
-resolved document.
+Version 0.2.3 adds the user-level `texchanges-merge` command, a manual page,
+version output, and readable command help. Example documents now use
+package-specific filenames following CTAN feedback.
 
 ## Submission checklist
 

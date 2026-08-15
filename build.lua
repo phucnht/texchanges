@@ -11,12 +11,12 @@ checkruns = 2
 
 uploadconfig = {
   pkg = "texchanges",
-  version = "0.2.2",
+  version = "0.2.3",
   author = "Phuc Nguyen",
   license = "lppl1.3c",
   summary = "LaTeX-native track changes for human and AI-assisted review",
   ctanPath = "/macros/latex/contrib/texchanges",
   repository = "https://github.com/phucnht/texchanges",
   bugtracker = "https://github.com/phucnht/texchanges/issues",
-  update = false,
+  update = true,
 }

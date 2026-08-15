@@ -166,6 +166,21 @@ done
 
 python3 -m unittest -v tests.test_merge
 
+test -x "$PROJECT_ROOT/scripts/texchanges-merge.py"
+test "$("$PROJECT_ROOT/scripts/texchanges-merge.py" --version)" = 'texchanges-merge 0.2.3'
+COLUMNS=10 "$PROJECT_ROOT/scripts/texchanges-merge.py" --help \
+  | grep -F 'Resolve or merge Texchanges markup without third-party dependencies.' >/dev/null
+
+if command -v mandoc >/dev/null 2>&1; then
+  mandoc -T lint "$PROJECT_ROOT/texchanges-merge.1"
+elif command -v groff >/dev/null 2>&1; then
+  groff -man -Tascii "$PROJECT_ROOT/texchanges-merge.1" >/dev/null
+else
+  for section in NAME SYNOPSIS DESCRIPTION OPTIONS 'EXIT STATUS' EXAMPLES FILES AUTHOR 'REPORTING BUGS'; do
+    grep -Fq ".SH $section" "$PROJECT_ROOT/texchanges-merge.1"
+  done
+fi
+
 compile_style_case() {
   local name="$1"
   local options="$2"
@@ -205,8 +220,8 @@ compile_style_case compat-ifneeded 'compat=changes,commandnameprefix=ifneeded' '
 compile_style_case compat-always 'compat=changes,commandnameprefix=always' '\chadded{added}\chreplaced{new}{old}'
 
 latexdiff --flatten --type=UNDERLINE \
-  "$PROJECT_ROOT/examples/automatic-diff/original.tex" \
-  "$PROJECT_ROOT/examples/automatic-diff/revised.tex" \
+  "$PROJECT_ROOT/examples/automatic-diff/texchanges-original.tex" \
+  "$PROJECT_ROOT/examples/automatic-diff/texchanges-revised.tex" \
   > "$TASK_TMP_DIR/automatic.tex"
 pdflatex \
   -halt-on-error \

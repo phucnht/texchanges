@@ -1,13 +1,100 @@
+import ast
 import contextlib
+import importlib.util
 import io
+import os
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.texchanges_merge import ParseError, main, parse_changes, transform
+SCRIPT = Path(__file__).parents[1] / "scripts" / "texchanges-merge.py"
+SPEC = importlib.util.spec_from_file_location("texchanges_merge", SCRIPT)
+assert SPEC is not None and SPEC.loader is not None
+MODULE = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = MODULE
+SPEC.loader.exec_module(MODULE)
+
+ParseError = MODULE.ParseError
+main = MODULE.main
+parse_changes = MODULE.parse_changes
+transform = MODULE.transform
 
 
 class MergeTests(unittest.TestCase):
+    def test_script_uses_only_standard_library_imports(self):
+        tree = ast.parse(SCRIPT.read_text(encoding="utf-8"))
+        imported = {
+            alias.name.split(".", 1)[0]
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Import)
+            for alias in node.names
+        }
+        imported.update(
+            node.module.split(".", 1)[0]
+            for node in ast.walk(tree)
+            if isinstance(node, ast.ImportFrom) and node.module != "__future__"
+        )
+        standard_library = {
+            "argparse",
+            "dataclasses",
+            "difflib",
+            "pathlib",
+            "re",
+            "shutil",
+            "sys",
+        }
+        self.assertTrue(imported <= standard_library)
+
+    def test_version_output(self):
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--version"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, "texchanges-merge 0.2.3\n")
+        self.assertEqual(result.stderr, "")
+
+    def test_help_remains_readable_in_narrow_terminal(self):
+        environment = os.environ.copy()
+        environment["COLUMNS"] = "10"
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--help"],
+            check=False,
+            capture_output=True,
+            text=True,
+            env=environment,
+        )
+        self.assertEqual(result.returncode, 0)
+        self.assertIn(
+            "Resolve or merge Texchanges markup without third-party dependencies.",
+            result.stdout,
+        )
+        for description in (
+            "LaTeX source file containing Texchanges markup",
+            "destination file for the updated source",
+            "accept matching changes",
+            "print a unified diff without writing files",
+        ):
+            self.assertIn(description, result.stdout)
+
+    def test_executable_symlink_is_working_directory_independent(self):
+        with tempfile.TemporaryDirectory() as directory:
+            link = Path(directory) / "texchanges-merge"
+            link.symlink_to(SCRIPT)
+            result = subprocess.run(
+                [str(link), "--version"],
+                cwd=Path(directory).parent,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, "texchanges-merge 0.2.3\n")
+
     def test_native_nested_and_unicode(self):
         source = r"Before \txreplace[author=a,id=R1]{old {nested}}{mới {nested}} after"
         self.assertIn("mới {nested}", transform(source, decision="accept", merge=True))

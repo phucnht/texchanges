@@ -26,7 +26,7 @@ example:
 	TEXINPUTS="$(CURDIR):" latexmk -pdf -halt-on-error \
 	  -interaction=nonstopmode \
 	  -outdir=$(BUILD_DIR)/explicit-review \
-	  examples/explicit-review/main.tex
+	  examples/explicit-review/texchanges-explicit-review.tex
 
 doc:
 	mkdir -p $(BUILD_DIR)
@@ -37,13 +37,13 @@ dist: clean
 	$(MAKE) doc
 	mkdir -p $(DIST_DIR)
 	zip -j $(DIST_DIR)/$(PACKAGE)-overleaf.zip \
-	  texchanges.sty examples/explicit-review/main.tex README.md LICENSE \
+	  texchanges.sty examples/explicit-review/texchanges-explicit-review.tex README.md LICENSE \
 	  texchanges-doc.tex build/texchanges-doc.pdf \
-	  scripts/texchanges_merge.py
+	  scripts/texchanges-merge.py
 	zip -j $(DIST_DIR)/$(PACKAGE)-automatic-diff-overleaf.zip \
-	  examples/automatic-diff/original.tex \
-	  examples/automatic-diff/revised.tex \
-	  examples/automatic-diff/review.tex \
+	  examples/automatic-diff/texchanges-original.tex \
+	  examples/automatic-diff/texchanges-revised.tex \
+	  examples/automatic-diff/texchanges-review.tex \
 	  examples/automatic-diff/latexmkrc \
 	  examples/automatic-diff/README.md
 
@@ -63,13 +63,13 @@ release-check: check dist ctan website
 	@printf 'Texchanges release artifacts verified.\n'
 
 clean:
-	latexmk -C examples/explicit-review/main.tex >/dev/null 2>&1 || true
+	latexmk -C examples/explicit-review/texchanges-explicit-review.tex >/dev/null 2>&1 || true
 	$(RM) \
 	  examples/automatic-diff/review-generated.tex \
-	  examples/automatic-diff/review.aux \
-	  examples/automatic-diff/review.fdb_latexmk \
-	  examples/automatic-diff/review.fls \
-	  examples/automatic-diff/review.log \
-	  examples/automatic-diff/review.pdf
+	  examples/automatic-diff/texchanges-review.aux \
+	  examples/automatic-diff/texchanges-review.fdb_latexmk \
+	  examples/automatic-diff/texchanges-review.fls \
+	  examples/automatic-diff/texchanges-review.log \
+	  examples/automatic-diff/texchanges-review.pdf
 	rm -rf $(BUILD_DIR) $(DIST_DIR)
 	find . -type d -name __pycache__ -prune -exec rm -rf {} +

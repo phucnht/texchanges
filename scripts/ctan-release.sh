@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-VERSION="0.2.2"
+VERSION="0.2.3"
 ARCHIVE="$PROJECT_ROOT/dist/texchanges-$VERSION.zip"
 TASK_TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/texchanges-ctan.XXXXXX")"
 trap 'rm -rf "$TASK_TMP_DIR"' EXIT
@@ -17,17 +17,18 @@ cp "$PROJECT_ROOT/README.md" "$PROJECT_ROOT/LICENSE" \
   "$PROJECT_ROOT/CHANGELOG.md" "$PROJECT_ROOT/Makefile" \
   "$PROJECT_ROOT/build.lua" "$PROJECT_ROOT/texchanges.sty" \
   "$PROJECT_ROOT/texchanges-doc.tex" "$PROJECT_ROOT/build/texchanges-doc.pdf" \
+  "$PROJECT_ROOT/texchanges-merge.1" \
   "$PACKAGE_DIR/"
 cp "$PROJECT_ROOT/examples/explicit-review/README.md" \
-  "$PROJECT_ROOT/examples/explicit-review/main.tex" \
+  "$PROJECT_ROOT/examples/explicit-review/texchanges-explicit-review.tex" \
   "$PACKAGE_DIR/examples/explicit-review/"
 cp "$PROJECT_ROOT/examples/automatic-diff/README.md" \
   "$PROJECT_ROOT/examples/automatic-diff/latexmkrc" \
-  "$PROJECT_ROOT/examples/automatic-diff/original.tex" \
-  "$PROJECT_ROOT/examples/automatic-diff/review.tex" \
-  "$PROJECT_ROOT/examples/automatic-diff/revised.tex" \
+  "$PROJECT_ROOT/examples/automatic-diff/texchanges-original.tex" \
+  "$PROJECT_ROOT/examples/automatic-diff/texchanges-review.tex" \
+  "$PROJECT_ROOT/examples/automatic-diff/texchanges-revised.tex" \
   "$PACKAGE_DIR/examples/automatic-diff/"
-cp "$PROJECT_ROOT/scripts/texchanges_merge.py" "$PACKAGE_DIR/scripts/"
+cp "$PROJECT_ROOT/scripts/texchanges-merge.py" "$PACKAGE_DIR/scripts/"
 
 if find "$PACKAGE_DIR" -type f \( -name '*.aux' -o -name '*.log' -o -name '*.out' \
   -o -name '*.fls' -o -name '*.fdb_latexmk' -o -name '*.txc' -o -name '*.txs' \) \
@@ -43,9 +44,20 @@ unzip -t "$ARCHIVE" >/dev/null
 VERIFY_DIR="$TASK_TMP_DIR/verify"
 mkdir -p "$VERIFY_DIR"
 unzip -q "$ARCHIVE" -d "$VERIFY_DIR"
+test -x "$VERIFY_DIR/texchanges/scripts/texchanges-merge.py"
+test -f "$VERIFY_DIR/texchanges/texchanges-merge.1"
+if find "$VERIFY_DIR/texchanges" -name 'texchanges_merge.py' | grep -q .; then
+  printf 'Obsolete underscore CLI filename found in CTAN archive.\n' >&2
+  exit 1
+fi
 TEXINPUTS="$VERIFY_DIR/texchanges:" pdflatex -halt-on-error \
   -interaction=nonstopmode -output-directory="$VERIFY_DIR" \
-  "$VERIFY_DIR/texchanges/examples/explicit-review/main.tex" >/dev/null
+  "$VERIFY_DIR/texchanges/examples/explicit-review/texchanges-explicit-review.tex" >/dev/null
+ln -s "$VERIFY_DIR/texchanges/scripts/texchanges-merge.py" "$TASK_TMP_DIR/texchanges-merge"
+(cd "$TASK_TMP_DIR" && ./texchanges-merge --version) \
+  | grep -Fx 'texchanges-merge 0.2.3' >/dev/null
+(cd "$TASK_TMP_DIR" && COLUMNS=10 ./texchanges-merge --help) \
+  | grep -F 'Resolve or merge Texchanges markup without third-party dependencies.' >/dev/null
 
 if command -v sha256sum >/dev/null 2>&1; then
   sha256sum "$ARCHIVE" > "$ARCHIVE.sha256"

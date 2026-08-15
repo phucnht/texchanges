@@ -11,6 +11,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+VERSION = "0.2.3"
 VERBATIM_ENVS = {"verbatim", "verbatim*", "lstlisting", "minted"}
 NATIVE = {
     "txadd": (0, 1),
@@ -249,20 +250,34 @@ def transform(
     return "".join(output)
 
 
+def _help_formatter(prog: str) -> argparse.HelpFormatter:
+    width = max(80, shutil.get_terminal_size(fallback=(80, 24)).columns)
+    return argparse.HelpFormatter(prog, width=width, max_help_position=30)
+
+
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("input", type=Path)
-    parser.add_argument("output", type=Path, nargs="?")
+    parser = argparse.ArgumentParser(
+        prog="texchanges-merge",
+        description=__doc__,
+        formatter_class=_help_formatter,
+    )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {VERSION}")
+    parser.add_argument("input", type=Path, help="LaTeX source file containing Texchanges markup")
+    parser.add_argument("output", type=Path, nargs="?", help="destination file for the updated source")
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--accept", action="store_true")
-    group.add_argument("--reject", action="store_true")
-    group.add_argument("--interactive", action="store_true")
+    group.add_argument("--accept", action="store_true", help="accept matching changes")
+    group.add_argument("--reject", action="store_true", help="reject matching changes")
+    group.add_argument("--interactive", action="store_true", help="prompt for each matching change")
     parser.add_argument("--merge", action="store_true", help="remove markup instead of updating status")
-    parser.add_argument("--author")
-    parser.add_argument("--id", dest="change_id")
-    parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--in-place", action="store_true")
-    parser.add_argument("--backup-suffix", default=".bak")
+    parser.add_argument("--author", help="process only changes by this author ID")
+    parser.add_argument("--id", dest="change_id", help="process only the specified change ID")
+    parser.add_argument("--dry-run", action="store_true", help="print a unified diff without writing files")
+    parser.add_argument("--in-place", action="store_true", help="update the input file and create a backup")
+    parser.add_argument(
+        "--backup-suffix",
+        default=".bak",
+        help="suffix for in-place backups (default: .bak)",
+    )
     return parser
 
 

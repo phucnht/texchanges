@@ -6,20 +6,23 @@ review markup, and resolves the same source into accepted or original output.
 
 ## Installation
 
-After Texchanges is available in your TeX distribution, install it with the
-distribution's package manager and load it normally:
+Texchanges is distributed through TeX Live. Install it with the distribution's
+package manager when needed, then load it normally:
 
 ```latex
 \usepackage[review]{texchanges}
 ```
 
 For Overleaf projects whose TeX Live version does not include Texchanges,
-upload `texchanges.sty` beside the main document. Overleaf updates TeX Live on
-its own release schedule, so a new CTAN package may take time to appear there.
+upload `texchanges.sty` beside the main document. The self-contained explicit
+example is `examples/explicit-review/texchanges-explicit-review.tex`. Overleaf
+updates TeX Live on its own release schedule, so a new CTAN package may take
+time to appear there.
 
-## Overleaf quick start
+## Overleaf fallback
 
-Upload `texchanges.sty` beside your main `.tex` file:
+If the TeX Live version selected for the project does not contain Texchanges,
+upload `texchanges.sty` beside your main `.tex` file:
 
 ```latex
 \usepackage[review]{texchanges}
@@ -127,14 +130,19 @@ Use `commandnameprefix=none|ifneeded|always` for compatibility commands. Native
 
 ## Resolve source markup
 
-The standard-library CLI can update statuses or permanently merge markup:
+The `texchanges-merge` CLI can update statuses or permanently merge markup
+from any working directory after it is installed by TeX Live:
 
 ```bash
-python3 scripts/texchanges_merge.py paper.tex reviewed.tex --accept
-python3 scripts/texchanges_merge.py paper.tex final.tex --accept --merge
-python3 scripts/texchanges_merge.py paper.tex --reject --id R12 --in-place
-python3 scripts/texchanges_merge.py paper.tex --accept --author phuc --dry-run
+texchanges-merge paper.tex reviewed.tex --accept
+texchanges-merge paper.tex final.tex --accept --merge
+texchanges-merge paper.tex --reject --id R12 --in-place
+texchanges-merge paper.tex --accept --author phuc --dry-run
 ```
+
+From a source checkout, use
+`python3 scripts/texchanges-merge.py` in place of `texchanges-merge`. The tool
+requires Python 3.10 or later and uses only the standard library.
 
 In-place updates create a `.bak` file. Interactive mode, nested braces, Unicode,
 comments, and common verbatim-like environments are supported. Malformed input
@@ -142,8 +150,10 @@ fails before any file is written.
 
 ## Automatic `latexdiff`
 
-`examples/automatic-diff/` compares two complete revisions through Overleaf's
-`latexmkrc` mechanism. It complements explicit semantic markup.
+`examples/automatic-diff/` compares `texchanges-original.tex` and
+`texchanges-revised.tex` through Overleaf's `latexmkrc` mechanism, with
+`texchanges-review.tex` as the Main document. It complements explicit semantic
+markup.
 
 ## Development
 

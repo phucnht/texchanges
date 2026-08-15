@@ -14,7 +14,7 @@
   colorlinks=true,
   linkcolor=txblue,
   urlcolor=txblue,
-  pdftitle={Texchanges 0.2.2 Manual},
+  pdftitle={Texchanges 0.2.3 Manual},
   pdfauthor={Phuc Nguyen}
 }
 \setlength{\emergencystretch}{2em}
@@ -36,7 +36,7 @@
 
 \title{\textsf{texchanges}\\\large LaTeX-native track changes}
 \author{Phuc Nguyen}
-\date{Version 0.2.2, 14 August 2026}
+\date{Version 0.2.3, 15 August 2026}
 
 \begin{document}
 \maketitle
@@ -52,8 +52,8 @@ decision statuses support human review and automated editing workflows.
 
 \section{Installation}
 
-After the package reaches your TeX distribution, install it with the normal
-package manager and load it with:
+Texchanges is distributed through TeX Live. Install it with the normal package
+manager when needed and load it with:
 
 \begin{lstlisting}
 \usepackage[review]{texchanges}
@@ -61,7 +61,10 @@ package manager and load it with:
 
 For Overleaf projects whose TeX Live version does not contain Texchanges,
 upload \path{texchanges.sty} beside the main document. The project can then
-use the same package line.
+use the same package line. The distributable explicit example is named
+\path{texchanges-explicit-review.tex}; the automatic comparison example uses
+\path{texchanges-original.tex}, \path{texchanges-revised.tex}, and
+\path{texchanges-review.tex} with a top-level \path{latexmkrc}.
 
 \section{Core commands}
 
@@ -159,14 +162,23 @@ or \texttt{always}.
 
 \section{Resolving source markup}
 
-The supplemental standard-library Python tool can update decisions or remove
-resolved markup permanently.
+The supplemental \texttt{texchanges-merge} tool can update decisions or remove
+resolved markup permanently from any working directory after TeX Live installs
+the executable.
 
 \begin{lstlisting}[language=bash]
-python3 scripts/texchanges_merge.py paper.tex reviewed.tex --accept
-python3 scripts/texchanges_merge.py paper.tex final.tex --accept --merge
-python3 scripts/texchanges_merge.py paper.tex --reject --id R12 --in-place
+texchanges-merge paper.tex reviewed.tex --accept
+texchanges-merge paper.tex final.tex --accept --merge
+texchanges-merge paper.tex --reject --id R12 --in-place
 \end{lstlisting}
+
+From a source checkout, run the script directly:
+
+\begin{lstlisting}[language=bash]
+python3 scripts/texchanges-merge.py --version
+\end{lstlisting}
+
+The tool requires Python 3.10 or later and uses only the standard library.
 
 In-place edits create a backup. The parser handles nested groups and skips
 comments and common verbatim-like environments. Malformed input fails before

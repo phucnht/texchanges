@@ -1,0 +1,87 @@
+.TH TEXCHANGES-MERGE 1 "2026-08-15" "texchanges 0.2.3" "User Commands"
+.SH NAME
+texchanges-merge \- resolve or merge Texchanges markup
+.SH SYNOPSIS
+.B texchanges-merge
+.RI [ options ]
+.I input
+.RI [ output ]
+.SH DESCRIPTION
+.B texchanges-merge
+accepts, rejects, or interactively resolves changes marked with Texchanges or
+supported compatibility commands.
+It can update decision statuses while preserving markup or permanently merge
+the selected result into the LaTeX source.
+The program requires Python 3.10 or later and uses only the Python standard
+library.
+.SH OPTIONS
+.TP
+.B \-h, \-\-help
+Show the command help and exit.
+.TP
+.B \-\-version
+Show the program version and exit.
+.TP
+.B \-\-accept
+Accept matching changes.
+.TP
+.B \-\-reject
+Reject matching changes.
+.TP
+.B \-\-interactive
+Prompt for each matching change.
+.TP
+.B \-\-merge
+Remove markup and keep the resolved text instead of updating the status.
+.TP
+.BI \-\-author " AUTHOR"
+Process only changes with the specified author ID.
+.TP
+.BI \-\-id " CHANGE_ID"
+Process only the specified change ID.
+.TP
+.B \-\-dry-run
+Print a unified diff without writing files.
+.TP
+.B \-\-in-place
+Update the input file and create a backup.
+.TP
+.BI \-\-backup-suffix " SUFFIX"
+Use SUFFIX for in-place backups instead of
+.BR .bak .
+.SH EXIT STATUS
+.TP
+.B 0
+The operation completed successfully.
+.TP
+.B 2
+The command line or LaTeX markup was malformed.
+.SH EXAMPLES
+Accept all changes and update their statuses in a separate file:
+.PP
+.EX
+texchanges-merge paper.tex reviewed.tex --accept
+.EE
+.PP
+Accept all changes and permanently remove the markup:
+.PP
+.EX
+texchanges-merge paper.tex final.tex --accept --merge
+.EE
+.PP
+Preview rejection of one change without writing a file:
+.PP
+.EX
+texchanges-merge paper.tex --reject --id R12 --dry-run
+.EE
+.SH FILES
+An in-place operation creates a backup beside the input file.
+The default backup suffix is
+.BR .bak .
+.SH AUTHOR
+Written and maintained by Phuc Nguyen.
+.SH REPORTING BUGS
+Report issues at
+.UR https://github.com/phucnht/texchanges/issues
+the Texchanges issue tracker
+.UE .

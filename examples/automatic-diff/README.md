@@ -1,9 +1,9 @@
 # Automatic latexdiff on Overleaf
 
 Upload all files in this directory to the top level of a new Overleaf project.
-Set `review.tex` as the Main document and use pdfLaTeX. Each recompile runs
-`latexdiff` over `original.tex` and `revised.tex`, then displays the generated
-visual diff.
+Set `texchanges-review.tex` as the Main document and use pdfLaTeX. Each
+recompile runs `latexdiff` over `texchanges-original.tex` and
+`texchanges-revised.tex`, then displays the generated visual diff.
 
 Edit the two filenames in `latexmkrc` to match a real project. Keep filenames
 free of shell metacharacters because they are part of a compile command.

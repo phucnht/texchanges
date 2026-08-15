@@ -5,13 +5,13 @@ description: Install Texchanges locally or use it on Overleaf.
 
 ## TeX distributions
 
-After Texchanges is available in your distribution, install it with the distribution's package manager. Then load it normally:
+Texchanges is distributed through TeX Live. Install it with the distribution's package manager when needed, then load it normally:
 
 ```latex
 \usepackage[review]{texchanges}
 ```
 
-CTAN publication and TeX distribution updates are separate processes. A new CTAN package can take additional time to reach TeX Live, MiKTeX, and Overleaf.
+CTAN publication and the TeX Live version selected for a project are separate concerns. Upload `texchanges.sty` when the active TeX Live version does not contain the package.
 
 ## Overleaf fallback
 

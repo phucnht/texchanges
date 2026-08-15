@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.3, 2026-08-15
+
+- Install the resolver as the user-level `texchanges-merge` command in TeX
+  Live while retaining a self-contained Python source script.
+- Add `--version`, readable help in narrow terminals, complete argument
+  descriptions, and a manual page.
+- Rename example documents with package-specific filenames and update all
+  Overleaf, test, documentation, and release references.
+
 ## 0.2.2, 2026-08-14
 
 - Use Phuc Nguyen consistently in public package metadata and documentation.
