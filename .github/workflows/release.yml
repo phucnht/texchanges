@@ -17,7 +17,7 @@ jobs:
         # diffutils: l3build compares .tlg baselines with `diff -c`, which
         # BusyBox diff does not support.
         run: apk add --no-cache make perl python3 poppler-utils zip unzip diffutils
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Check the tag matches the package version
         run: |
           STY_VERSION="$(sed -n 's/.*\\ProvidesExplPackage{texchanges}{[^}]*}{\([^}]*\)}.*/\1/p' texchanges.sty)"
