@@ -1,0 +1,53 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+============================================================
+TEST 1: public~API~surface~is~defined
+============================================================
+txadd: defined
+txremove: defined
+txreplace: defined
+txhighlight: defined
+txcomment: defined
+txdefineauthor: defined
+txsetanonymousname: defined
+txlistofchanges: defined
+texchangesmode: defined
+txsetaddedmarkup: defined
+txsetdeletedmarkup: defined
+txsethighlightmarkup: defined
+txsetcommentmarkup: defined
+txsetauthormarkup: defined
+txsetauthormarkupposition: defined
+txsetauthormarkuptext: defined
+txsettruncatewidth: defined
+txsetsummarywidth: defined
+txsetsummarytowidth: defined
+txsetlocextension: defined
+txsetsocextension: defined
+add: defined
+remove: defined
+replace: defined
+============================================================
+============================================================
+TEST 2: localization~strings~expand~in~english
+============================================================
+list=List of changes
+summary=Changes
+compact=Changes (compact)
+author=Author
+added=Added
+removed=Removed
+replaced=Replaced
+highlighted=Highlighted
+commented=Commented
+status=Status
+pending=pending
+accepted=accepted
+rejected=rejected
+nochanges=No changes.
+============================================================
+============================================================
+TEST 3: mode~reflection
+============================================================
+mode=review
+============================================================

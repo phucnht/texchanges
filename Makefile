@@ -1,4 +1,4 @@
-.PHONY: help check test example doc dist overleaf-check ctan release-check website clean
+.PHONY: help check test save-baselines example doc dist overleaf-check ctan release-check website clean
 
 PACKAGE := texchanges
 BUILD_DIR := build
@@ -8,6 +8,7 @@ help:
 	@printf '%s\n' \
 	  'make check    Run the verification suite (TEST=<name> filters cases)' \
 	  'make test     Alias for make check' \
+	  'make save-baselines  Regenerate l3build .tlg baselines' \
 	  'make example  Compile the explicit review example' \
 	  'make doc      Compile the package manual' \
 	  'make dist     Build the unified Overleaf-ready zip archive' \
@@ -80,7 +81,11 @@ release-check: check overleaf-check ctan website
 	fi > "$(CURDIR)/$(DIST_DIR)/SHA256SUMS"
 	@printf 'Texchanges release artifacts verified.\n'
 
+save-baselines:
+	l3build save $(TEST) < /dev/null
+
 clean:
+	l3build clean >/dev/null 2>&1 || true
 	latexmk -C examples/explicit-review/texchanges-explicit-review.tex >/dev/null 2>&1 || true
 	$(RM) \
 	  examples/automatic-diff/review-generated.tex \

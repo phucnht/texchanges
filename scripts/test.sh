@@ -273,6 +273,14 @@ case_compat_prefixes() {
   compile_style_case compat-always 'compat=changes,commandnameprefix=always' '\chadded{added}\chreplaced{new}{old}'
 }
 
+case_l3build() {
+  if ! command -v l3build >/dev/null 2>&1; then
+    printf 'l3build not installed; skipping log-level regression tests\n' >&2
+    return 0
+  fi
+  (cd "$PROJECT_ROOT" && l3build check < /dev/null)
+}
+
 case_latexdiff() {
   latexdiff --flatten --type=UNDERLINE --config MINWORDSBLOCK=1 \
     "$PROJECT_ROOT/examples/automatic-diff/texchanges-original.tex" \
@@ -337,6 +345,7 @@ run_case cli_help
 run_case manpage
 run_case style_matrix
 run_case compat_prefixes
+run_case l3build
 run_case latexdiff
 
 if [ "$RAN" -eq 0 ]; then

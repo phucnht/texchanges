@@ -5,6 +5,7 @@
 - `*.tex` — LaTeX fixtures. Each is a small document compiled by `scripts/test.sh`; the resulting PDF text (via `pdftotext`) is checked for sentinel tokens such as `OLDTOKEN` or `NEWACCEPTED`.
 - `duplicate-id.tex`, `undefined-author.tex` — negative fixtures: the suite asserts these **fail** to compile.
 - `test_merge.py` — stdlib `unittest` tests for the `texchanges-merge` CLI.
+- `../testfiles/*.lvt` — l3build log-level tests with `.tlg` baselines, comparing the typeset log across pdfTeX, XeTeX, and LuaTeX. See [docs/dev/testing.md](../docs/dev/testing.md).
 
 ## Running
 
@@ -47,3 +48,5 @@ TEXCHANGES_TEST_DIR=/tmp/tx-out make check
 5. For behavior that must *fail*, follow the `case_error_fixtures` pattern.
 
 CLI changes get a test method in `test_merge.py` instead; the CLI must stay standard-library-only (there is a test enforcing this).
+
+Adding or removing a **public command** or a **localization string** also changes the l3build baselines. Update them with `make save-baselines` and review the diff before committing.

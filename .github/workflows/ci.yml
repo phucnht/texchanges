@@ -69,6 +69,11 @@ jobs:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Shellcheck
         run: shellcheck scripts/*.sh
+      - name: Check the l3build baselines are present
+        run: |
+          for lvt in testfiles/*.lvt; do
+            test -f "${lvt%.lvt}.tlg" || { echo "Missing baseline for $lvt" >&2; exit 1; }
+          done
       - name: Python syntax
         run: python3 -m compileall -q scripts tests
 

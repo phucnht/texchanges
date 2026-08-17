@@ -1,0 +1,28 @@
+\input{regression-test}
+\documentclass{article}
+\usepackage[review,compat=changes]{texchanges}
+\begin{document}
+\START
+
+\TEST{changes~compatibility~surface~is~defined}{
+  \def\CHECK#1{\TYPE{#1:
+    \ifcsname#1\endcsname defined\else MISSING\fi}}
+  \CHECK{added}\CHECK{deleted}\CHECK{replaced}
+  \CHECK{highlight}\CHECK{comment}
+  \CHECK{definechangesauthor}\CHECK{listofchanges}
+  \CHECK{setaddedmarkup}\CHECK{setdeletedmarkup}
+  \CHECK{sethighlightmarkup}\CHECK{setcommentmarkup}
+  \CHECK{setauthormarkup}\CHECK{setanonymousname}
+  \CHECK{settruncatewidth}\CHECK{setsummarywidth}
+  \CHECK{setlocextension}\CHECK{setsocextension}
+  \CHECK{txcompatadded}\CHECK{txcompatreplaced}
+}
+
+\TEST{native~replace~keeps~old~then~new}{
+  \txreplace[id=N1]{OLDNATIVE}{NEWNATIVE}
+}
+
+\TEST{compat~replaced~takes~new~then~old}{
+  \replaced[changeid=C1]{NEWCOMPAT}{OLDCOMPAT}
+}
+\END

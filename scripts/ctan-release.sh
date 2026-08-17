@@ -37,6 +37,8 @@ cp "$PROJECT_ROOT/examples/automatic-diff/README.md" \
 cp "$PROJECT_ROOT/examples/overleaf-workflow/README.md" \
   "$PACKAGE_DIR/examples/overleaf-workflow/"
 cp "$PROJECT_ROOT/scripts/texchanges-merge.py" "$PACKAGE_DIR/scripts/"
+mkdir -p "$PACKAGE_DIR/testfiles"
+cp "$PROJECT_ROOT"/testfiles/*.lvt "$PROJECT_ROOT"/testfiles/*.tlg "$PACKAGE_DIR/testfiles/"
 
 if find "$PACKAGE_DIR" -type f \( -name '*.aux' -o -name '*.log' -o -name '*.out' \
   -o -name '*.fls' -o -name '*.fdb_latexmk' -o -name '*.txc' -o -name '*.txs' \) \

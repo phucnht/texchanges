@@ -1,0 +1,43 @@
+\input{regression-test}
+\documentclass{article}
+\usepackage[review]{texchanges}
+\begin{document}
+\START
+
+\TEST{public~API~surface~is~defined}{
+  \def\CHECK#1{\TYPE{#1:
+    \ifcsname#1\endcsname defined\else MISSING\fi}}
+  \CHECK{txadd}\CHECK{txremove}\CHECK{txreplace}
+  \CHECK{txhighlight}\CHECK{txcomment}
+  \CHECK{txdefineauthor}\CHECK{txsetanonymousname}
+  \CHECK{txlistofchanges}\CHECK{texchangesmode}
+  \CHECK{txsetaddedmarkup}\CHECK{txsetdeletedmarkup}
+  \CHECK{txsethighlightmarkup}\CHECK{txsetcommentmarkup}
+  \CHECK{txsetauthormarkup}\CHECK{txsetauthormarkupposition}
+  \CHECK{txsetauthormarkuptext}\CHECK{txsettruncatewidth}
+  \CHECK{txsetsummarywidth}\CHECK{txsetsummarytowidth}
+  \CHECK{txsetlocextension}\CHECK{txsetsocextension}
+  \CHECK{add}\CHECK{remove}\CHECK{replace}
+}
+
+\TEST{localization~strings~expand~in~english}{
+  \TYPE{list=\txlistchangesname}
+  \TYPE{summary=\txsummaryname}
+  \TYPE{compact=\txcompactsummaryname}
+  \TYPE{author=\txauthorname}
+  \TYPE{added=\txaddedname}
+  \TYPE{removed=\txremovedname}
+  \TYPE{replaced=\txreplacedname}
+  \TYPE{highlighted=\txhighlightedname}
+  \TYPE{commented=\txcommentedname}
+  \TYPE{status=\txstatusname}
+  \TYPE{pending=\txpendingname}
+  \TYPE{accepted=\txacceptedname}
+  \TYPE{rejected=\txrejectedname}
+  \TYPE{nochanges=\txnochangesname}
+}
+
+\TEST{mode~reflection}{
+  \TYPE{mode=\texchangesmode}
+}
+\END

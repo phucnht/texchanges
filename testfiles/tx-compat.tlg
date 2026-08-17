@@ -1,0 +1,33 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+============================================================
+TEST 1: changes~compatibility~surface~is~defined
+============================================================
+added: defined
+deleted: defined
+replaced: defined
+highlight: defined
+comment: defined
+definechangesauthor: defined
+listofchanges: defined
+setaddedmarkup: defined
+setdeletedmarkup: defined
+sethighlightmarkup: defined
+setcommentmarkup: defined
+setauthormarkup: defined
+setanonymousname: defined
+settruncatewidth: defined
+setsummarywidth: defined
+setlocextension: defined
+setsocextension: defined
+txcompatadded: defined
+txcompatreplaced: defined
+============================================================
+============================================================
+TEST 2: native~replace~keeps~old~then~new
+============================================================
+============================================================
+============================================================
+TEST 3: compat~replaced~takes~new~then~old
+============================================================
+============================================================
