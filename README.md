@@ -149,6 +149,10 @@ In-place updates create a `.bak` file. Interactive mode, nested braces, Unicode,
 
 Run `make dist` to build the single `dist/texchanges-overleaf.zip` upload bundle. Its [workflow guide](examples/overleaf-workflow/README.md) explains both Main-document choices.
 
+## Reviewing faster
+
+Keep the [cheatsheet](https://phucnht.github.io/texchanges/reference/cheatsheet/) open while reviewing, and install the snippets and completion files in [`editors/`](editors/README.md) for VS Code or TeXstudio. Overleaf autocompletes the commands on its own. Screen reader and low-vision workflows are covered in [accessible reviewing](https://phucnht.github.io/texchanges/guides/accessible-reviewing/).
+
 ## Roadmap
 
 The path to 1.0.0 is tracked as a public checklist on the website: [roadmap](https://phucnht.github.io/texchanges/roadmap/).

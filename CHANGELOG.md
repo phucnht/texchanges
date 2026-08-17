@@ -4,6 +4,15 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Added
+
+- Editor support files in `editors/`: VS Code snippets that wrap the selected text, and a TeXstudio completion list covering every command, package option, and change key.
+- A printable cheatsheet, an editor shortcuts guide, and an accessible reviewing guide covering screen reader, terminal, and low-vision workflows alongside the current limitations.
+
+### Fixed
+
+- The documentation homepage no longer runs a replaced word into the following word in final mode.
+
 ## [0.2.5] - 2026-08-17
 
 ### Fixed

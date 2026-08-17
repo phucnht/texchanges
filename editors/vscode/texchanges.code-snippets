@@ -1,0 +1,83 @@
+{
+  "Texchanges: replace old with new": {
+    "prefix": "txreplace",
+    "scope": "latex,tex",
+    "body": ["\\\\txreplace{${1:${TM_SELECTED_TEXT:old text}}}{${2:new text}}$0"],
+    "description": "Replace text. Arguments are old then new."
+  },
+  "Texchanges: replace with metadata": {
+    "prefix": "txreplacemeta",
+    "scope": "latex,tex",
+    "body": [
+      "\\\\txreplace[",
+      "  author=${1:author-id},",
+      "  id=${2:R1},",
+      "  comment={${3:Why this change}},",
+      "  status=${4|pending,accepted,rejected|}",
+      "]{${5:${TM_SELECTED_TEXT:old text}}}{${6:new text}}$0"
+    ],
+    "description": "Replace text with author, change ID, comment, and status."
+  },
+  "Texchanges: add text": {
+    "prefix": "txadd",
+    "scope": "latex,tex",
+    "body": ["\\\\txadd{${1:${TM_SELECTED_TEXT:new text}}}$0"],
+    "description": "Mark text as added."
+  },
+  "Texchanges: remove text": {
+    "prefix": "txremove",
+    "scope": "latex,tex",
+    "body": ["\\\\txremove{${1:${TM_SELECTED_TEXT:old text}}}$0"],
+    "description": "Mark text as removed."
+  },
+  "Texchanges: highlight text": {
+    "prefix": "txhighlight",
+    "scope": "latex,tex",
+    "body": ["\\\\txhighlight{${1:${TM_SELECTED_TEXT:text}}}$0"],
+    "description": "Highlight text without changing it."
+  },
+  "Texchanges: comment": {
+    "prefix": "txcomment",
+    "scope": "latex,tex",
+    "body": ["\\\\txcomment[author=${1:author-id}]{${2:${TM_SELECTED_TEXT:note}}}$0"],
+    "description": "Attach a reviewer note."
+  },
+  "Texchanges: change metadata options": {
+    "prefix": "txmeta",
+    "scope": "latex,tex",
+    "body": ["[author=${1:author-id},id=${2:R1},comment={${3:note}},status=${4|pending,accepted,rejected|}]$0"],
+    "description": "Optional-argument block for any change command."
+  },
+  "Texchanges: define author": {
+    "prefix": "txauthor",
+    "scope": "latex,tex",
+    "body": ["\\\\txdefineauthor[name={${1:Full Name}},color=${2|blue,orange,teal,violet,red|}]{${3:author-id}}$0"],
+    "description": "Register a reviewer with a display name and color."
+  },
+  "Texchanges: list of changes": {
+    "prefix": "txlist",
+    "scope": "latex,tex",
+    "body": ["\\\\txlistofchanges[style=${1|list,summary,compactsummary|}]$0"],
+    "description": "Insert a change report."
+  },
+  "Texchanges: filtered list of changes": {
+    "prefix": "txlistfilter",
+    "scope": "latex,tex",
+    "body": [
+      "\\\\txlistofchanges[",
+      "  style=${1|list,summary,compactsummary|},",
+      "  title={${2:Open reviewer changes}},",
+      "  show={${3:added,removed,replaced,highlighted,commented}},",
+      "  status={${4:pending}},",
+      "  author={${5:author-id}}",
+      "]$0"
+    ],
+    "description": "Change report filtered by type, status, and author."
+  },
+  "Texchanges: load package": {
+    "prefix": "txusepackage",
+    "scope": "latex,tex",
+    "body": ["\\\\usepackage[${1|review,final,original|}]{texchanges}$0"],
+    "description": "Load texchanges in a document mode."
+  }
+}

@@ -273,6 +273,18 @@ case_compat_prefixes() {
   compile_style_case compat-always 'compat=changes,commandnameprefix=always' '\chadded{added}\chreplaced{new}{old}'
 }
 
+case_editor_files() {
+  python3 -m json.tool "$PROJECT_ROOT/editors/vscode/texchanges.code-snippets" >/dev/null
+  local command
+  for command in txadd txremove txreplace txhighlight txcomment txdefineauthor txlistofchanges; do
+    assert_contains "$PROJECT_ROOT/editors/texstudio/texchanges.cwl" "\\$command"
+  done
+  # The compatibility layer reverses the replacement arguments; the completion
+  # data must not teach the wrong order.
+  assert_contains "$PROJECT_ROOT/editors/texstudio/texchanges.cwl" '\txreplace{old}{new}'
+  assert_contains "$PROJECT_ROOT/editors/texstudio/texchanges.cwl" '\replaced{new}{old}'
+}
+
 case_l3build() {
   if ! command -v l3build >/dev/null 2>&1; then
     printf 'l3build not installed; skipping log-level regression tests\n' >&2
@@ -345,6 +357,7 @@ run_case cli_help
 run_case manpage
 run_case style_matrix
 run_case compat_prefixes
+run_case editor_files
 run_case l3build
 run_case latexdiff
 
