@@ -245,8 +245,12 @@ body {
    column grid. Group it with the external links on the right instead: the
    title and its nav keep the left, everything after is pushed to the end. */
 @media (min-width: 50rem) {
+  /* Starlight nests this div inside a flex <header>, so as a flex item it
+     shrinks to its content and leaves the right half of the bar unused. It has
+     to claim the free space before an auto margin has anything to distribute. */
   .header {
     display: flex;
+    flex: 1;
     gap: 1rem;
     align-items: center;
   }
@@ -276,6 +280,28 @@ body:has(.tx-hero) .content-panel:first-of-type {
   border: 0;
 }
 
+/* The landing components render inside .sl-markdown-content, which applies
+   paragraph rhythm to every sibling and indents definition lists. That reached
+   into the grids: the first cell of a row stretched to the row height while the
+   rest were pushed down by an injected margin, so nothing lined up. These
+   sections own their spacing. Scoped to the landing page so documentation prose
+   keeps Starlight's normal rhythm. */
+body:has(.tx-hero) .sl-markdown-content > * {
+  margin-top: 0;
+}
+
+.tx-facts__list > *,
+.tx-features__list > *,
+.example-cards__grid > *,
+.tx-terminal__tabs > *,
+.tx-terminal__panel > * {
+  margin-top: 0;
+}
+
+.tx-fact__value {
+  padding-inline-start: 0;
+}
+
 /* The splash template centres content; the landing page sets its own rhythm. */
 .tx-hero,
 .tx-facts,
@@ -301,7 +327,7 @@ body:has(.tx-hero) .content-panel:first-of-type {
 }
 
 .tx-hero {
-  padding-block: clamp(1.75rem, 4vw, 3rem) 1.5rem;
+  padding-block: clamp(1.75rem, 4vw, 3rem) var(--tx-section-gap);
 }
 
 .tx-hero__title {
@@ -386,6 +412,7 @@ body:has(.tx-hero) .content-panel:first-of-type {
 }
 
 .tx-facts__list {
+  align-items: start;
   display: grid;
   gap: 1.5rem 2rem;
   margin: 0;
@@ -407,7 +434,7 @@ body:has(.tx-hero) .content-panel:first-of-type {
 }
 
 .tx-intro {
-  padding-block: var(--tx-section-gap) 0;
+  padding-block: var(--tx-section-gap);
 }
 
 .tx-intro__lead {
@@ -424,6 +451,7 @@ body:has(.tx-hero) .content-panel:first-of-type {
 }
 
 .tx-features__list {
+  align-items: start;
   display: grid;
   gap: 1.5rem 2rem;
   margin: 0;
@@ -688,8 +716,8 @@ body:has(.tx-hero) .content-panel:first-of-type {
 }
 
 .example-cards {
-  margin-block: 3.5rem;
-  padding-block: 0.5rem;
+  margin-block: var(--tx-section-gap);
+  padding-block: 0;
 }
 
 .example-cards__heading {
@@ -707,6 +735,7 @@ body:has(.tx-hero) .content-panel:first-of-type {
 }
 
 .example-cards__grid {
+  align-items: start;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.25rem;
