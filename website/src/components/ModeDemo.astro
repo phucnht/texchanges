@@ -12,10 +12,9 @@
 
   <div class="mode-demo__paper" aria-live="polite">
     <p class="mode-demo__label">Rendered document</p>
-    <p class="mode-demo__sentence" data-rendered-mode="review">
-      The simulation <span class="old">imitates</span> <span class="new">reproduces</span> 
-      collaborative decision-making.<sup class="author">phuc</sup>
-    </p>
+    <!-- Keep the sentence on one physical line: compressHTML strips whitespace at
+         end of line, which would glue the change to the following word. -->
+    <p class="mode-demo__sentence" data-rendered-mode="review">The simulation <span class="old">imitates</span> <span class="new">reproduces</span> collaborative decision-making.<sup class="author">phuc</sup></p>
     <p class="mode-demo__comment">Clarify the claim before acceptance.</p>
   </div>
 

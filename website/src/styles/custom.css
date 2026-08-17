@@ -227,7 +227,9 @@ h3,
 }
 
 .mode-demo__sentence .new {
-  margin-inline: 0.3em;
+  /* Only separate the new text from the struck-out old text; the space before
+     the following word comes from the markup. Mirrors the package's \hspace. */
+  margin-inline-start: 0.3em;
   color: var(--tx-blue);
   text-decoration: underline;
   text-underline-offset: 0.16em;
