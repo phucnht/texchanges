@@ -111,6 +111,26 @@ class MergeTests(unittest.TestCase):
         self.assertIn("status={accepted}", result)
         self.assertIn(r"\txadd[author=b,id=B]{two}", result)
 
+    def test_legacy_label_survives_status_update(self):
+        source = r"\txreplace[Reviewer]{old}{new} \txadd[author=anonymous,id=A]{two}"
+        stderr = io.StringIO()
+        with contextlib.redirect_stderr(stderr):
+            result = transform(source, decision="accept", merge=False)
+        self.assertIn(r"\txreplace[Reviewer]{old}{new}", result)
+        self.assertIn("status={accepted}", result)
+        self.assertIn("legacy label", stderr.getvalue())
+
+    def test_legacy_label_merges_normally(self):
+        source = r"\txreplace[Reviewer]{old}{new}"
+        self.assertEqual(transform(source, decision="accept", merge=True), "new")
+        self.assertEqual(transform(source, decision="reject", merge=True), "old")
+
+    def test_verbatim_end_with_space_is_recognized(self):
+        source = "\\begin{verbatim}\n\\txadd{code}\n\\end {verbatim}\n\\txadd{real}"
+        result = transform(source, decision="accept", merge=True)
+        self.assertIn(r"\txadd{code}", result)
+        self.assertTrue(result.endswith("real"))
+
     def test_comments_and_verbatim_are_skipped(self):
         source = "% \\txadd{comment}\n\\begin{verbatim}\n\\txadd{code}\n\\end{verbatim}\n\\txadd{real}"
         result = transform(source, decision="accept", merge=True)

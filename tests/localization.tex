@@ -1,9 +1,9 @@
 \documentclass{article}
-\usepackage[vietnamese,english]{babel}
-\usepackage{texchanges}
+\usepackage[english,vietnamese]{babel}
+\usepackage[review]{texchanges}
 \begin{document}
-\selectlanguage{vietnamese}
+\txadd[id=L1]{VNTOKEN}
+\txlistofchanges
+\txlistofchanges[style=compactsummary,status={pending}]
 \txlistofchanges[title={DANH SACH}]
-\selectlanguage{english}
-\txadd[id=L1]{localized}
 \end{document}

@@ -145,7 +145,11 @@ assert_contains "$TASK_TMP_DIR/list.txt" LISTADD
 assert_contains "$TASK_TMP_DIR/list.txt" LISTCOMMENT
 assert_not_contains "$TASK_TMP_DIR/list.txt" "Removed (L2)"
 
-compile_named localization
+compile_named localization 2
+assert_contains "$TASK_TMP_DIR/localization.txt" "Danh sách thay đổi"
+assert_contains "$TASK_TMP_DIR/localization.txt" "Thêm (L1): VNTOKEN"
+assert_contains "$TASK_TMP_DIR/localization.txt" "Các thay đổi (rút gọn)"
+assert_contains "$TASK_TMP_DIR/localization.txt" "đang chờ"
 assert_contains "$TASK_TMP_DIR/localization.txt" "DANH SACH"
 
 if TEXINPUTS="$PROJECT_ROOT:" pdflatex -halt-on-error -interaction=nonstopmode \

@@ -134,7 +134,6 @@
 \tl_new:N \l_tx_label_tl
 \tl_new:N \l_tx_color_tl
 \tl_new:N \l_tx_type_tl
-\tl_new:N \l_tx_excerpt_tl
 \bool_new:N \l_tx_legacy_label_bool
 
 \keys_define:nn { tx/change }
@@ -238,22 +237,57 @@
 \cs_new:Npn \txhighlightedname {Highlighted}
 \cs_new:Npn \txcommentedname {Commented}
 \cs_new:Npn \txstatusname {Status}
+\cs_new:Npn \txpendingname {pending}
+\cs_new:Npn \txacceptedname {accepted}
+\cs_new:Npn \txrejectedname {rejected}
 \cs_new:Npn \txnochangesname {No~changes.}
-\cs_new_protected:Npn \tx_localize:nnnnnnnnn #1#2#3#4#5#6#7#8#9
-  {\cs_set:Npn \txlistchangesname {#1}\cs_set:Npn \txsummaryname {#2}\cs_set:Npn \txauthorname {#3}\cs_set:Npn \txaddedname {#4}\cs_set:Npn \txremovedname {#5}\cs_set:Npn \txreplacedname {#6}\cs_set:Npn \txhighlightedname {#7}\cs_set:Npn \txcommentedname {#8}\cs_set:Npn \txstatusname {#9}}
+\keys_define:nn {tx/localize}
+  {
+    listchanges .code:n = \cs_set:Npn \txlistchangesname {#1},
+    summary .code:n = \cs_set:Npn \txsummaryname {#1},
+    compactsummary .code:n = \cs_set:Npn \txcompactsummaryname {#1},
+    author .code:n = \cs_set:Npn \txauthorname {#1},
+    added .code:n = \cs_set:Npn \txaddedname {#1},
+    removed .code:n = \cs_set:Npn \txremovedname {#1},
+    replaced .code:n = \cs_set:Npn \txreplacedname {#1},
+    highlighted .code:n = \cs_set:Npn \txhighlightedname {#1},
+    commented .code:n = \cs_set:Npn \txcommentedname {#1},
+    status .code:n = \cs_set:Npn \txstatusname {#1},
+    pending .code:n = \cs_set:Npn \txpendingname {#1},
+    accepted .code:n = \cs_set:Npn \txacceptedname {#1},
+    rejected .code:n = \cs_set:Npn \txrejectedname {#1},
+    nochanges .code:n = \cs_set:Npn \txnochangesname {#1}
+  }
+\cs_new_protected:Npn \tx_localize:n #1 {\keys_set:nn {tx/localize}{#1}}
+% Install each translation into its babel caption hook exactly once. Runs at
+% load time when babel precedes texchanges, and again at begin-document to
+% cover babel loaded afterwards; the property list keeps it idempotent.
+\prop_new:N \g_tx_localized_prop
+\cs_new_protected:Npn \tx_install_language:nn #1#2
+  {
+    \cs_if_exist:cT {captions#1}
+      {
+        \prop_if_in:NnF \g_tx_localized_prop {#1}
+          {
+            \prop_gput:Nnn \g_tx_localized_prop {#1}{installed}
+            \exp_args:Nc \addto {captions#1}{\tx_localize:n {#2}}
+          }
+      }
+  }
 \cs_new_protected:Npn \tx_install_localizations:
   {
     \cs_if_exist:NT \addto
       {
-        \cs_if_exist:NT \captionsenglish {\addto\captionsenglish{\tx_localize:nnnnnnnnn{List of changes}{Changes}{Author}{Added}{Removed}{Replaced}{Highlighted}{Commented}{Status}}}
-        \cs_if_exist:NT \captionsbritish {\addto\captionsbritish{\tx_localize:nnnnnnnnn{List of changes}{Changes}{Author}{Added}{Removed}{Replaced}{Highlighted}{Commented}{Status}}}
-        \cs_if_exist:NT \captionsgerman {\addto\captionsgerman{\tx_localize:nnnnnnnnn{Liste der Änderungen}{Änderungen}{Autor}{Eingefügt}{Gelöscht}{Ersetzt}{Hervorgehoben}{Kommentiert}{Status}}}
-        \cs_if_exist:NT \captionsngerman {\addto\captionsngerman{\tx_localize:nnnnnnnnn{Liste der Änderungen}{Änderungen}{Autor}{Eingefügt}{Gelöscht}{Ersetzt}{Hervorgehoben}{Kommentiert}{Status}}}
-        \cs_if_exist:NT \captionsfrench {\addto\captionsfrench{\tx_localize:nnnnnnnnn{Liste des modifications}{Modifications}{Auteur}{Ajouté}{Supprimé}{Remplacé}{Mis en évidence}{Commenté}{Statut}}}
-        \cs_if_exist:NT \captionsitalian {\addto\captionsitalian{\tx_localize:nnnnnnnnn{Lista delle modifiche}{Modifiche}{Autore}{Aggiunto}{Rimosso}{Sostituito}{Evidenziato}{Commentato}{Stato}}}
-        \cs_if_exist:NT \captionsvietnamese {\addto\captionsvietnamese{\tx_localize:nnnnnnnnn{Danh sách thay đổi}{Các thay đổi}{Tác giả}{Thêm}{Xóa}{Thay thế}{Đánh dấu}{Nhận xét}{Trạng thái}}}
+        \tx_install_language:nn {english}{listchanges={List~of~changes},summary={Changes},compactsummary={Changes~(compact)},author={Author},added={Added},removed={Removed},replaced={Replaced},highlighted={Highlighted},commented={Commented},status={Status},pending={pending},accepted={accepted},rejected={rejected},nochanges={No~changes.}}
+        \tx_install_language:nn {british}{listchanges={List~of~changes},summary={Changes},compactsummary={Changes~(compact)},author={Author},added={Added},removed={Removed},replaced={Replaced},highlighted={Highlighted},commented={Commented},status={Status},pending={pending},accepted={accepted},rejected={rejected},nochanges={No~changes.}}
+        \tx_install_language:nn {german}{listchanges={Liste~der~Änderungen},summary={Änderungen},compactsummary={Änderungen~(kompakt)},author={Autor},added={Eingefügt},removed={Gelöscht},replaced={Ersetzt},highlighted={Hervorgehoben},commented={Kommentiert},status={Status},pending={ausstehend},accepted={akzeptiert},rejected={abgelehnt},nochanges={Keine~Änderungen.}}
+        \tx_install_language:nn {ngerman}{listchanges={Liste~der~Änderungen},summary={Änderungen},compactsummary={Änderungen~(kompakt)},author={Autor},added={Eingefügt},removed={Gelöscht},replaced={Ersetzt},highlighted={Hervorgehoben},commented={Kommentiert},status={Status},pending={ausstehend},accepted={akzeptiert},rejected={abgelehnt},nochanges={Keine~Änderungen.}}
+        \tx_install_language:nn {french}{listchanges={Liste~des~modifications},summary={Modifications},compactsummary={Modifications~(compact)},author={Auteur},added={Ajouté},removed={Supprimé},replaced={Remplacé},highlighted={Mis~en~évidence},commented={Commenté},status={Statut},pending={en~attente},accepted={accepté},rejected={rejeté},nochanges={Aucune~modification.}}
+        \tx_install_language:nn {italian}{listchanges={Lista~delle~modifiche},summary={Modifiche},compactsummary={Modifiche~(compatto)},author={Autore},added={Aggiunto},removed={Rimosso},replaced={Sostituito},highlighted={Evidenziato},commented={Commentato},status={Stato},pending={in~sospeso},accepted={accettato},rejected={rifiutato},nochanges={Nessuna~modifica.}}
+        \tx_install_language:nn {vietnamese}{listchanges={Danh~sách~thay~đổi},summary={Các~thay~đổi},compactsummary={Các~thay~đổi~(rút~gọn)},author={Tác~giả},added={Thêm},removed={Xóa},replaced={Thay~thế},highlighted={Đánh~dấu},commented={Nhận~xét},status={Trạng~thái},pending={đang~chờ},accepted={đã~chấp~nhận},rejected={đã~từ~chối},nochanges={Không~có~thay~đổi.}}
       }
   }
+\tx_install_localizations:
 \AtBeginDocument{\tx_install_localizations:}
 
 % --------------------------------------------------------------------------
@@ -330,11 +364,10 @@
           {\protect\txreportline{#1}{\l_tx_status_tl}{\l_tx_author_tl}{\l_tx_id_tl}{#2}}
       }
   }
-\cs_new_protected:Npn \tx_change_begin:nnn #1#2#3
+\cs_new_protected:Npn \tx_change_begin:nn #1#2
   {
     \tx_change_parse:n {#2}
     \tl_set:Nn \l_tx_type_tl {#1}
-    \tl_set:Nn \l_tx_excerpt_tl {#3}
     \tx_set_color:
   }
 \cs_new_protected:Npn \tx_pending_markup:nn #1#2
@@ -361,7 +394,7 @@
       }
   }
 \cs_new_protected:Npn \tx_change:nnnn #1#2#3#4
-  {\group_begin:\tx_change_begin:nnn{#1}{#2}{#4}\tx_record:nn{#1}{#4}\tx_render:nn{#3}{#4}\group_end:}
+  {\group_begin:\tx_change_begin:nn{#1}{#2}\tx_record:nn{#1}{#4}\tx_render:nn{#3}{#4}\group_end:}
 \cs_new_protected:Npn \tx_compat_change:nnnn #1#2#3#4
   {
     \group_begin:
@@ -369,7 +402,6 @@
     \keys_set:nn {tx/compat-change}{#2}
     \tx_change_validate:
     \tl_set:Nn \l_tx_type_tl {#1}
-    \tl_set:Nn \l_tx_excerpt_tl {#4}
     \tx_set_color:
     \tx_record:nn{#1}{#4}
     \tx_render:nn{#3}{#4}
@@ -406,6 +438,7 @@
           {\par\noindent\textbf{\tx_type_name:n{#1}}\tl_if_blank:nF{#4}{~(#4)}:~\truncate{\g_tx_truncate_width_dim}{#5}\tl_if_blank:nF{#4}{\dotfill\pageref{tx:#4}}\par}}}
   }
 \cs_new:Npn \tx_type_name:n #1 {\str_case:nnF{#1}{{added}{\txaddedname}{removed}{\txremovedname}{replaced}{\txreplacedname}{highlighted}{\txhighlightedname}{commented}{\txcommentedname}}{#1}}
+\cs_new:Npn \tx_status_name:n #1 {\str_case:nnF{#1}{{pending}{\txpendingname}{accepted}{\txacceptedname}{rejected}{\txrejectedname}}{#1}}
 \cs_new_protected:Npn \tx_summary:
   {
     \prop_set_eq:NN \l_tx_report_counts_prop \g_tx_counts_prop
@@ -420,7 +453,7 @@
         \clist_map_inline:nn {added,removed,replaced,highlighted,commented}
           {\int_zero:N \l_tmpa_int\clist_map_inline:Nn \l_tx_list_status_clist {\prop_get:NnNT \l_tx_report_counts_prop {##1/####1/########1}\l_tmpa_tl{\int_add:Nn \l_tmpa_int{\l_tmpa_tl}}}\str_if_eq:VnTF \l_tx_list_style_tl{compactsummary}{\int_compare:nNnT{\l_tmpa_int}>{0}{\tx_type_name:n{####1}:~\int_use:N\l_tmpa_int\quad}}{\tx_type_name:n{####1}:~\int_use:N\l_tmpa_int\quad}}\par
         \clist_map_inline:Nn \l_tx_list_status_clist
-          {\int_zero:N \l_tmpa_int\clist_map_inline:nn {added,removed,replaced,highlighted,commented}{\prop_get:NnNT \l_tx_report_counts_prop {##1/########1/####1}\l_tmpa_tl{\int_add:Nn \l_tmpa_int{\l_tmpa_tl}}}\textit{####1}:~\int_use:N\l_tmpa_int\quad}\par
+          {\int_zero:N \l_tmpa_int\clist_map_inline:nn {added,removed,replaced,highlighted,commented}{\prop_get:NnNT \l_tx_report_counts_prop {##1/########1/####1}\l_tmpa_tl{\int_add:Nn \l_tmpa_int{\l_tmpa_tl}}}\textit{\tx_status_name:n{####1}}:~\int_use:N\l_tmpa_int\quad}\par
       }
   }
 \cs_new_protected:Npn \txsummaryentry #1#2
@@ -441,7 +474,7 @@
         \clist_set:Nn \l_tx_list_status_clist {pending,accepted,rejected}
         \clist_set:Nx \l_tx_list_author_clist {\seq_use:Nn \g_tx_author_seq {,}}
         \keys_set:nn {tx/list}{#1}
-        \section*{\tl_if_blank:VTF \l_tx_list_title_tl{\str_if_eq:VnTF \l_tx_list_style_tl{list}{\txlistchangesname}{\txsummaryname}}{\l_tx_list_title_tl}}
+        \section*{\tl_if_blank:VTF \l_tx_list_title_tl{\str_case:Vn \l_tx_list_style_tl {{list}{\txlistchangesname}{summary}{\txsummaryname}{compactsummary}{\txcompactsummaryname}}}{\l_tx_list_title_tl}}
         \str_if_eq:VnTF \l_tx_list_style_tl {list}
           {
             \exp_args:Nx \file_if_exist:nF {\jobname.\g_tx_loc_ext_tl}
