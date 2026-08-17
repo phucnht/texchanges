@@ -46,7 +46,9 @@ jobs:
             tag: latest
     steps:
       - name: Install test utilities
-        run: apk add --no-cache make perl python3 poppler-utils zip unzip
+        # diffutils: l3build compares .tlg baselines with `diff -c`, which
+        # BusyBox diff does not support.
+        run: apk add --no-cache make perl python3 poppler-utils zip unzip diffutils
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Verify package and release archives
         run: make check && make dist && make ctan
