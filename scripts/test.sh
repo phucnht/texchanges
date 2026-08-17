@@ -170,8 +170,16 @@ done
 
 python3 -m unittest -v tests.test_merge
 
+# texchanges.sty is the single source of truth for the package version; every
+# other copy must agree with it.
+STY_VERSION="$(sed -n 's/.*\\ProvidesExplPackage{texchanges}{[^}]*}{\([^}]*\)}.*/\1/p' "$PROJECT_ROOT/texchanges.sty")"
+test -n "$STY_VERSION"
+assert_contains "$PROJECT_ROOT/scripts/texchanges-merge.py" "VERSION = \"$STY_VERSION\""
+assert_contains "$PROJECT_ROOT/build.lua" "version = \"$STY_VERSION\""
+assert_contains "$PROJECT_ROOT/website/package.json" "\"version\": \"$STY_VERSION\""
+
 test -x "$PROJECT_ROOT/scripts/texchanges-merge.py"
-test "$("$PROJECT_ROOT/scripts/texchanges-merge.py" --version)" = 'texchanges-merge 0.2.4'
+test "$("$PROJECT_ROOT/scripts/texchanges-merge.py" --version)" = "texchanges-merge $STY_VERSION"
 COLUMNS=10 "$PROJECT_ROOT/scripts/texchanges-merge.py" --help \
   | grep -F 'Resolve or merge Texchanges markup without third-party dependencies.' >/dev/null
 

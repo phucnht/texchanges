@@ -1,0 +1,63 @@
+name: Release assets
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build release artifacts
+    runs-on: ubuntu-latest
+    container: ghcr.io/xu-cheng/texlive-full:latest
+    steps:
+      - name: Install tools
+        run: apk add --no-cache make perl python3 poppler-utils zip unzip
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - name: Check the tag matches the package version
+        run: |
+          STY_VERSION="$(sed -n 's/.*\\ProvidesExplPackage{texchanges}{[^}]*}{\([^}]*\)}.*/\1/p' texchanges.sty)"
+          if [ "v$STY_VERSION" != "${{ github.event.release.tag_name }}" ]; then
+            printf 'Tag %s does not match texchanges.sty version %s\n' \
+              "${{ github.event.release.tag_name }}" "$STY_VERSION" >&2
+            exit 1
+          fi
+      - name: Build and verify artifacts
+        run: |
+          make check
+          make dist
+          make ctan
+      - name: Write checksums
+        run: |
+          cp build/texchanges-doc.pdf dist/
+          cd dist
+          sha256sum ./*.zip texchanges-doc.pdf > SHA256SUMS
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: release-artifacts
+          path: |
+            dist/*.zip
+            dist/*.zip.sha256
+            dist/SHA256SUMS
+            dist/texchanges-doc.pdf
+          if-no-files-found: error
+
+  upload:
+    name: Attach artifacts to the release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: release-artifacts
+          path: dist
+      - name: Upload release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload '${{ github.event.release.tag_name }}' \
+            dist/* --clobber --repo '${{ github.repository }}'

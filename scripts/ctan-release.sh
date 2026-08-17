@@ -3,7 +3,12 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-VERSION="0.2.4"
+# texchanges.sty is the single source of truth for the package version.
+VERSION="$(sed -n 's/.*\\ProvidesExplPackage{texchanges}{[^}]*}{\([^}]*\)}.*/\1/p' "$PROJECT_ROOT/texchanges.sty")"
+if [ -z "$VERSION" ]; then
+  printf 'Unable to read the package version from texchanges.sty.\n' >&2
+  exit 1
+fi
 ARCHIVE="$PROJECT_ROOT/dist/texchanges-$VERSION.zip"
 TASK_TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/texchanges-ctan.XXXXXX")"
 trap 'rm -rf "$TASK_TMP_DIR"' EXIT
@@ -60,7 +65,7 @@ TEXINPUTS="$VERIFY_DIR/texchanges:" pdflatex -halt-on-error \
   latexmk -pdf -halt-on-error -interaction=nonstopmode texchanges-review.tex >/dev/null)
 ln -s "$VERIFY_DIR/texchanges/scripts/texchanges-merge.py" "$TASK_TMP_DIR/texchanges-merge"
 (cd "$TASK_TMP_DIR" && ./texchanges-merge --version) \
-  | grep -Fx 'texchanges-merge 0.2.4' >/dev/null
+  | grep -Fx "texchanges-merge $VERSION" >/dev/null
 (cd "$TASK_TMP_DIR" && COLUMNS=10 ./texchanges-merge --help) \
   | grep -F 'Resolve or merge Texchanges markup without third-party dependencies.' >/dev/null
 
