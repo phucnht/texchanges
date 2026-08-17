@@ -49,7 +49,7 @@ jobs:
         # diffutils: l3build compares .tlg baselines with `diff -c`, which
         # BusyBox diff does not support.
         run: apk add --no-cache make perl python3 poppler-utils zip unzip diffutils
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Verify package and release archives
         run: make check && make dist && make ctan
         env:
@@ -68,7 +68,7 @@ jobs:
     name: Lint scripts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Shellcheck
         run: shellcheck scripts/*.sh
       - name: Check the l3build baselines are present
@@ -86,7 +86,7 @@ jobs:
       run:
         working-directory: website
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version: 24
