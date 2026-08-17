@@ -1,21 +1,36 @@
 # texchanges
 
+[![CI](https://github.com/phucnht/texchanges/actions/workflows/ci.yml/badge.svg)](https://github.com/phucnht/texchanges/actions/workflows/ci.yml)
+[![CTAN](https://img.shields.io/ctan/v/texchanges)](https://ctan.org/pkg/texchanges)
+[![License](https://img.shields.io/ctan/l/texchanges)](LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-phucnht.github.io%2Ftexchanges-blue)](https://phucnht.github.io/texchanges/)
+
 `texchanges` is a LaTeX-native track-changes protocol for Overleaf, human reviewers, and AI agents. It keeps changes in plain text, renders Word-like review markup, and resolves the same source into accepted or original output.
+
+Compared to the `changes` package, texchanges adds review decisions (`pending`/`accepted`/`rejected`), three document modes from one source, filterable change reports, and a merge CLI that resolves the markup back into clean LaTeX — plus an opt-in `changes` compatibility layer for migration. Compared to raw `latexdiff`, the markup is part of the source, so decisions survive revisions; a bundled `latexmkrc` still gives you automatic word-level diffs when you want them.
+
+| Explicit review | Automatic `latexdiff` |
+|---|---|
+| [![Explicit review with marked changes and a review report.](website/public/examples/explicit-review-at-a-glance.png)](examples/explicit-review/README.md) | [![Automatic word-level diff with marked changes.](website/public/examples/automatic-diff-at-a-glance.png)](examples/automatic-diff/README.md) |
+| Keep authors, IDs, decisions, comments, and reports in one source file. [Open the example](examples/explicit-review/README.md) or [view the walkthrough](https://phucnht.github.io/texchanges/getting-started/examples/). | Compare two complete revisions with word-level `latexdiff`. [Open the example](examples/automatic-diff/README.md) or [view the walkthrough](https://phucnht.github.io/texchanges/getting-started/examples/). |
 
 ## Installation
 
-Texchanges is distributed through TeX Live. Install it with the distribution's package manager when needed, then load it normally:
+Texchanges is on [CTAN](https://ctan.org/pkg/texchanges) and distributed through TeX Live:
+
+```bash
+tlmgr install texchanges
+```
+
+Then load it normally:
 
 ```latex
 \usepackage[review]{texchanges}
 ```
 
-For Overleaf projects whose TeX Live version does not include Texchanges, upload `texchanges.sty` beside the main document. The unified `texchanges-overleaf.zip` bundle includes the package, an explicit review document, automatic comparison files, and `latexmkrc`. Overleaf updates TeX Live on its own release schedule, so a new CTAN package may take time to appear there.
+For Overleaf projects whose TeX Live version does not include Texchanges, upload `texchanges.sty` beside the main document. The unified `texchanges-overleaf.zip` bundle (attached to every [GitHub release](https://github.com/phucnht/texchanges/releases)) includes the package, an explicit review document, automatic comparison files, and `latexmkrc`. Overleaf updates TeX Live on its own release schedule, so a new CTAN package may take time to appear there.
 
-## Overleaf fallback
-
-If the TeX Live version selected for the project does not contain Texchanges,
-upload `texchanges.sty` beside your main `.tex` file:
+## Quick start
 
 ```latex
 \usepackage[review]{texchanges}
@@ -71,7 +86,7 @@ The legacy form `\txreplace[Reviewer]{old}{new}` remains supported as a visual l
 ]
 ```
 
-Detailed reports need two LaTeX runs. With `hyperref`, entries link to changes that have an ID. Summary and compact-summary reports group counts by author and change type. Reports are displayed and recorded only in `review` mode.
+Detailed reports need two LaTeX runs. With `hyperref`, entries link to changes that have an ID. Summary and compact-summary reports group counts by author and change type. Reports are displayed and recorded only in `review` mode. Report titles, change types, and statuses are localized through babel for English, British, German, French, Italian, and Vietnamese.
 
 ## Visual customization
 
@@ -96,6 +111,8 @@ Presets are `texchanges`, `default`, `underlined`, `bfit`, and `nocolor`.
 - Comment styles: `inline`, `todo`, `margin`, `footnote`, and `uwave`.
 - Author styles: `superscript`, `subscript`, `brackets`, `footnote`, and `none`.
 
+Additions, removals, and highlights render in the author's registered color. Replacements deliberately use the fixed removed/added palette so the old and new text stay distinguishable within one change; the author label still carries the author's color.
+
 Runtime hooks such as `\txsetaddedmarkup`, `\txsetcommentmarkup`, `\txsetauthormarkup`, and the width/auxiliary-file setters are documented in the [online API reference](https://phucnht.github.io/texchanges/reference/api/).
 
 ## `changes` compatibility
@@ -113,8 +130,7 @@ Use `commandnameprefix=none|ifneeded|always` for compatibility commands. Native 
 
 ## Resolve source markup
 
-The `texchanges-merge` CLI can update statuses or permanently merge markup
-from any working directory after it is installed by TeX Live:
+The `texchanges-merge` CLI can update statuses or permanently merge markup from any working directory after it is installed by TeX Live:
 
 ```bash
 texchanges-merge paper.tex reviewed.tex --accept
@@ -131,61 +147,16 @@ In-place updates create a `.bak` file. Interactive mode, nested braces, Unicode,
 
 `examples/automatic-diff/` compares `texchanges-original.tex` and `texchanges-revised.tex` through Overleaf's `latexmkrc` mechanism, with `texchanges-review.tex` as the Main document. It uses word-level matching, so short shared phrases remain unchanged. The same `latexmkrc` compiles `texchanges-explicit-review.tex` normally when that document is selected as Main.
 
-## Examples
-
-The repository includes two complete, visual walkthroughs:
-
-| Workflow | Use it when | Start here |
-|---|---|---|
-| Explicit review | You need author IDs, decisions, comments, review reports, and one source that compiles in three modes. | [Explicit review example](examples/explicit-review/README.md) |
-| Automatic `latexdiff` | You need a visual comparison between two complete document revisions. | [Automatic diff example](examples/automatic-diff/README.md) |
-
 Run `make dist` to build the single `dist/texchanges-overleaf.zip` upload bundle. Its [workflow guide](examples/overleaf-workflow/README.md) explains both Main-document choices.
 
-| Explicit review | Automatic `latexdiff` |
-|---|---|
-| [![Explicit review with marked changes and a review report.](website/public/examples/explicit-review-at-a-glance.png)](examples/explicit-review/README.md) | [![Automatic word-level diff with marked changes.](website/public/examples/automatic-diff-at-a-glance.png)](examples/automatic-diff/README.md) |
-| Keep authors, IDs, decisions, comments, and reports in one source file. [Open the example](examples/explicit-review/README.md) or [view the walkthrough](https://phucnht.github.io/texchanges/getting-started/examples/). | Compare two complete revisions with word-level `latexdiff`. [Open the example](examples/automatic-diff/README.md) or [view the walkthrough](https://phucnht.github.io/texchanges/getting-started/examples/). |
+## Roadmap
 
-## Roadmap to 1.0.0
-
-Features will be grouped into future minor releases only after implementation and testing. Completed work belongs in the changelog.
-
-- [ ] Review data and project policies
-  - [ ] JSONL manifests with stable source locations
-  - [ ] External decision files and policy checks
-  - [ ] Protected-file enforcement and Git revision conversion
-
-- [ ] Resolution and compatibility
-  - [ ] Expanded CLI commands for scanning, checking, deciding, and resolving
-  - [ ] TexLua resolver and Python parity fixtures
-  - [ ] Schema and migration tooling
-  - [ ] Typst interoperability, with a documented review-markup bridge and format-aware conversion limits
-
-- [ ] Collaboration
-  - [ ] Categories, threads, replies, and contributor metadata
-  - [ ] GitHub review annotations and CI summaries
-
-- [ ] Robust and accessible authoring
-  - [ ] Safe markup in headings, captions, footnotes, floats, and math
-  - [ ] Accessible visual presets and tagged-PDF support where available
-  - [ ] Clear diagnostics for unsupported citation and verbatim contexts
-
-- [ ] Editor and optional browser tooling
-  - [ ] Standard-library language server and thin VS Code client
-  - [ ] Capability-detected Overleaf browser extension with no telemetry
-
-- [ ] 1.0.0 readiness
-  - [ ] Public compatibility commitments for markup, decisions, CLI, and reports
-  - [ ] Cross-engine, accessibility, archive, and real-project verification
-  - [ ] Complete migration guidance and pilot feedback resolution
-
-See the [detailed roadmap](https://phucnht.github.io/texchanges/roadmap/) for the synchronized public checklist.
+The path to 1.0.0 is tracked as a public checklist on the website: [roadmap](https://phucnht.github.io/texchanges/roadmap/).
 
 ## Development
 
 ```bash
-make check
+make check    # full verification suite (TEST=<name> filters cases)
 make example
 make doc
 make dist
@@ -194,13 +165,15 @@ make website
 make release-check
 ```
 
-The suite covers all modes, metadata, reports, styles, compatibility syntax, the CLI, pdfLaTeX, XeLaTeX, LuaLaTeX, and automatic `latexdiff`.
+The suite covers all modes, metadata, reports, styles, compatibility syntax, the CLI, pdfLaTeX, XeLaTeX, LuaLaTeX, and automatic `latexdiff`. See [tests/README.md](tests/README.md) for how to run and add tests.
+
+## Contributing
+
+Bug reports and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for how to land a change, the compatibility rules, and what reviewers look for. Report issues at <https://github.com/phucnht/texchanges/issues>.
 
 ## Limitations
 
 - Complex display math, floats, headings, verbatim content, and some commands should be changed at a larger text boundary or reviewed with `latexdiff`.
 - The merge CLI intentionally skips comments and common verbatim-like environments. Custom verbatim environments require manual review.
 
-Maintained by Phuc Nguyen. Report issues at <https://github.com/phucnht/texchanges/issues>.
-
-Released under LPPL 1.3c or later. See `LICENSE`.
+Maintained by Phuc Nguyen. Released under LPPL 1.3c or later. See `LICENSE`.
