@@ -13,3 +13,10 @@ updates:
         patterns:
           - astro
           - '@astrojs/*'
+    ignore:
+      # TypeScript 7's native compiler does not expose the programmatic API
+      # that `astro check` needs. Track https://github.com/withastro/roadmap/discussions/1321
+      # and drop this entry once Astro supports it.
+      - dependency-name: typescript
+        update-types:
+          - version-update:semver-major
