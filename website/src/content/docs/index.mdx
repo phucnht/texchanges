@@ -9,19 +9,21 @@ tableOfContents: false
 ---
 
 import SiteHero from '../../components/SiteHero.astro';
+import IntroLead from '../../components/IntroLead.astro';
+import ModeDemo from '../../components/ModeDemo.astro';
+import FactGrid from '../../components/FactGrid.astro';
 import FeatureList from '../../components/FeatureList.astro';
 import InstallTabs from '../../components/InstallTabs.astro';
-import ModeDemo from '../../components/ModeDemo.astro';
 import ExampleCards from '../../components/ExampleCards.astro';
+import ClosingLinks from '../../components/ClosingLinks.astro';
 
 <SiteHero />
 
-<section class="tx-intro">
-  <p class="tx-eyebrow">% what is texchanges</p>
-  <p class="tx-intro__lead">Texchanges gives authors, reviewers, and editing tools one vocabulary for proposing and deciding changes, written directly in the document. Nothing lives in a proprietary format, a sidebar, or a separate service.</p>
-</section>
+<IntroLead />
 
 <ModeDemo />
+
+<FactGrid />
 
 <FeatureList />
 
@@ -29,12 +31,4 @@ import ExampleCards from '../../components/ExampleCards.astro';
 
 <ExampleCards />
 
-<section class="tx-closing">
-  <p class="tx-eyebrow">% next</p>
-  <div class="tx-closing__links">
-    <a href="/texchanges/getting-started/quick-start/">Quick start</a>
-    <a href="/texchanges/reference/cheatsheet/">Cheatsheet</a>
-    <a href="/texchanges/guides/accessible-reviewing/">Accessible reviewing</a>
-    <a href="/texchanges/migration/from-changes/">Coming from changes</a>
-  </div>
-</section>
+<ClosingLinks />

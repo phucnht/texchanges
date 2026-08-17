@@ -1,0 +1,24 @@
+---
+title: Exemples
+description: Voir les flux explicit review et automatic latexdiff, de la source au rendu.
+---
+
+import ExampleStudio from '../../../../components/ExampleStudio.astro';
+
+Texchanges propose deux flux complémentaires. Utilisez le balisage de relecture explicite lorsque les décisions doivent vivre dans la source LaTeX, ou `latexdiff` automatique pour comparer deux révisions complètes.
+
+## Relecture explicite
+
+L’[exemple de relecture explicite](https://github.com/phucnht/texchanges/tree/main/examples/explicit-review/) garde les ajouts, suppressions, remplacements et décisions dans un seul fichier source LaTeX. Modifiez `\texchangesexamplemode` pour compiler la même source en review, final, ou original.
+
+Source : [`texchanges-explicit-review.tex`](https://github.com/phucnht/texchanges/blob/main/examples/explicit-review/texchanges-explicit-review.tex) · [Instructions Overleaf](https://github.com/phucnht/texchanges/blob/main/examples/explicit-review/README.md)
+
+<ExampleStudio workflow="explicit" />
+
+## `latexdiff` automatique
+
+L’[exemple de comparaison automatique](https://github.com/phucnht/texchanges/tree/main/examples/automatic-diff/) compare deux révisions complètes. Choisissez `texchanges-review.tex` comme Main document sur Overleaf : `latexmkrc` lance alors `latexdiff` au niveau du mot avant que pdfLaTeX ne compile le document de relecture généré. L’exemple couvre un mot supprimé, un remplacement de syntagme, une insertion, du texte mis en forme, et une liste révisée.
+
+Sources : [`texchanges-original.tex`](https://github.com/phucnht/texchanges/blob/main/examples/automatic-diff/texchanges-original.tex), [`texchanges-revised.tex`](https://github.com/phucnht/texchanges/blob/main/examples/automatic-diff/texchanges-revised.tex), [`latexmkrc`](https://github.com/phucnht/texchanges/blob/main/examples/automatic-diff/latexmkrc) · [Instructions Overleaf](https://github.com/phucnht/texchanges/blob/main/examples/automatic-diff/README.md)
+
+<ExampleStudio workflow="automatic" />

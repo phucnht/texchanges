@@ -7,7 +7,7 @@
 
 `texchanges` is a LaTeX-native track-changes protocol for Overleaf, human reviewers, and AI agents. It keeps changes in plain text, renders Word-like review markup, and resolves the same source into accepted or original output.
 
-Compared to the `changes` package, texchanges adds review decisions (`pending`/`accepted`/`rejected`), three document modes from one source, filterable change reports, and a merge CLI that resolves the markup back into clean LaTeX — plus an opt-in `changes` compatibility layer for migration. Compared to raw `latexdiff`, the markup is part of the source, so decisions survive revisions; a bundled `latexmkrc` still gives you automatic word-level diffs when you want them.
+Compared to the `changes` package, texchanges adds review decisions (`pending`/`accepted`/`rejected`), three document modes from one source, filterable change reports, and a merge CLI that resolves the markup back into clean LaTeX, plus an opt-in `changes` compatibility layer for migration. Compared to raw `latexdiff`, the markup is part of the source, so decisions survive revisions; a bundled `latexmkrc` still gives you automatic word-level diffs when you want them.
 
 | Explicit review | Automatic `latexdiff` |
 |---|---|
@@ -173,7 +173,7 @@ The suite covers all modes, metadata, reports, styles, compatibility syntax, the
 
 ## Contributing
 
-Bug reports and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for how to land a change, the compatibility rules, and what reviewers look for. Report issues at <https://github.com/phucnht/texchanges/issues>.
+Bug reports and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to land a change, the compatibility rules, and what reviewers look for. Report issues at <https://github.com/phucnht/texchanges/issues>.
 
 ## Limitations
 

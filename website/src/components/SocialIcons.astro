@@ -1,0 +1,48 @@
+---
+// Overrides Starlight's SocialIcons to group the external links together on the
+// right of the header. CTAN is a text link because no icon in Starlight's set
+// reads as "CTAN"; the icons that follow come from the `social` config.
+import config from 'virtual:starlight/user-config';
+import { Icon } from '@astrojs/starlight/components';
+
+const links = config.social || [];
+---
+
+<a class="tx-external" href="https://ctan.org/pkg/texchanges">CTAN</a>
+
+{
+  links.map(({ label, href, icon }) => (
+    <a href={href} rel="me" class="sl-flex">
+      <span class="sr-only">{label}</span>
+      <Icon name={icon} />
+    </a>
+  ))
+}
+
+<style>
+  a {
+    color: var(--sl-color-text-accent);
+    padding: 0.5em;
+    margin: -0.5em;
+  }
+
+  a:hover {
+    color: var(--sl-color-white);
+  }
+
+  .tx-external {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin: 0;
+    padding: 0 0.25rem;
+    color: var(--sl-color-gray-2);
+    font-size: var(--tx-text-meta);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .tx-external:hover {
+    color: var(--sl-color-white);
+  }
+</style>

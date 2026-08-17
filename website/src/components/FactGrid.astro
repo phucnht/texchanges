@@ -1,0 +1,27 @@
+---
+import { ui, localeFrom } from '../i18n/ui';
+
+const t = ui[localeFrom(Astro.url)];
+
+const facts = [
+  { label: t.factEngines, value: t.factEnginesValue },
+  { label: t.factTexlive, value: t.factTexliveValue },
+  { label: t.factOverleaf, value: t.factOverleafValue },
+  { label: t.factDeps, value: t.factDepsValue },
+  { label: t.factLicence, value: t.factLicenceValue },
+  { label: t.factDistribution, value: t.factDistributionValue }
+];
+---
+
+<section class="tx-facts" aria-labelledby="tx-facts-title">
+  <p class="tx-eyebrow" id="tx-facts-title">{t.factsEyebrow}</p>
+
+  <dl class="tx-facts__list">
+    {facts.map((fact) => (
+      <div class="tx-fact">
+        <dt class="tx-fact__label">{fact.label}</dt>
+        <dd class="tx-fact__value">{fact.value}</dd>
+      </div>
+    ))}
+  </dl>
+</section>

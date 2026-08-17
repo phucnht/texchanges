@@ -2,10 +2,10 @@
 
 ## Layout
 
-- `*.tex` — LaTeX fixtures. Each is a small document compiled by `scripts/test.sh`; the resulting PDF text (via `pdftotext`) is checked for sentinel tokens such as `OLDTOKEN` or `NEWACCEPTED`.
-- `duplicate-id.tex`, `undefined-author.tex` — negative fixtures: the suite asserts these **fail** to compile.
-- `test_merge.py` — stdlib `unittest` tests for the `texchanges-merge` CLI.
-- `../testfiles/*.lvt` — l3build log-level tests with `.tlg` baselines, comparing the typeset log across pdfTeX, XeTeX, and LuaTeX. See [docs/dev/testing.md](../docs/dev/testing.md).
+- `*.tex`: LaTeX fixtures. Each is a small document compiled by `scripts/test.sh`; the resulting PDF text (via `pdftotext`) is checked for sentinel tokens such as `OLDTOKEN` or `NEWACCEPTED`.
+- `duplicate-id.tex`, `undefined-author.tex`: negative fixtures, the suite asserts these **fail** to compile.
+- `test_merge.py`: stdlib `unittest` tests for the `texchanges-merge` CLI.
+- `../testfiles/*.lvt`: l3build log-level tests with `.tlg` baselines, comparing the typeset log across pdfTeX, XeTeX, and LuaTeX. See [docs/dev/testing.md](../docs/dev/testing.md).
 
 ## Running
 

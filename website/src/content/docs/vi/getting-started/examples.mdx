@@ -1,0 +1,24 @@
+---
+title: Ví dụ
+description: Xem hai quy trình explicit review và automatic latexdiff, từ mã nguồn tới kết quả dựng ra.
+---
+
+import ExampleStudio from '../../../../components/ExampleStudio.astro';
+
+Texchanges hỗ trợ hai quy trình bổ trợ cho nhau. Dùng đánh dấu review tường minh khi quyết định cần nằm trong mã nguồn LaTeX, hoặc dùng `latexdiff` tự động để so sánh hai bản sửa hoàn chỉnh.
+
+## Review tường minh
+
+[Ví dụ explicit review](https://github.com/phucnht/texchanges/tree/main/examples/explicit-review/) giữ phần thêm, xóa, thay thế, và quyết định trong cùng một tệp nguồn LaTeX. Đổi `\texchangesexamplemode` để biên dịch cùng một nguồn thành bản review, bản final, hoặc bản original.
+
+Mã nguồn: [`texchanges-explicit-review.tex`](https://github.com/phucnht/texchanges/blob/main/examples/explicit-review/texchanges-explicit-review.tex) · [Hướng dẫn cho Overleaf](https://github.com/phucnht/texchanges/blob/main/examples/explicit-review/README.md)
+
+<ExampleStudio workflow="explicit" />
+
+## `latexdiff` tự động
+
+[Ví dụ automatic diff](https://github.com/phucnht/texchanges/tree/main/examples/automatic-diff/) so sánh hai bản sửa hoàn chỉnh. Chọn `texchanges-review.tex` làm Main document trên Overleaf, khi đó `latexmkrc` sẽ chạy `latexdiff` ở mức từ trước khi pdfLaTeX biên dịch tài liệu review được sinh ra. Ví dụ này bao gồm một từ bị xóa, một cụm bị thay thế, một phần chèn thêm, văn bản có định dạng, và một danh sách được sửa.
+
+Mã nguồn: [`texchanges-original.tex`](https://github.com/phucnht/texchanges/blob/main/examples/automatic-diff/texchanges-original.tex), [`texchanges-revised.tex`](https://github.com/phucnht/texchanges/blob/main/examples/automatic-diff/texchanges-revised.tex), [`latexmkrc`](https://github.com/phucnht/texchanges/blob/main/examples/automatic-diff/latexmkrc) · [Hướng dẫn cho Overleaf](https://github.com/phucnht/texchanges/blob/main/examples/automatic-diff/README.md)
+
+<ExampleStudio workflow="automatic" />
