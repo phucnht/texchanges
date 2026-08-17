@@ -15,7 +15,7 @@ La publication sur CTAN et la version de TeX Live choisie pour un projet sont de
 
 ## Solution de repli pour Overleaf
 
-Téléchargez `texchanges-overleaf.zip` depuis la dernière version publiée sur GitHub et téléversez-la comme projet. L’archive contient `texchanges.sty` comme repli, `texchanges-explicit-review.tex`, deux révisions pour la comparaison automatique, `texchanges-review.tex`, et `latexmkrc`. Laissez la ligne de chargement du paquet inchangée.
+Téléchargez `texchanges-overleaf.zip` depuis la dernière version publiée sur GitHub, puis téléversez cette archive comme projet. L’archive contient `texchanges.sty` comme repli, `texchanges-explicit-review.tex`, deux révisions pour la comparaison automatique, `texchanges-review.tex`, et `latexmkrc`. Laissez la ligne de chargement du paquet inchangée.
 
 ## Installation manuelle
 

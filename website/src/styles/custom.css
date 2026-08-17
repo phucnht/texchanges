@@ -1176,3 +1176,102 @@ body:has(.tx-hero) .sl-markdown-content > * {
     transition: background-color 160ms ease;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Customizable select (theme and language pickers)
+   --------------------------------------------------------------------------
+   Starlight renders both pickers with a native <select>, which until recently
+   could not be styled past the closed button. `appearance: base-select` opts
+   the control and its picker into browser-provided base styles that CSS can
+   reach. Both the select and ::picker(select) have to opt in; opting in the
+   picker alone is not possible.
+
+   Two deliberate limits:
+
+   - Behind @supports, so any engine without the feature keeps the native
+     control it already renders correctly. The feature is not Baseline yet.
+   - Behind a pointer query. A customizable select no longer opens the
+     operating system's own picker, and that sheet is easier to operate on a
+     touch screen than a styled listbox, so phones keep the native one.
+
+   ::checkmark and ::picker-icon sit outside the accessibility tree, so nothing
+   here is announced; the option text remains the accessible name. */
+@supports (appearance: base-select) {
+  @media (hover: hover) and (pointer: fine) {
+    .right-group select,
+    .right-group ::picker(select) {
+      appearance: base-select;
+    }
+
+    .right-group select {
+      border: 0;
+      padding-block: 0.35rem;
+      color: inherit;
+      font-size: var(--tx-text-meta);
+    }
+
+    .right-group select::picker-icon {
+      color: var(--sl-color-gray-3);
+      transition: rotate 180ms ease;
+    }
+
+    .right-group select:open::picker-icon {
+      rotate: 180deg;
+    }
+
+    .right-group ::picker(select) {
+      /* The picker is a popover in the top layer, anchored to the button. */
+      margin-block-start: 0.4rem;
+      padding: 0.25rem;
+      border: 1px solid var(--tx-rule-strong);
+      border-radius: var(--tx-radius);
+      background: var(--tx-paper);
+      box-shadow: 0 0.75rem 2rem color-mix(in srgb, var(--sl-color-black) 12%, transparent);
+      opacity: 0;
+      transition: opacity 160ms ease, display 160ms allow-discrete, overlay 160ms allow-discrete;
+    }
+
+    .right-group select:open::picker(select) {
+      opacity: 1;
+    }
+
+    @starting-style {
+      .right-group select:open::picker(select) {
+        opacity: 0;
+      }
+    }
+
+    .right-group option {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      padding: 0.4rem 0.6rem;
+      border-radius: calc(var(--tx-radius) - 0.125rem);
+      background: none;
+      color: var(--sl-color-gray-2);
+      font-size: var(--tx-text-meta);
+    }
+
+    .right-group option:hover,
+    .right-group option:focus {
+      background: var(--tx-paper-sunk);
+      color: var(--sl-color-white);
+    }
+
+    .right-group option:checked {
+      color: var(--sl-color-white);
+    }
+
+    .right-group option::checkmark {
+      content: '\2713';
+      color: var(--tx-blue);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .right-group ::picker(select),
+    .right-group select::picker-icon {
+      transition: none;
+    }
+  }
+}
