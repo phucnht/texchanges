@@ -11,7 +11,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "0.2.4"
+VERSION = "0.2.5"
 VERBATIM_ENVS = {"verbatim", "verbatim*", "lstlisting", "minted"}
 # command -> (argument count, index of the old text, index of the new text);
 # None means the empty string. The changes-compatibility replacement commands
