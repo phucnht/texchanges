@@ -10,8 +10,8 @@ The suite compiles fixtures and greps `pdftotext` output for sentinel tokens. Th
 
 `l3build check` runs as the `l3build` case inside `make check`, and independently via `l3build check`. Sources live in `testfiles/`:
 
-- `tx-api.lvt` — asserts the full public command surface exists, that every localization string expands to its expected English default, and that `\texchangesmode` reflects the package mode.
-- `tx-compat.lvt` — asserts the `changes` compatibility surface exists and pins the opposite argument orders of `\txreplace` (old, new) and `\replaced` (new, old).
+- `tx-api.lvt` asserts the full public command surface exists, that every localization string expands to its expected English default, and that `\texchangesmode` reflects the package mode.
+- `tx-compat.lvt` asserts the `changes` compatibility surface exists and pins the opposite argument orders of `\txreplace` (old, new) and `\replaced` (new, old).
 
 These complement the PDF-text assertions: they compare the **typeset log**, so they catch a renamed command, a dropped alias, or a changed caption string even when the rendered PDF still looks plausible. `checkengines` covers pdfTeX, XeTeX, and LuaTeX, so an engine-specific divergence shows up as a diff.
 

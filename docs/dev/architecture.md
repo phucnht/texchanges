@@ -4,7 +4,7 @@
 
 `texchanges.sty` is a single expl3 file. The flow for every change command (`\txadd`, `\txremove`, `\txreplace`, `\txhighlight`, `\txcomment`) is:
 
-1. `\tx_change_parse:n` reads the optional argument — either a key–value list (`author`, `id`, `comment`, `status`) or a bare legacy label — and validates it (`\tx_change_validate:` rejects duplicate IDs and undefined authors).
+1. `\tx_change_parse:n` reads the optional argument, either a key-value list (`author`, `id`, `comment`, `status`) or a bare legacy label, then validates it (`\tx_change_validate:` rejects duplicate IDs and undefined authors).
 2. `\tx_record:nn` runs only in `review` mode: it bumps per-`author/type/status` counters and writes a `\txreportline` entry to the list auxiliary file (`\jobname.txc` by default).
 3. `\tx_render:nn` picks the visible output from the mode (`review`/`final`/`original`) and the change status (`pending`/`accepted`/`rejected`).
 

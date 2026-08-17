@@ -1,7 +1,13 @@
+---
+import { ui, localeFrom } from '../i18n/ui';
+
+const t = ui[localeFrom(Astro.url)];
+---
+
 <section class="mode-demo" aria-labelledby="mode-demo-title">
   <div class="mode-demo__heading">
-    <p class="tx-eyebrow">% compile one source three ways</p>
-    <h2 id="mode-demo-title">Review decisions without leaving LaTeX</h2>
+    <p class="tx-eyebrow">{t.demoEyebrow}</p>
+    <h2 id="mode-demo-title">{t.demoTitle}</h2>
   </div>
 
   <div class="mode-demo__controls" role="group" aria-label="Document mode">
@@ -11,11 +17,11 @@
   </div>
 
   <div class="mode-demo__paper" aria-live="polite">
-    <p class="mode-demo__label">Rendered document</p>
+    <p class="mode-demo__label">{t.demoRendered}</p>
     <!-- Keep the sentence on one physical line: compressHTML strips whitespace at
          end of line, which would glue the change to the following word. -->
     <p class="mode-demo__sentence" data-rendered-mode="review">The simulation <span class="old">imitates</span> <span class="new">reproduces</span> collaborative decision-making.<sup class="author">phuc</sup></p>
-    <p class="mode-demo__comment">Clarify the claim before acceptance.</p>
+    <p class="mode-demo__comment">{t.demoComment}</p>
   </div>
 
   <pre class="mode-demo__source"><code>{String.raw`\txreplace[

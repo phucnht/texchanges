@@ -11,7 +11,7 @@ Good first contributions are small and self-contained:
 - Documentation fixes in `README.md`, the manual `texchanges-doc.tex`, or the website under `website/src/content/docs/`.
 - Gaps in the `changes` compatibility layer (`compat=changes`).
 
-For anything larger — new commands, new package options, CLI behavior changes — please open an issue first and describe the design. The [roadmap](https://phucnht.github.io/texchanges/roadmap/) lists where the project is headed; work that fits it is much more likely to land.
+For anything larger (new commands, new package options, CLI behavior changes) please open an issue first and describe the design. The [roadmap](https://phucnht.github.io/texchanges/roadmap/) lists where the project is headed; work that fits it is much more likely to land.
 
 ## How to land a contribution
 

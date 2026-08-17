@@ -54,5 +54,5 @@ The `.cwl` file is a plain list of command signatures and is a good starting poi
 
 ## See also
 
-- [Cheatsheet](/texchanges/reference/cheatsheet/) — every command, key, and option on one page.
-- [Accessible reviewing](/texchanges/guides/accessible-reviewing/) — keyboard and screen reader workflows.
+- [Cheatsheet](/texchanges/reference/cheatsheet/): every command, key, and option on one page.
+- [Accessible reviewing](/texchanges/guides/accessible-reviewing/): keyboard and screen reader workflows.

@@ -1,27 +1,19 @@
 ---
-const facts = [
-  'pdfTeX · XeTeX · LuaTeX',
-  'TeX Live 2023+',
-  'Overleaf ready',
-  'No dependencies beyond TeX Live'
-];
+import { ui, localeFrom, pathFor } from '../i18n/ui';
+
+const locale = localeFrom(Astro.url);
+const t = ui[locale];
 ---
 
 <section class="tx-hero">
-  <p class="tx-eyebrow">% LaTeX-native track changes</p>
+  <p class="tx-eyebrow">{t.heroEyebrow}</p>
   <h1 class="tx-hero__title">Texchanges</h1>
-  <p class="tx-hero__subtitle">Review decisions that live in your source</p>
-  <p class="tx-hero__tagline">Additions, removals, replacements, comments, and accept or reject decisions written as plain LaTeX. Compile the same file as a marked-up review, as the accepted document, or as the original.</p>
+  <p class="tx-hero__subtitle">{t.heroSubtitle}</p>
+  <p class="tx-hero__tagline">{t.heroTagline}</p>
 
   <div class="tx-hero__actions">
-    <a class="tx-btn tx-btn--primary" href="/texchanges/getting-started/quick-start/">Start reviewing</a>
-    <a class="tx-btn" href="/texchanges/reference/cheatsheet/">Cheatsheet</a>
+    <a class="tx-btn tx-btn--primary" href={pathFor(locale, '/getting-started/quick-start/')}>{t.ctaStart}</a>
+    <a class="tx-btn" href={pathFor(locale, '/reference/cheatsheet/')}>{t.ctaCheatsheet}</a>
     <a class="tx-btn tx-btn--quiet" href="https://github.com/phucnht/texchanges">GitHub</a>
   </div>
 </section>
-
-<div class="tx-stats">
-  <ul class="tx-stats__list">
-    {facts.map((fact) => <li>{fact}</li>)}
-  </ul>
-</div>

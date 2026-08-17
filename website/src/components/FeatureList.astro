@@ -1,34 +1,20 @@
 ---
+import { ui, localeFrom } from '../i18n/ui';
+
+const t = ui[localeFrom(Astro.url)];
+
 const features = [
-  {
-    title: 'One source, three documents',
-    body: 'Compile as review to see the markup, final to read the accepted text, or original to recover what was there before. The file never forks.'
-  },
-  {
-    title: 'Decisions, not just diffs',
-    body: 'Every change carries an author, a stable ID, an optional note, and a status of pending, accepted, or rejected. Reviews stay addressable across revisions.'
-  },
-  {
-    title: 'Reports you can filter',
-    body: 'Generate a list or a summary of changes, narrowed by type, status, or author, with hyperlinks back to each change.'
-  },
-  {
-    title: 'Resolve back to clean LaTeX',
-    body: 'The texchanges-merge tool updates statuses or removes the markup entirely, in place or to a new file, with a dry run first.'
-  },
-  {
-    title: 'Works where you already write',
-    body: 'Overleaf, pdfTeX, XeTeX, and LuaTeX, verified in continuous integration against TeX Live 2023 through the current release.'
-  },
-  {
-    title: 'Migrates from changes',
-    body: 'An opt-in compatibility layer accepts the changes package commands, so an existing manuscript keeps compiling while you move over.'
-  }
+  { title: t.f1, body: t.f1b },
+  { title: t.f2, body: t.f2b },
+  { title: t.f3, body: t.f3b },
+  { title: t.f4, body: t.f4b },
+  { title: t.f5, body: t.f5b },
+  { title: t.f6, body: t.f6b }
 ];
 ---
 
 <section class="tx-features" aria-labelledby="tx-features-title">
-  <p class="tx-eyebrow" id="tx-features-title">% features</p>
+  <p class="tx-eyebrow" id="tx-features-title">{t.featuresEyebrow}</p>
 
   <ul class="tx-features__list">
     {features.map((feature) => (

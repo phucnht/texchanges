@@ -1,0 +1,20 @@
+---
+import { ui, localeFrom, pathFor } from '../i18n/ui';
+
+const locale = localeFrom(Astro.url);
+const t = ui[locale];
+
+const links = [
+  { label: t.linkQuickStart, path: '/getting-started/quick-start/' },
+  { label: t.ctaCheatsheet, path: '/reference/cheatsheet/' },
+  { label: t.linkAccessible, path: '/guides/accessible-reviewing/' },
+  { label: t.linkMigration, path: '/migration/from-changes/' }
+];
+---
+
+<section class="tx-closing">
+  <p class="tx-eyebrow">{t.closingEyebrow}</p>
+  <div class="tx-closing__links">
+    {links.map((link) => <a href={pathFor(locale, link.path)}>{link.label}</a>)}
+  </div>
+</section>

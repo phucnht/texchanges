@@ -2,15 +2,20 @@
 // Overrides Starlight's SiteTitle to place primary navigation next to the
 // title. Overriding SiteTitle rather than Header keeps Starlight's header grid,
 // search, and theme controls intact across upgrades.
+import { ui, localeFrom, pathFor } from '../i18n/ui';
+
 const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
 
+const locale = localeFrom(Astro.url);
+const t = ui[locale];
+
+// Internal pages only. External links live on the right, next to the search
+// box and the theme control.
 const links = [
-  { label: 'Docs', href: '/texchanges/getting-started/quick-start/', priority: 'md' },
-  { label: 'Examples', href: '/texchanges/getting-started/examples/', priority: 'md' },
-  { label: 'Cheatsheet', href: '/texchanges/reference/cheatsheet/', priority: 'lg' },
-  { label: 'Roadmap', href: '/texchanges/roadmap/', priority: 'lg' },
-  { label: 'CTAN', href: 'https://ctan.org/pkg/texchanges', priority: 'lg', external: true },
-  { label: 'GitHub', href: 'https://github.com/phucnht/texchanges', priority: 'lg', external: true }
+  { label: t.navDocs, href: pathFor(locale, '/getting-started/quick-start/'), priority: 'md' },
+  { label: t.navExamples, href: pathFor(locale, '/getting-started/examples/'), priority: 'md' },
+  { label: t.navCheatsheet, href: pathFor(locale, '/reference/cheatsheet/'), priority: 'lg' },
+  { label: t.navRoadmap, href: pathFor(locale, '/roadmap/'), priority: 'lg' }
 ];
 
 const current = Astro.url.pathname;
@@ -26,8 +31,7 @@ const current = Astro.url.pathname;
       <a
         href={link.href}
         class:list={['tx-nav__link', link.priority === 'lg' && 'tx-nav__link--wide']}
-        aria-current={!link.external && current.startsWith(link.href) ? 'page' : undefined}
-        {...link.external ? { target: '_blank', rel: 'noreferrer' } : {}}
+        aria-current={current.startsWith(link.href) ? 'page' : undefined}
       >
         {link.label}
       </a>

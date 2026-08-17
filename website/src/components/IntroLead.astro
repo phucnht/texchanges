@@ -1,0 +1,10 @@
+---
+import { ui, localeFrom } from '../i18n/ui';
+
+const t = ui[localeFrom(Astro.url)];
+---
+
+<section class="tx-intro">
+  <p class="tx-eyebrow">{t.introEyebrow}</p>
+  <p class="tx-intro__lead">{t.introLead}</p>
+</section>

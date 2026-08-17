@@ -1,34 +1,35 @@
 ---
+import { ui, localeFrom } from '../i18n/ui';
+
+const t = ui[localeFrom(Astro.url)];
+
 const targets = [
   {
     id: 'texlive',
     label: 'TeX Live',
     prompt: '$',
     lines: ['tlmgr install texchanges'],
-    note: 'Then load it in the preamble.'
+    note: t.installTexliveNote
   },
   {
     id: 'overleaf',
     label: 'Overleaf',
     prompt: null,
-    lines: [
-      'Upload texchanges.sty beside your main .tex file,',
-      'or upload the texchanges-overleaf.zip bundle.'
-    ],
-    note: 'Overleaf updates TeX Live on its own schedule, so a new CTAN release can take time to appear.'
+    lines: [t.installOverleafBody],
+    note: t.installOverleafNote
   },
   {
     id: 'miktex',
     label: 'MiKTeX',
     prompt: '$',
     lines: ['miktex packages install texchanges'],
-    note: 'MiKTeX also installs on first use when the package is missing.'
+    note: t.installMiktexNote
   }
 ];
 ---
 
 <section class="tx-install" aria-labelledby="tx-install-title">
-  <p class="tx-eyebrow" id="tx-install-title">% install</p>
+  <p class="tx-eyebrow" id="tx-install-title">{t.installEyebrow}</p>
 
   <div class="tx-terminal">
     <div class="tx-terminal__tabs" role="tablist" aria-label="Installation target">
