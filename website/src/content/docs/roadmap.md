@@ -16,6 +16,7 @@ This is a living checklist. Features will be grouped into future minor releases 
   - [ ] Expanded CLI commands for scanning, checking, deciding, and resolving
   - [ ] TexLua resolver and Python parity fixtures
   - [ ] Schema and migration tooling
+  - [ ] Typst interoperability, with a documented review-markup bridge and format-aware conversion limits
 
 - [ ] Collaboration
   - [ ] Categories, threads, replies, and contributor metadata
