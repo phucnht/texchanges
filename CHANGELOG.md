@@ -11,6 +11,7 @@ All notable changes to this project are documented in this file. The format is b
 - The compact summary title and the pending, accepted, and rejected status names are localized; reports with `style=compactsummary` now use `\txcompactsummaryname`.
 - `texchanges-merge` keeps legacy `\txreplace[Label]` changes unchanged during status updates instead of silently discarding the label, and explains why on stderr.
 - `texchanges-merge` recognizes `\end {verbatim}` with interior whitespace when skipping verbatim environments.
+- `authormarkuptext=name` works on TeX Live 2023, whose expl3 does not predefine the `\prop_item:NV` variant.
 
 ### Changed
 
