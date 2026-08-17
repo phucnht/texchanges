@@ -1,0 +1,13 @@
+name: Documentation issue
+description: A problem with the manual, README, examples, or the documentation website
+title: Write a short and descriptive title
+labels:
+  - documentation
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What is wrong or missing, and where? Link the page or name the file if you can.
+    validations:
+      required: true

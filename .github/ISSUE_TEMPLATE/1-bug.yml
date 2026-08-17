@@ -1,0 +1,72 @@
+name: Bug report
+description: Something in the package, the merge CLI, or the documentation behaves incorrectly
+title: Write a short and descriptive title
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting a bug. Please check the [open issues](https://github.com/phucnht/texchanges/issues?q=is%3Aopen+is%3Aissue+label%3Abug) first; if yours is already filed, join the discussion there.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened, and what did you expect instead? Include a minimal `.tex` document that reproduces the problem.
+      placeholder: |
+        \documentclass{article}
+        \usepackage[review]{texchanges}
+        \begin{document}
+        ...
+        \end{document}
+    validations:
+      required: true
+  - type: dropdown
+    id: engine
+    attributes:
+      label: Engine
+      multiple: true
+      options:
+        - pdfLaTeX
+        - XeLaTeX
+        - LuaLaTeX
+        - Not engine-related (CLI or docs)
+    validations:
+      required: false
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where does it happen?
+      multiple: true
+      options:
+        - Overleaf
+        - Local TeX Live
+        - MiKTeX
+        - Docker
+        - Other
+    validations:
+      required: false
+  - type: input
+    id: texlive
+    attributes:
+      label: TeX Live year (or Overleaf TeX Live version)
+      placeholder: "2026"
+    validations:
+      required: false
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Package mode
+      multiple: true
+      options:
+        - review
+        - final
+        - original
+    validations:
+      required: false
+  - type: checkboxes
+    id: version
+    attributes:
+      label: Texchanges version
+      options:
+        - label: I am using the latest released version of texchanges
+          required: false

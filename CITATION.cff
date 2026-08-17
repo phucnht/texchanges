@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+title: Texchanges
+message: If you use this software, please cite it using the metadata from this file.
+type: software
+authors:
+  - given-names: Phuc
+    family-names: Nguyen
+version: 0.2.4
+date-released: '2026-08-15'
+repository-code: 'https://github.com/phucnht/texchanges'
+url: 'https://phucnht.github.io/texchanges/'
+abstract: >-
+  LaTeX-native track changes for Overleaf, human reviewers, and AI-assisted
+  review. Keeps changes in plain text, renders Word-like review markup, and
+  resolves the same source into accepted or original output.
+keywords:
+  - latex
+  - track changes
+  - overleaf
+  - latexdiff
+  - collaborative writing
+license: LPPL-1.3c

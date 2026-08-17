@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation
+    url: https://phucnht.github.io/texchanges/
+    about: Guides, reference, and troubleshooting for the package and the merge CLI.
+  - name: Roadmap
+    url: https://phucnht.github.io/texchanges/roadmap/
+    about: Where the project is headed before 1.0.0.
+  - name: CTAN package page
+    url: https://ctan.org/pkg/texchanges
+    about: The released package on CTAN.

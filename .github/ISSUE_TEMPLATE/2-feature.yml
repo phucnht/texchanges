@@ -1,0 +1,23 @@
+name: Feature request
+description: Propose new behavior for the package or the merge CLI
+title: Write a short and descriptive title
+labels:
+  - feature request
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for sharing a feature request. Please check the [open requests](https://github.com/phucnht/texchanges/issues?q=is%3Aopen+is%3Aissue+label%3A%22feature+request%22) and the [roadmap](https://phucnht.github.io/texchanges/roadmap/) first; if a similar request exists, join the discussion there.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the feature. Example markup for how it would look in a document is very welcome.
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      description: Describe why this would be useful and who benefits from it.
+    validations:
+      required: true
