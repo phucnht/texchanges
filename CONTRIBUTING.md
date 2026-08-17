@@ -15,13 +15,15 @@ For anything larger — new commands, new package options, CLI behavior changes 
 
 ## How to land a contribution
 
-1. Fork the repository and create a branch.
+1. Fork the repository and branch from `develop`.
 2. Make the change. Run the full suite locally with `make check`. The suite needs `pdflatex`, `xelatex`, `lualatex`, `latexdiff`, `pdftotext`, `perl`, and `python3` on your `PATH`; a full TeX Live installation provides everything except `python3`.
 3. Add or update tests (see below). A behavior change without a test will be asked to add one.
 4. Update `CHANGELOG.md` under the unreleased heading.
-5. Open a pull request with a short description of what changed and why. Keep each pull request to one fix or one feature.
+5. Open a pull request **against `develop`** with a short description of what changed and why. Keep each pull request to one fix or one feature.
 
 CI runs the same `make check` plus a website build; both must pass.
+
+`main` holds released code and is what the documentation site deploys from; it receives release merges from `develop` and documentation hotfixes only. See [docs/dev/releasing.md](docs/dev/releasing.md) for the branch layout and the release checklist.
 
 ## Signs of a good pull request
 
