@@ -4,10 +4,12 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    target-branch: develop
   - package-ecosystem: npm
     directory: /website
     schedule:
       interval: weekly
+    target-branch: develop
     groups:
       astro:
         patterns:
