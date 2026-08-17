@@ -1,0 +1,41 @@
+---
+const features = [
+  {
+    title: 'One source, three documents',
+    body: 'Compile as review to see the markup, final to read the accepted text, or original to recover what was there before. The file never forks.'
+  },
+  {
+    title: 'Decisions, not just diffs',
+    body: 'Every change carries an author, a stable ID, an optional note, and a status of pending, accepted, or rejected. Reviews stay addressable across revisions.'
+  },
+  {
+    title: 'Reports you can filter',
+    body: 'Generate a list or a summary of changes, narrowed by type, status, or author, with hyperlinks back to each change.'
+  },
+  {
+    title: 'Resolve back to clean LaTeX',
+    body: 'The texchanges-merge tool updates statuses or removes the markup entirely, in place or to a new file, with a dry run first.'
+  },
+  {
+    title: 'Works where you already write',
+    body: 'Overleaf, pdfTeX, XeTeX, and LuaTeX, verified in continuous integration against TeX Live 2023 through the current release.'
+  },
+  {
+    title: 'Migrates from changes',
+    body: 'An opt-in compatibility layer accepts the changes package commands, so an existing manuscript keeps compiling while you move over.'
+  }
+];
+---
+
+<section class="tx-features" aria-labelledby="tx-features-title">
+  <p class="tx-eyebrow" id="tx-features-title">% features</p>
+
+  <ul class="tx-features__list">
+    {features.map((feature) => (
+      <li class="tx-feature">
+        <h3 class="tx-feature__title"><span class="tx-feature__marker" aria-hidden="true">\item</span> {feature.title}</h3>
+        <p class="tx-feature__body">{feature.body}</p>
+      </li>
+    ))}
+  </ul>
+</section>

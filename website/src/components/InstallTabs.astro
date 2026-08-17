@@ -1,0 +1,97 @@
+---
+const targets = [
+  {
+    id: 'texlive',
+    label: 'TeX Live',
+    prompt: '$',
+    lines: ['tlmgr install texchanges'],
+    note: 'Then load it in the preamble.'
+  },
+  {
+    id: 'overleaf',
+    label: 'Overleaf',
+    prompt: null,
+    lines: [
+      'Upload texchanges.sty beside your main .tex file,',
+      'or upload the texchanges-overleaf.zip bundle.'
+    ],
+    note: 'Overleaf updates TeX Live on its own schedule, so a new CTAN release can take time to appear.'
+  },
+  {
+    id: 'miktex',
+    label: 'MiKTeX',
+    prompt: '$',
+    lines: ['miktex packages install texchanges'],
+    note: 'MiKTeX also installs on first use when the package is missing.'
+  }
+];
+---
+
+<section class="tx-install" aria-labelledby="tx-install-title">
+  <p class="tx-eyebrow" id="tx-install-title">% install</p>
+
+  <div class="tx-terminal">
+    <div class="tx-terminal__tabs" role="tablist" aria-label="Installation target">
+      {targets.map((target, index) => (
+        <button
+          type="button"
+          role="tab"
+          id={`tab-${target.id}`}
+          aria-controls={`panel-${target.id}`}
+          aria-selected={index === 0 ? 'true' : 'false'}
+          tabindex={index === 0 ? 0 : -1}
+          data-target={target.id}
+        >
+          {target.label}
+        </button>
+      ))}
+    </div>
+
+    {targets.map((target, index) => (
+      <div
+        class="tx-terminal__panel"
+        role="tabpanel"
+        id={`panel-${target.id}`}
+        aria-labelledby={`tab-${target.id}`}
+        hidden={index !== 0}
+      >
+        <pre><code>{target.lines.map((line) => (
+          <span class="tx-terminal__line">{target.prompt ? <span class="tx-terminal__prompt">{target.prompt} </span> : null}{line}
+</span>
+        ))}</code></pre>
+        <p class="tx-terminal__note">{target.note}</p>
+      </div>
+    ))}
+  </div>
+
+  <pre class="tx-install__usage"><code>{String.raw`\usepackage[review]{texchanges}`}</code></pre>
+</section>
+
+<script>
+  for (const install of document.querySelectorAll<HTMLElement>('.tx-install')) {
+    const tabs = [...install.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = [...install.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+
+    const select = (index: number) => {
+      tabs.forEach((tab, i) => {
+        tab.setAttribute('aria-selected', String(i === index));
+        tab.tabIndex = i === index ? 0 : -1;
+      });
+      panels.forEach((panel, i) => {
+        panel.hidden = i !== index;
+      });
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => select(index));
+      tab.addEventListener('keydown', (event) => {
+        const offset = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+        if (!offset) return;
+        event.preventDefault();
+        const next = (index + offset + tabs.length) % tabs.length;
+        select(next);
+        tabs[next].focus();
+      });
+    });
+  }
+</script>

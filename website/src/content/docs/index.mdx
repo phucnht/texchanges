@@ -2,32 +2,39 @@
 title: Texchanges
 description: LaTeX-native track changes for human and AI-assisted review.
 template: splash
-hero:
-  tagline: Keep review decisions in readable LaTeX source, compile clear markup, and resolve the same document into final or original text.
-  actions:
-    - text: Start reviewing
-      link: /texchanges/getting-started/quick-start/
-      icon: right-arrow
-    - text: View on GitHub
-      link: https://github.com/phucnht/texchanges
-      icon: external
-      variant: minimal
+editUrl: false
+next: false
+prev: false
+tableOfContents: false
 ---
 
+import SiteHero from '../../components/SiteHero.astro';
+import FeatureList from '../../components/FeatureList.astro';
+import InstallTabs from '../../components/InstallTabs.astro';
 import ModeDemo from '../../components/ModeDemo.astro';
 import ExampleCards from '../../components/ExampleCards.astro';
 
+<SiteHero />
+
+<section class="tx-intro">
+  <p class="tx-eyebrow">% what is texchanges</p>
+  <p class="tx-intro__lead">Texchanges gives authors, reviewers, and editing tools one vocabulary for proposing and deciding changes, written directly in the document. Nothing lives in a proprietary format, a sidebar, or a separate service.</p>
+</section>
+
 <ModeDemo />
+
+<FeatureList />
+
+<InstallTabs />
 
 <ExampleCards />
 
-## A review protocol that stays in your source
-
-Texchanges gives authors, reviewers, and editing tools a shared vocabulary for additions, removals, replacements, highlights, comments, and decisions. Stable IDs make individual changes addressable without introducing a proprietary document format.
-
-```latex
-\txdefineauthor[name={Phuc Nguyen},color=orange]{phuc}
-\txreplace[author=phuc,id=R12,status=pending]{old text}{new text}
-```
-
-Use `review` while decisions remain open. Switch to `final` for the proposed document or `original` to recover its initial state.
+<section class="tx-closing">
+  <p class="tx-eyebrow">% next</p>
+  <div class="tx-closing__links">
+    <a href="/texchanges/getting-started/quick-start/">Quick start</a>
+    <a href="/texchanges/reference/cheatsheet/">Cheatsheet</a>
+    <a href="/texchanges/guides/accessible-reviewing/">Accessible reviewing</a>
+    <a href="/texchanges/migration/from-changes/">Coming from changes</a>
+  </div>
+</section>
