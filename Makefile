@@ -6,7 +6,7 @@ DIST_DIR := dist
 
 help:
 	@printf '%s\n' \
-	  'make check    Run mode and automatic-diff verification' \
+	  'make check    Run the verification suite (TEST=<name> filters cases)' \
 	  'make test     Alias for make check' \
 	  'make example  Compile the explicit review example' \
 	  'make doc      Compile the package manual' \
@@ -18,7 +18,7 @@ help:
 	  'make clean    Remove generated output'
 
 check:
-	./scripts/test.sh
+	TEST="$(TEST)" ./scripts/test.sh
 
 test: check
 

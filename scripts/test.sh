@@ -38,20 +38,6 @@ assert_not_contains() {
   fi
 }
 
-compile_mode() {
-  local mode="$1"
-  TEXINPUTS="$PROJECT_ROOT:" pdflatex \
-    -halt-on-error \
-    -interaction=nonstopmode \
-    -output-directory="$TASK_TMP_DIR" \
-    "$PROJECT_ROOT/tests/$mode.tex" >/dev/null
-  pdftotext "$TASK_TMP_DIR/$mode.pdf" "$TASK_TMP_DIR/$mode.txt"
-}
-
-for mode in review final original; do
-  compile_mode "$mode"
-done
-
 compile_named() {
   local name="$1"
   local runs="${2:-1}"
@@ -65,140 +51,6 @@ compile_named() {
   done
   pdftotext "$TASK_TMP_DIR/$name.pdf" "$TASK_TMP_DIR/$name.txt"
 }
-
-assert_contains "$TASK_TMP_DIR/review.txt" OLDTOKEN
-assert_contains "$TASK_TMP_DIR/review.txt" NEWTOKEN
-assert_contains "$TASK_TMP_DIR/review.txt" ADDTOKEN
-assert_contains "$TASK_TMP_DIR/review.txt" REMOVETOKEN
-assert_contains "$TASK_TMP_DIR/review.txt" COMMENTTOKEN
-assert_contains "$TASK_TMP_DIR/review.txt" HIGHLIGHTTOKEN
-
-assert_contains "$TASK_TMP_DIR/final.txt" NEWTOKEN
-assert_contains "$TASK_TMP_DIR/final.txt" ADDTOKEN
-assert_contains "$TASK_TMP_DIR/final.txt" HIGHLIGHTTOKEN
-assert_not_contains "$TASK_TMP_DIR/final.txt" OLDTOKEN
-assert_not_contains "$TASK_TMP_DIR/final.txt" REMOVETOKEN
-assert_not_contains "$TASK_TMP_DIR/final.txt" COMMENTTOKEN
-
-assert_contains "$TASK_TMP_DIR/original.txt" OLDTOKEN
-assert_contains "$TASK_TMP_DIR/original.txt" REMOVETOKEN
-assert_contains "$TASK_TMP_DIR/original.txt" HIGHLIGHTTOKEN
-assert_not_contains "$TASK_TMP_DIR/original.txt" NEWTOKEN
-assert_not_contains "$TASK_TMP_DIR/original.txt" ADDTOKEN
-assert_not_contains "$TASK_TMP_DIR/original.txt" COMMENTTOKEN
-
-compile_named features 2
-assert_contains "$TASK_TMP_DIR/features.txt" OLDPENDING
-assert_contains "$TASK_TMP_DIR/features.txt" NEWPENDING
-assert_contains "$TASK_TMP_DIR/features.txt" NEWACCEPTED
-assert_not_contains "$TASK_TMP_DIR/features.txt" OLDACCEPTED
-assert_contains "$TASK_TMP_DIR/features.txt" OLDREJECTED
-assert_not_contains "$TASK_TMP_DIR/features.txt" NEWREJECTED
-assert_contains "$TASK_TMP_DIR/features.txt" SUMMARY
-assert_contains "$TASK_TMP_DIR/features.txt" "Phuc Nguyen"
-assert_contains "$TASK_TMP_DIR/features.txt" Alice
-assert_contains "$TASK_TMP_DIR/features.txs" "phuc/replaced/pending"
-
-compile_named report-extensions 2
-assert_contains "$TASK_TMP_DIR/report-extensions.txt" "CUSTOM LIST"
-assert_contains "$TASK_TMP_DIR/report-extensions.txt" "CUSTOM SUMMARY"
-assert_contains "$TASK_TMP_DIR/report-extensions.txt" "CUSTOMEXTENSION"
-assert_contains "$TASK_TMP_DIR/report-extensions.txcustomsummary" "anonymous/added/pending"
-test -f "$TASK_TMP_DIR/report-extensions.txcustomlist"
-
-printf '%s\n' 'STALE FINAL REPORT' > "$TASK_TMP_DIR/status-final.txc"
-printf '%s\n' '\txsummaryentry{anonymous/added/pending}{99}' > "$TASK_TMP_DIR/status-final.txs"
-compile_named status-final
-assert_contains "$TASK_TMP_DIR/status-final.txt" NEWPENDING
-assert_contains "$TASK_TMP_DIR/status-final.txt" NEWACCEPTED
-assert_contains "$TASK_TMP_DIR/status-final.txt" OLDREJECTED
-assert_contains "$TASK_TMP_DIR/status-final.txt" REJECTEDREMOVE
-assert_not_contains "$TASK_TMP_DIR/status-final.txt" REJECTEDADD
-assert_not_contains "$TASK_TMP_DIR/status-final.txt" "HIDDEN FINAL REPORT"
-assert_not_contains "$TASK_TMP_DIR/status-final.txt" "STALE FINAL REPORT"
-assert_contains "$TASK_TMP_DIR/status-final.log" "Pending changes were accepted"
-
-printf '%s\n' 'STALE ORIGINAL REPORT' > "$TASK_TMP_DIR/status-original.txc"
-printf '%s\n' '\txsummaryentry{anonymous/added/pending}{99}' > "$TASK_TMP_DIR/status-original.txs"
-compile_named status-original
-assert_contains "$TASK_TMP_DIR/status-original.txt" OLDACCEPTED
-assert_contains "$TASK_TMP_DIR/status-original.txt" OLDREJECTED
-assert_contains "$TASK_TMP_DIR/status-original.txt" ACCEPTEDREMOVE
-assert_not_contains "$TASK_TMP_DIR/status-original.txt" ACCEPTEDADD
-assert_not_contains "$TASK_TMP_DIR/status-original.txt" "HIDDEN ORIGINAL REPORT"
-assert_not_contains "$TASK_TMP_DIR/status-original.txt" "STALE ORIGINAL REPORT"
-
-compile_named compat
-assert_contains "$TASK_TMP_DIR/compat.txt" COMPATNEW
-assert_contains "$TASK_TMP_DIR/compat.txt" COMPATOLD
-assert_contains "$TASK_TMP_DIR/compat.txt" COMPATCOMMENT
-
-compile_named compat-ifneeded
-assert_contains "$TASK_TMP_DIR/compat-ifneeded.txt" ORIGINALCOMMENT
-assert_contains "$TASK_TMP_DIR/compat-ifneeded.txt" CHANGECOMMENT
-assert_contains "$TASK_TMP_DIR/compat-ifneeded.txt" ADDED
-
-compile_named options
-assert_contains "$TASK_TMP_DIR/options.txt" OPTIONS
-
-compile_named styles
-assert_contains "$TASK_TMP_DIR/styles.txt" STYLEADD
-assert_contains "$TASK_TMP_DIR/styles.txt" STYLEDELETE
-assert_contains "$TASK_TMP_DIR/styles.txt" STYLEHIGHLIGHT
-
-compile_named list 3
-assert_contains "$TASK_TMP_DIR/list.txt" DETAILED
-assert_contains "$TASK_TMP_DIR/list.txt" LISTADD
-assert_contains "$TASK_TMP_DIR/list.txt" LISTCOMMENT
-assert_not_contains "$TASK_TMP_DIR/list.txt" "Removed (L2)"
-
-compile_named localization 2
-assert_contains "$TASK_TMP_DIR/localization.txt" "Danh sách thay đổi"
-assert_contains "$TASK_TMP_DIR/localization.txt" "Thêm (L1): VNTOKEN"
-assert_contains "$TASK_TMP_DIR/localization.txt" "Các thay đổi (rút gọn)"
-assert_contains "$TASK_TMP_DIR/localization.txt" "đang chờ"
-assert_contains "$TASK_TMP_DIR/localization.txt" "DANH SACH"
-
-if TEXINPUTS="$PROJECT_ROOT:" pdflatex -halt-on-error -interaction=nonstopmode \
-  -output-directory="$TASK_TMP_DIR" "$PROJECT_ROOT/tests/duplicate-id.tex" >/dev/null 2>&1; then
-  printf 'Expected duplicate change ID compilation to fail\n' >&2
-  exit 1
-fi
-if TEXINPUTS="$PROJECT_ROOT:" pdflatex -halt-on-error -interaction=nonstopmode \
-  -output-directory="$TASK_TMP_DIR" "$PROJECT_ROOT/tests/undefined-author.tex" >/dev/null 2>&1; then
-  printf 'Expected undefined author compilation to fail\n' >&2
-  exit 1
-fi
-
-for engine in xelatex lualatex; do
-  TEXMFCACHE="$TASK_TMP_DIR/texmf-cache" TEXINPUTS="$PROJECT_ROOT:" "$engine" -halt-on-error -interaction=nonstopmode \
-    -output-directory="$TASK_TMP_DIR" "$PROJECT_ROOT/tests/features.tex" >/dev/null
-done
-
-python3 -m unittest -v tests.test_merge
-
-# texchanges.sty is the single source of truth for the package version; every
-# other copy must agree with it.
-STY_VERSION="$(sed -n 's/.*\\ProvidesExplPackage{texchanges}{[^}]*}{\([^}]*\)}.*/\1/p' "$PROJECT_ROOT/texchanges.sty")"
-test -n "$STY_VERSION"
-assert_contains "$PROJECT_ROOT/scripts/texchanges-merge.py" "VERSION = \"$STY_VERSION\""
-assert_contains "$PROJECT_ROOT/build.lua" "version = \"$STY_VERSION\""
-assert_contains "$PROJECT_ROOT/website/package.json" "\"version\": \"$STY_VERSION\""
-
-test -x "$PROJECT_ROOT/scripts/texchanges-merge.py"
-test "$("$PROJECT_ROOT/scripts/texchanges-merge.py" --version)" = "texchanges-merge $STY_VERSION"
-COLUMNS=10 "$PROJECT_ROOT/scripts/texchanges-merge.py" --help \
-  | grep -F 'Resolve or merge Texchanges markup without third-party dependencies.' >/dev/null
-
-if command -v mandoc >/dev/null 2>&1; then
-  mandoc -T lint "$PROJECT_ROOT/texchanges-merge.1"
-elif command -v groff >/dev/null 2>&1; then
-  groff -man -Tascii "$PROJECT_ROOT/texchanges-merge.1" >/dev/null
-else
-  for section in NAME SYNOPSIS DESCRIPTION OPTIONS 'EXIT STATUS' EXAMPLES FILES AUTHOR 'REPORTING BUGS'; do
-    grep -Fq ".SH $section" "$PROJECT_ROOT/texchanges-merge.1"
-  done
-fi
 
 compile_style_case() {
   local name="$1"
@@ -215,48 +67,284 @@ compile_style_case() {
     -output-directory="$TASK_TMP_DIR" "$source" >/dev/null
 }
 
-for preset in texchanges default underlined bfit nocolor; do
-  compile_style_case "preset-$preset" "markup=$preset" '\txreplace{old}{new}'
-done
-for style in colored uline uuline uwave dashuline dotuline bf it sl em; do
-  compile_style_case "added-$style" "addedmarkup=$style" '\txadd{added}'
-done
-for style in colored sout xout uline uuline uwave dashuline dotuline bf it sl em; do
-  compile_style_case "deleted-$style" "deletedmarkup=$style" '\txremove{deleted}'
-done
-for style in background uuline uwave; do
-  compile_style_case "highlight-$style" "highlightmarkup=$style" '\txhighlight{highlighted}'
-done
-for style in inline margin footnote uwave todo; do
-  compile_style_case "comment-$style" "commentmarkup=$style" '\txcomment{commented}'
-done
-for style in superscript subscript brackets footnote none; do
-  compile_style_case "author-$style" "authormarkup=$style" '\txadd[Reviewer]{added}'
-done
+# --------------------------------------------------------------------------
+# Test cases. Each runs in its own subshell; a failure aborts only that case.
+# --------------------------------------------------------------------------
 
-compile_style_case compat-none 'compat=changes,commandnameprefix=none' '\added{added}\replaced{new}{old}'
-compile_style_case compat-ifneeded 'compat=changes,commandnameprefix=ifneeded' '\added{added}\replaced{new}{old}'
-compile_style_case compat-always 'compat=changes,commandnameprefix=always' '\chadded{added}\chreplaced{new}{old}'
+case_modes() {
+  local mode
+  for mode in review final original; do
+    compile_named "$mode"
+  done
 
-latexdiff --flatten --type=UNDERLINE --config MINWORDSBLOCK=1 \
-  "$PROJECT_ROOT/examples/automatic-diff/texchanges-original.tex" \
-  "$PROJECT_ROOT/examples/automatic-diff/texchanges-revised.tex" \
-  > "$TASK_TMP_DIR/automatic.tex"
-pdflatex \
-  -halt-on-error \
-  -interaction=nonstopmode \
-  -output-directory="$TASK_TMP_DIR" \
-  "$TASK_TMP_DIR/automatic.tex" >/dev/null
-pdftotext "$TASK_TMP_DIR/automatic.pdf" "$TASK_TMP_DIR/automatic.txt"
-assert_contains "$TASK_TMP_DIR/automatic.tex" '\DIFdel{new }'
-assert_contains "$TASK_TMP_DIR/automatic.tex" '\DIFdel{a realistic representation }'
-assert_contains "$TASK_TMP_DIR/automatic.tex" '\DIFadd{selected characteristics }'
-assert_contains "$TASK_TMP_DIR/automatic.tex" '\emph{\DIFdelbegin'
-assert_contains "$TASK_TMP_DIR/automatic.tex" '\begin{itemize}'
-assert_contains "$TASK_TMP_DIR/automatic.txt" selected
-assert_contains "$TASK_TMP_DIR/automatic.txt" adaptive
-assert_contains "$TASK_TMP_DIR/automatic.txt" completion
+  assert_contains "$TASK_TMP_DIR/review.txt" OLDTOKEN
+  assert_contains "$TASK_TMP_DIR/review.txt" NEWTOKEN
+  assert_contains "$TASK_TMP_DIR/review.txt" ADDTOKEN
+  assert_contains "$TASK_TMP_DIR/review.txt" REMOVETOKEN
+  assert_contains "$TASK_TMP_DIR/review.txt" COMMENTTOKEN
+  assert_contains "$TASK_TMP_DIR/review.txt" HIGHLIGHTTOKEN
 
-perl -c "$PROJECT_ROOT/examples/automatic-diff/latexmkrc" >/dev/null
+  assert_contains "$TASK_TMP_DIR/final.txt" NEWTOKEN
+  assert_contains "$TASK_TMP_DIR/final.txt" ADDTOKEN
+  assert_contains "$TASK_TMP_DIR/final.txt" HIGHLIGHTTOKEN
+  assert_not_contains "$TASK_TMP_DIR/final.txt" OLDTOKEN
+  assert_not_contains "$TASK_TMP_DIR/final.txt" REMOVETOKEN
+  assert_not_contains "$TASK_TMP_DIR/final.txt" COMMENTTOKEN
 
-printf 'texchanges checks passed: modes, metadata, reports, compatibility, CLI, engines, automatic diff\n'
+  assert_contains "$TASK_TMP_DIR/original.txt" OLDTOKEN
+  assert_contains "$TASK_TMP_DIR/original.txt" REMOVETOKEN
+  assert_contains "$TASK_TMP_DIR/original.txt" HIGHLIGHTTOKEN
+  assert_not_contains "$TASK_TMP_DIR/original.txt" NEWTOKEN
+  assert_not_contains "$TASK_TMP_DIR/original.txt" ADDTOKEN
+  assert_not_contains "$TASK_TMP_DIR/original.txt" COMMENTTOKEN
+}
+
+case_features() {
+  compile_named features 2
+  assert_contains "$TASK_TMP_DIR/features.txt" OLDPENDING
+  assert_contains "$TASK_TMP_DIR/features.txt" NEWPENDING
+  assert_contains "$TASK_TMP_DIR/features.txt" NEWACCEPTED
+  assert_not_contains "$TASK_TMP_DIR/features.txt" OLDACCEPTED
+  assert_contains "$TASK_TMP_DIR/features.txt" OLDREJECTED
+  assert_not_contains "$TASK_TMP_DIR/features.txt" NEWREJECTED
+  assert_contains "$TASK_TMP_DIR/features.txt" SUMMARY
+  assert_contains "$TASK_TMP_DIR/features.txt" "Phuc Nguyen"
+  assert_contains "$TASK_TMP_DIR/features.txt" Alice
+  assert_contains "$TASK_TMP_DIR/features.txs" "phuc/replaced/pending"
+}
+
+case_report_extensions() {
+  compile_named report-extensions 2
+  assert_contains "$TASK_TMP_DIR/report-extensions.txt" "CUSTOM LIST"
+  assert_contains "$TASK_TMP_DIR/report-extensions.txt" "CUSTOM SUMMARY"
+  assert_contains "$TASK_TMP_DIR/report-extensions.txt" "CUSTOMEXTENSION"
+  assert_contains "$TASK_TMP_DIR/report-extensions.txcustomsummary" "anonymous/added/pending"
+  test -f "$TASK_TMP_DIR/report-extensions.txcustomlist"
+}
+
+case_status_final() {
+  printf '%s\n' 'STALE FINAL REPORT' > "$TASK_TMP_DIR/status-final.txc"
+  printf '%s\n' '\txsummaryentry{anonymous/added/pending}{99}' > "$TASK_TMP_DIR/status-final.txs"
+  compile_named status-final
+  assert_contains "$TASK_TMP_DIR/status-final.txt" NEWPENDING
+  assert_contains "$TASK_TMP_DIR/status-final.txt" NEWACCEPTED
+  assert_contains "$TASK_TMP_DIR/status-final.txt" OLDREJECTED
+  assert_contains "$TASK_TMP_DIR/status-final.txt" REJECTEDREMOVE
+  assert_not_contains "$TASK_TMP_DIR/status-final.txt" REJECTEDADD
+  assert_not_contains "$TASK_TMP_DIR/status-final.txt" "HIDDEN FINAL REPORT"
+  assert_not_contains "$TASK_TMP_DIR/status-final.txt" "STALE FINAL REPORT"
+  assert_contains "$TASK_TMP_DIR/status-final.log" "Pending changes were accepted"
+}
+
+case_status_original() {
+  printf '%s\n' 'STALE ORIGINAL REPORT' > "$TASK_TMP_DIR/status-original.txc"
+  printf '%s\n' '\txsummaryentry{anonymous/added/pending}{99}' > "$TASK_TMP_DIR/status-original.txs"
+  compile_named status-original
+  assert_contains "$TASK_TMP_DIR/status-original.txt" OLDACCEPTED
+  assert_contains "$TASK_TMP_DIR/status-original.txt" OLDREJECTED
+  assert_contains "$TASK_TMP_DIR/status-original.txt" ACCEPTEDREMOVE
+  assert_not_contains "$TASK_TMP_DIR/status-original.txt" ACCEPTEDADD
+  assert_not_contains "$TASK_TMP_DIR/status-original.txt" "HIDDEN ORIGINAL REPORT"
+  assert_not_contains "$TASK_TMP_DIR/status-original.txt" "STALE ORIGINAL REPORT"
+}
+
+case_compat() {
+  compile_named compat
+  assert_contains "$TASK_TMP_DIR/compat.txt" COMPATNEW
+  assert_contains "$TASK_TMP_DIR/compat.txt" COMPATOLD
+  assert_contains "$TASK_TMP_DIR/compat.txt" COMPATCOMMENT
+
+  compile_named compat-ifneeded
+  assert_contains "$TASK_TMP_DIR/compat-ifneeded.txt" ORIGINALCOMMENT
+  assert_contains "$TASK_TMP_DIR/compat-ifneeded.txt" CHANGECOMMENT
+  assert_contains "$TASK_TMP_DIR/compat-ifneeded.txt" ADDED
+}
+
+case_options() {
+  compile_named options
+  assert_contains "$TASK_TMP_DIR/options.txt" OPTIONS
+}
+
+case_styles() {
+  compile_named styles
+  assert_contains "$TASK_TMP_DIR/styles.txt" STYLEADD
+  assert_contains "$TASK_TMP_DIR/styles.txt" STYLEDELETE
+  assert_contains "$TASK_TMP_DIR/styles.txt" STYLEHIGHLIGHT
+}
+
+case_list() {
+  compile_named list 3
+  assert_contains "$TASK_TMP_DIR/list.txt" DETAILED
+  assert_contains "$TASK_TMP_DIR/list.txt" LISTADD
+  assert_contains "$TASK_TMP_DIR/list.txt" LISTCOMMENT
+  assert_not_contains "$TASK_TMP_DIR/list.txt" "Removed (L2)"
+}
+
+case_localization() {
+  compile_named localization 2
+  assert_contains "$TASK_TMP_DIR/localization.txt" "Danh sách thay đổi"
+  assert_contains "$TASK_TMP_DIR/localization.txt" "Thêm (L1): VNTOKEN"
+  assert_contains "$TASK_TMP_DIR/localization.txt" "Các thay đổi (rút gọn)"
+  assert_contains "$TASK_TMP_DIR/localization.txt" "đang chờ"
+  assert_contains "$TASK_TMP_DIR/localization.txt" "DANH SACH"
+}
+
+case_error_fixtures() {
+  if TEXINPUTS="$PROJECT_ROOT:" pdflatex -halt-on-error -interaction=nonstopmode \
+    -output-directory="$TASK_TMP_DIR" "$PROJECT_ROOT/tests/duplicate-id.tex" >/dev/null 2>&1; then
+    printf 'Expected duplicate change ID compilation to fail\n' >&2
+    exit 1
+  fi
+  if TEXINPUTS="$PROJECT_ROOT:" pdflatex -halt-on-error -interaction=nonstopmode \
+    -output-directory="$TASK_TMP_DIR" "$PROJECT_ROOT/tests/undefined-author.tex" >/dev/null 2>&1; then
+    printf 'Expected undefined author compilation to fail\n' >&2
+    exit 1
+  fi
+}
+
+case_engines() {
+  local engine
+  for engine in xelatex lualatex; do
+    TEXMFCACHE="$TASK_TMP_DIR/texmf-cache" TEXINPUTS="$PROJECT_ROOT:" "$engine" -halt-on-error -interaction=nonstopmode \
+      -output-directory="$TASK_TMP_DIR" "$PROJECT_ROOT/tests/features.tex" >/dev/null
+  done
+}
+
+case_python_unit() {
+  python3 -m unittest -v tests.test_merge
+}
+
+case_versions() {
+  # texchanges.sty is the single source of truth for the package version;
+  # every other copy must agree with it.
+  local sty_version
+  sty_version="$(sed -n 's/.*\\ProvidesExplPackage{texchanges}{[^}]*}{\([^}]*\)}.*/\1/p' "$PROJECT_ROOT/texchanges.sty")"
+  test -n "$sty_version"
+  assert_contains "$PROJECT_ROOT/scripts/texchanges-merge.py" "VERSION = \"$sty_version\""
+  assert_contains "$PROJECT_ROOT/build.lua" "version = \"$sty_version\""
+  assert_contains "$PROJECT_ROOT/website/package.json" "\"version\": \"$sty_version\""
+  test -x "$PROJECT_ROOT/scripts/texchanges-merge.py"
+  test "$("$PROJECT_ROOT/scripts/texchanges-merge.py" --version)" = "texchanges-merge $sty_version"
+}
+
+case_cli_help() {
+  COLUMNS=10 "$PROJECT_ROOT/scripts/texchanges-merge.py" --help \
+    | grep -F 'Resolve or merge Texchanges markup without third-party dependencies.' >/dev/null
+}
+
+case_manpage() {
+  local section
+  if command -v mandoc >/dev/null 2>&1; then
+    mandoc -T lint "$PROJECT_ROOT/texchanges-merge.1"
+  elif command -v groff >/dev/null 2>&1; then
+    groff -man -Tascii "$PROJECT_ROOT/texchanges-merge.1" >/dev/null
+  else
+    for section in NAME SYNOPSIS DESCRIPTION OPTIONS 'EXIT STATUS' EXAMPLES FILES AUTHOR 'REPORTING BUGS'; do
+      grep -Fq ".SH $section" "$PROJECT_ROOT/texchanges-merge.1"
+    done
+  fi
+}
+
+case_style_matrix() {
+  local preset style
+  for preset in texchanges default underlined bfit nocolor; do
+    compile_style_case "preset-$preset" "markup=$preset" '\txreplace{old}{new}'
+  done
+  for style in colored uline uuline uwave dashuline dotuline bf it sl em; do
+    compile_style_case "added-$style" "addedmarkup=$style" '\txadd{added}'
+  done
+  for style in colored sout xout uline uuline uwave dashuline dotuline bf it sl em; do
+    compile_style_case "deleted-$style" "deletedmarkup=$style" '\txremove{deleted}'
+  done
+  for style in background uuline uwave; do
+    compile_style_case "highlight-$style" "highlightmarkup=$style" '\txhighlight{highlighted}'
+  done
+  for style in inline margin footnote uwave todo; do
+    compile_style_case "comment-$style" "commentmarkup=$style" '\txcomment{commented}'
+  done
+  for style in superscript subscript brackets footnote none; do
+    compile_style_case "author-$style" "authormarkup=$style" '\txadd[Reviewer]{added}'
+  done
+}
+
+case_compat_prefixes() {
+  compile_style_case compat-none 'compat=changes,commandnameprefix=none' '\added{added}\replaced{new}{old}'
+  compile_style_case compat-ifneeded 'compat=changes,commandnameprefix=ifneeded' '\added{added}\replaced{new}{old}'
+  compile_style_case compat-always 'compat=changes,commandnameprefix=always' '\chadded{added}\chreplaced{new}{old}'
+}
+
+case_latexdiff() {
+  latexdiff --flatten --type=UNDERLINE --config MINWORDSBLOCK=1 \
+    "$PROJECT_ROOT/examples/automatic-diff/texchanges-original.tex" \
+    "$PROJECT_ROOT/examples/automatic-diff/texchanges-revised.tex" \
+    > "$TASK_TMP_DIR/automatic.tex"
+  pdflatex \
+    -halt-on-error \
+    -interaction=nonstopmode \
+    -output-directory="$TASK_TMP_DIR" \
+    "$TASK_TMP_DIR/automatic.tex" >/dev/null
+  pdftotext "$TASK_TMP_DIR/automatic.pdf" "$TASK_TMP_DIR/automatic.txt"
+  assert_contains "$TASK_TMP_DIR/automatic.tex" '\DIFdel{new }'
+  assert_contains "$TASK_TMP_DIR/automatic.tex" '\DIFdel{a realistic representation }'
+  assert_contains "$TASK_TMP_DIR/automatic.tex" '\DIFadd{selected characteristics }'
+  assert_contains "$TASK_TMP_DIR/automatic.tex" '\emph{\DIFdelbegin'
+  assert_contains "$TASK_TMP_DIR/automatic.tex" '\begin{itemize}'
+  assert_contains "$TASK_TMP_DIR/automatic.txt" selected
+  assert_contains "$TASK_TMP_DIR/automatic.txt" adaptive
+  assert_contains "$TASK_TMP_DIR/automatic.txt" completion
+
+  perl -c "$PROJECT_ROOT/examples/automatic-diff/latexmkrc" >/dev/null
+}
+
+# --------------------------------------------------------------------------
+# Runner. TEST=<substring> runs only matching cases; failures are collected
+# and reported together instead of aborting on the first one.
+# --------------------------------------------------------------------------
+
+FAILURES=0
+RAN=0
+RUN_FILTER="${TEST:-}"
+
+run_case() {
+  local name="$1"
+  if [ -n "$RUN_FILTER" ] && [[ "$name" != *"$RUN_FILTER"* ]]; then
+    return 0
+  fi
+  RAN=$((RAN + 1))
+  if ( set -e; "case_$name" ); then
+    printf 'ok: %s\n' "$name"
+  else
+    printf 'FAIL: %s\n' "$name" >&2
+    FAILURES=$((FAILURES + 1))
+  fi
+}
+
+run_case modes
+run_case features
+run_case report_extensions
+run_case status_final
+run_case status_original
+run_case compat
+run_case options
+run_case styles
+run_case list
+run_case localization
+run_case error_fixtures
+run_case engines
+run_case python_unit
+run_case versions
+run_case cli_help
+run_case manpage
+run_case style_matrix
+run_case compat_prefixes
+run_case latexdiff
+
+if [ "$RAN" -eq 0 ]; then
+  printf 'No test case matches TEST=%s\n' "$RUN_FILTER" >&2
+  exit 1
+fi
+if [ "$FAILURES" -gt 0 ]; then
+  printf '%d of %d test case(s) failed\n' "$FAILURES" "$RAN" >&2
+  exit 1
+fi
+printf 'texchanges checks passed: %d case(s) covering modes, metadata, reports, compatibility, CLI, engines, automatic diff\n' "$RAN"
