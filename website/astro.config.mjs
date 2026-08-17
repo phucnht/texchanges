@@ -14,6 +14,7 @@ export default defineConfig({
       social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/phucnht/texchanges' }],
       editLink: { baseUrl: 'https://github.com/phucnht/texchanges/edit/main/website/' },
       customCss: ['./src/styles/custom.css'],
+      components: { SiteTitle: './src/components/SiteTitle.astro' },
       head: [
         { tag: 'meta', attrs: { property: 'og:image', content: 'https://phucnht.github.io/texchanges/social-card.svg' } },
         { tag: 'meta', attrs: { name: 'theme-color', content: '#fbfbf9' } }

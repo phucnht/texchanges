@@ -1,0 +1,100 @@
+---
+// Overrides Starlight's SiteTitle to place primary navigation next to the
+// title. Overriding SiteTitle rather than Header keeps Starlight's header grid,
+// search, and theme controls intact across upgrades.
+const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
+
+const links = [
+  { label: 'Docs', href: '/texchanges/getting-started/quick-start/', priority: 'md' },
+  { label: 'Examples', href: '/texchanges/getting-started/examples/', priority: 'md' },
+  { label: 'Cheatsheet', href: '/texchanges/reference/cheatsheet/', priority: 'lg' },
+  { label: 'Roadmap', href: '/texchanges/roadmap/', priority: 'lg' },
+  { label: 'CTAN', href: 'https://ctan.org/pkg/texchanges', priority: 'lg', external: true },
+  { label: 'GitHub', href: 'https://github.com/phucnht/texchanges', priority: 'lg', external: true }
+];
+
+const current = Astro.url.pathname;
+---
+
+<div class="tx-brand">
+  <a href={siteTitleHref} class="site-title sl-flex">
+    <span translate="no">{siteTitle}</span>
+  </a>
+
+  <nav class="tx-nav" aria-label="Main">
+    {links.map((link) => (
+      <a
+        href={link.href}
+        class:list={['tx-nav__link', link.priority === 'lg' && 'tx-nav__link--wide']}
+        aria-current={!link.external && current.startsWith(link.href) ? 'page' : undefined}
+        {...link.external ? { target: '_blank', rel: 'noreferrer' } : {}}
+      >
+        {link.label}
+      </a>
+    ))}
+  </nav>
+</div>
+
+<style>
+  .tx-brand {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    min-width: 0;
+  }
+
+  .site-title {
+    align-items: center;
+    gap: var(--sl-nav-gap);
+    font-size: var(--sl-text-h4);
+    font-weight: 600;
+    color: var(--sl-color-text-accent);
+    text-decoration: none;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  .site-title span {
+    overflow: hidden;
+  }
+
+  .tx-nav {
+    display: none;
+    align-items: center;
+    gap: 1.1rem;
+  }
+
+  .tx-nav__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--sl-color-gray-2);
+    font-size: var(--tx-text-meta);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 180ms ease;
+  }
+
+  .tx-nav__link:hover,
+  .tx-nav__link[aria-current='page'] {
+    color: var(--sl-color-white);
+  }
+
+  .tx-nav__link--wide {
+    display: none;
+  }
+
+  /* Starlight's mobile menu already carries the sidebar, so the top nav only
+     appears once there is room for it. */
+  @media (min-width: 50rem) {
+    .tx-nav {
+      display: flex;
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .tx-nav__link--wide {
+      display: inline-flex;
+    }
+  }
+</style>
