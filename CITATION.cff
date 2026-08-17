@@ -5,8 +5,8 @@ type: software
 authors:
   - given-names: Phuc
     family-names: Nguyen
-version: 0.2.4
-date-released: '2026-08-15'
+version: 0.3.0
+date-released: '2026-08-18'
 repository-code: 'https://github.com/phucnht/texchanges'
 url: 'https://phucnht.github.io/texchanges/'
 abstract: >-

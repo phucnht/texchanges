@@ -4,35 +4,30 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-18
+
 ### Added
 
-- Editor support files in `editors/`: VS Code snippets that wrap the selected text, and a TeXstudio completion list covering every command, package option, and change key.
+- Editor support files in `editors/`, shipped in the CTAN archive: VS Code snippets that wrap the selected text, and a TeXstudio completion list covering every command, package option, and change key.
+- Log-level regression tests in `testfiles/`, run by `l3build check` against pdfTeX, XeTeX, and LuaTeX, covering the public command surface, the `changes` compatibility aliases, and the localization defaults.
+- Contributor documentation: `CONTRIBUTING.md`, issue and pull request templates, and `CITATION.cff`.
 - A printable cheatsheet, an editor shortcuts guide, and an accessible reviewing guide covering screen reader, terminal, and low-vision workflows alongside the current limitations.
-
-### Fixed
-
-- The documentation homepage no longer runs a replaced word into the following word in final mode.
-
-## [0.2.5] - 2026-08-17
+- Vietnamese and French translations of the documentation home page and the Start here section.
 
 ### Fixed
 
 - Babel translations now activate for the document's main language. They previously applied only after an explicit mid-document `\selectlanguage`.
-- Multi-word translated captions keep their spaces. They were previously collapsed (for example "ListederÄnderungen") because spaces are ignored under expl3 catcodes.
+- Multi-word translated captions keep their spaces. They were previously collapsed (for example "ListederAenderungen") because spaces are ignored under expl3 catcodes.
 - The compact summary title and the pending, accepted, and rejected status names are localized; reports with `style=compactsummary` now use `\txcompactsummaryname`.
 - `texchanges-merge` keeps legacy `\txreplace[Label]` changes unchanged during status updates instead of silently discarding the label, and explains why on stderr.
 - `texchanges-merge` recognizes `\end {verbatim}` with interior whitespace when skipping verbatim environments.
 - `authormarkuptext=name` works on TeX Live 2023, whose expl3 does not predefine the `\prop_item:NV` variant.
+- The documentation homepage no longer runs a replaced word into the following word in final mode.
 
 ### Changed
 
 - `scripts/ctan-release.sh` and the test suite read the package version from `texchanges.sty` instead of hardcoding their own copies.
 - Publishing a GitHub release now builds and attaches the CTAN archive, the Overleaf bundle, the manual, and checksums automatically.
-
-### Added
-
-- Contributor documentation: `CONTRIBUTING.md`, issue and pull request templates, and `CITATION.cff`.
-- `l3build check` runs log-level regression tests from `testfiles/` against pdfTeX, XeTeX, and LuaTeX, covering the public command surface, the `changes` compatibility aliases, and the localization defaults.
 - The verification suite runs as named cases; `make check TEST=<name>` runs a subset and failures are summarized instead of aborting the run.
 - Continuous integration verifies the package against TeX Live 2023, 2024, 2025, and the latest release.
 
@@ -95,8 +90,8 @@ All notable changes to this project are documented in this file. The format is b
 - Add Overleaf-ready explicit and automatic `latexdiff` examples.
 - Add PDF-based mode tests and distribution tooling.
 
-[Unreleased]: https://github.com/phucnht/texchanges/compare/v0.2.5...HEAD
-[0.2.5]: https://github.com/phucnht/texchanges/compare/v0.2.4...v0.2.5
+[Unreleased]: https://github.com/phucnht/texchanges/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/phucnht/texchanges/compare/v0.2.4...v0.3.0
 [0.2.4]: https://github.com/phucnht/texchanges/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/phucnht/texchanges/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/phucnht/texchanges/releases/tag/v0.2.2
