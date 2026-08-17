@@ -5,25 +5,82 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  # Aggregate result so one branch protection rule covers the whole matrix.
   package:
+    name: Package
     runs-on: ubuntu-latest
-    container: ghcr.io/xu-cheng/texlive-full:latest
+    needs: [package-matrix]
+    if: always()
     steps:
-      - uses: actions/checkout@v4
+      - name: Matrix successful
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: exit 0
+      - name: Matrix failing
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
+
+  package-matrix:
+    name: Package (TeX Live ${{ matrix.texlive }})
+    runs-on: ubuntu-latest
+    container: ghcr.io/xu-cheng/texlive-full:${{ matrix.tag }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Overleaf pins TeX Live by year; test the years users actually get.
+          - texlive: "2023"
+            tag: "20230801"
+          - texlive: "2024"
+            tag: "20240801"
+          - texlive: "2025"
+            tag: "20251002"
+          - texlive: latest
+            tag: latest
+    steps:
       - name: Install test utilities
         run: apk add --no-cache make perl python3 poppler-utils zip unzip
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Verify package and release archives
         run: make check && make dist && make ctan
+        env:
+          TEXCHANGES_TEST_DIR: ${{ github.workspace }}/test-output
+      - name: Upload compile output
+        if: failure()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: test-output-texlive-${{ matrix.texlive }}
+          path: |
+            test-output
+            build/*.log
+          retention-days: 7
+
+  lint:
+    name: Lint scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - name: Shellcheck
+        run: shellcheck scripts/*.sh
+      - name: Python syntax
+        run: python3 -m compileall -q scripts tests
 
   website:
+    name: Website
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: website
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version: 24
           cache: npm

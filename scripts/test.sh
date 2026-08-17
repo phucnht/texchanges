@@ -3,8 +3,15 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-TASK_TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/texchanges-test.XXXXXX")"
-trap 'rm -rf "$TASK_TMP_DIR"' EXIT
+# Set TEXCHANGES_TEST_DIR to keep compile output for inspection (CI uploads it
+# when a run fails); the default is a temporary directory removed on exit.
+if [ -n "${TEXCHANGES_TEST_DIR:-}" ]; then
+  TASK_TMP_DIR="$TEXCHANGES_TEST_DIR"
+  mkdir -p "$TASK_TMP_DIR"
+else
+  TASK_TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/texchanges-test.XXXXXX")"
+  trap 'rm -rf "$TASK_TMP_DIR"' EXIT
+fi
 
 for tool in pdflatex xelatex lualatex latexdiff pdftotext perl python3; do
   if ! command -v "$tool" >/dev/null 2>&1; then
