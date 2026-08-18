@@ -76,7 +76,7 @@ These are real, and we would rather state them than let you discover them mid-re
 - **Author color is not announced.** In the default preset, author identity exists only as color in the PDF. Use `authormarkuptext=name` so the name is in the text.
 - **`soul` and `ulem` markup is visual only.** The underline and strikethrough carry no semantics that a PDF reader can expose.
 
-Tagged-PDF support, and accessible visual presets verified against real assistive technology, are tracked under "Robust and accessible authoring" on the [roadmap](/texchanges/roadmap/) and are part of what 1.0.0 must deliver.
+Tagged-PDF support, and accessible visual presets verified against real assistive technology, are tracked under "Robust and accessible authoring" on the [roadmap](/roadmap/) and are part of what 1.0.0 must deliver.
 
 ## Reporting problems
 

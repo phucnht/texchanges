@@ -2,7 +2,7 @@
 
 Shortcuts and completion data for writing Texchanges markup. Nothing here is required to use the package; they only reduce typing.
 
-See the [cheatsheet](https://phucnht.github.io/texchanges/reference/cheatsheet/) for the commands themselves, and the [editor shortcuts guide](https://phucnht.github.io/texchanges/guides/editor-shortcuts/) for a walkthrough.
+See the [cheatsheet](https://texchanges.dev/reference/cheatsheet/) for the commands themselves, and the [editor shortcuts guide](https://texchanges.dev/guides/editor-shortcuts/) for a walkthrough.
 
 ## Overleaf
 

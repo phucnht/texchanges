@@ -3,7 +3,7 @@
 [![CI](https://github.com/phucnht/texchanges/actions/workflows/ci.yml/badge.svg)](https://github.com/phucnht/texchanges/actions/workflows/ci.yml)
 [![CTAN](https://img.shields.io/ctan/v/texchanges)](https://ctan.org/pkg/texchanges)
 [![License](https://img.shields.io/ctan/l/texchanges)](LICENSE)
-[![Documentation](https://img.shields.io/badge/docs-phucnht.github.io%2Ftexchanges-blue)](https://phucnht.github.io/texchanges/)
+[![Documentation](https://img.shields.io/badge/docs-texchanges.dev-blue)](https://texchanges.dev/)
 
 `texchanges` is a LaTeX-native track-changes protocol for Overleaf, human reviewers, and AI agents. It keeps changes in plain text, renders Word-like review markup, and resolves the same source into accepted or original output.
 
@@ -12,7 +12,7 @@ Compared to the `changes` package, texchanges adds review decisions (`pending`/`
 | Explicit review | Automatic `latexdiff` |
 |---|---|
 | [![Explicit review with marked changes and a review report.](website/public/examples/explicit-review-at-a-glance.png)](examples/explicit-review/README.md) | [![Automatic word-level diff with marked changes.](website/public/examples/automatic-diff-at-a-glance.png)](examples/automatic-diff/README.md) |
-| Keep authors, IDs, decisions, comments, and reports in one source file. [Open the example](examples/explicit-review/README.md) or [view the walkthrough](https://phucnht.github.io/texchanges/getting-started/examples/). | Compare two complete revisions with word-level `latexdiff`. [Open the example](examples/automatic-diff/README.md) or [view the walkthrough](https://phucnht.github.io/texchanges/getting-started/examples/). |
+| Keep authors, IDs, decisions, comments, and reports in one source file. [Open the example](examples/explicit-review/README.md) or [view the walkthrough](https://texchanges.dev/getting-started/examples/). | Compare two complete revisions with word-level `latexdiff`. [Open the example](examples/automatic-diff/README.md) or [view the walkthrough](https://texchanges.dev/getting-started/examples/). |
 
 ## Installation
 
@@ -113,7 +113,7 @@ Presets are `texchanges`, `default`, `underlined`, `bfit`, and `nocolor`.
 
 Additions, removals, and highlights render in the author's registered color. Replacements deliberately use the fixed removed/added palette so the old and new text stay distinguishable within one change; the author label still carries the author's color.
 
-Runtime hooks such as `\txsetaddedmarkup`, `\txsetcommentmarkup`, `\txsetauthormarkup`, and the width/auxiliary-file setters are documented in the [online API reference](https://phucnht.github.io/texchanges/reference/api/).
+Runtime hooks such as `\txsetaddedmarkup`, `\txsetcommentmarkup`, `\txsetauthormarkup`, and the width/auxiliary-file setters are documented in the [online API reference](https://texchanges.dev/reference/api/).
 
 ## `changes` compatibility
 
@@ -151,11 +151,11 @@ Run `make dist` to build the single `dist/texchanges-overleaf.zip` upload bundle
 
 ## Reviewing faster
 
-Keep the [cheatsheet](https://phucnht.github.io/texchanges/reference/cheatsheet/) open while reviewing, and install the snippets and completion files in [`editors/`](editors/README.md) for VS Code or TeXstudio. Overleaf autocompletes the commands on its own. Screen reader and low-vision workflows are covered in [accessible reviewing](https://phucnht.github.io/texchanges/guides/accessible-reviewing/).
+Keep the [cheatsheet](https://texchanges.dev/reference/cheatsheet/) open while reviewing, and install the snippets and completion files in [`editors/`](editors/README.md) for VS Code or TeXstudio. Overleaf autocompletes the commands on its own. Screen reader and low-vision workflows are covered in [accessible reviewing](https://texchanges.dev/guides/accessible-reviewing/).
 
 ## Roadmap
 
-The path to 1.0.0 is tracked as a public checklist on the website: [roadmap](https://phucnht.github.io/texchanges/roadmap/).
+The path to 1.0.0 is tracked as a public checklist on the website: [roadmap](https://texchanges.dev/roadmap/).
 
 ## Development
 

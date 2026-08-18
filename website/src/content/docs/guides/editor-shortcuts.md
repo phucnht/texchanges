@@ -11,7 +11,7 @@ The files live in [`editors/`](https://github.com/phucnht/texchanges/tree/main/e
 
 Nothing to install. Overleaf autocompletes commands from every package the document loads, so once `\usepackage{texchanges}` is in the preamble, typing `\txr` offers `\txreplace`.
 
-Overleaf has no plugin API, so there is no way to add Texchanges entries to its context menu or toolbar. A browser extension could inject them, and one is [on the roadmap](/texchanges/roadmap/), but it would have to detect and degrade gracefully whenever Overleaf changes its interface, which is why it is a separate piece of work rather than a quick addition.
+Overleaf has no plugin API, so there is no way to add Texchanges entries to its context menu or toolbar. A browser extension could inject them, and one is [on the roadmap](/roadmap/), but it would have to detect and degrade gracefully whenever Overleaf changes its interface, which is why it is a separate piece of work rather than a quick addition.
 
 ## VS Code
 
@@ -54,5 +54,5 @@ The `.cwl` file is a plain list of command signatures and is a good starting poi
 
 ## See also
 
-- [Cheatsheet](/texchanges/reference/cheatsheet/): every command, key, and option on one page.
-- [Accessible reviewing](/texchanges/guides/accessible-reviewing/): keyboard and screen reader workflows.
+- [Cheatsheet](/reference/cheatsheet/): every command, key, and option on one page.
+- [Accessible reviewing](/guides/accessible-reviewing/): keyboard and screen reader workflows.

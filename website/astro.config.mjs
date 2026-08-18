@@ -3,8 +3,7 @@ import starlight from '@astrojs/starlight';
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://phucnht.github.io',
-  base: '/texchanges',
+  site: 'https://texchanges.dev',
   integrations: [
     sitemap(),
     starlight({
@@ -27,7 +26,7 @@ export default defineConfig({
         SocialIcons: './src/components/SocialIcons.astro'
       },
       head: [
-        { tag: 'meta', attrs: { property: 'og:image', content: 'https://phucnht.github.io/texchanges/social-card.svg' } },
+        { tag: 'meta', attrs: { property: 'og:image', content: 'https://texchanges.dev/social-card.svg' } },
         { tag: 'meta', attrs: { name: 'theme-color', content: '#fbfbf9' } }
       ],
       sidebar: [

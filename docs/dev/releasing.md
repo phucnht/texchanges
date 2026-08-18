@@ -33,13 +33,10 @@ This runs the full suite (all modes, metadata, reports, styles, compatibility, C
 
 ### 3. Manual verification
 
-Do these by hand and actually look at the output:
-
-- `make example`, then open `build/explicit-review/texchanges-explicit-review.pdf`. Check the marked-up text, the author labels and colors, the comment, and the change report.
-- Flip `\texchangesexamplemode` to `final` and to `original`; recompile and confirm each mode reads correctly.
-- Upload `dist/texchanges-overleaf.zip` to a real Overleaf project. Compile with `texchanges-explicit-review.tex` as the Main document, then switch to `texchanges-review.tex` and confirm the automatic `latexdiff` path produces a diff. This is the only check that exercises the environment most users are in.
-- Run the CLI against a real document: `texchanges-merge paper.tex out.tex --accept --dry-run`, inspect the diff, then without `--dry-run` and confirm the result compiles.
-- Preview the website locally (`npm --prefix website run dev -- --host 127.0.0.1`) and click through any pages you changed.
+Follow [manual-testing.md](manual-testing.md). It covers what the suite cannot see: colour and
+position in the compiled PDF, the three document modes, the CLI filters and the legacy-label case,
+the Overleaf bundle with both Main-document choices and an older TeX Live year, and the website in
+all three languages.
 
 ### 4. Merge and tag
 
