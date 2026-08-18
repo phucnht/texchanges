@@ -30,6 +30,7 @@ All notable changes to this project are documented in this file. The format is b
 - Publishing a GitHub release now builds and attaches the CTAN archive, the Overleaf bundle, the manual, and checksums automatically.
 - The verification suite runs as named cases; `make check TEST=<name>` runs a subset and failures are summarized instead of aborting the run.
 - Continuous integration verifies the package against TeX Live 2023, 2024, 2025, and the latest release.
+- The documentation moved to <https://texchanges.dev>. The manual, the citation file, and the repository links point there; the previous address redirects.
 
 ## [0.2.4] - 2026-08-15
 
