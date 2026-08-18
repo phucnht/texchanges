@@ -2,6 +2,12 @@
 # automatic comparison. Other Main documents, including
 # texchanges-explicit-review.tex, compile normally.
 #
+# The branch tests %S, the source filename, because that is the same locally and
+# on Overleaf. %B is the job name, and Overleaf compiles with -jobname=output,
+# so a test against %B matches only on a local run.
+#
+# -jobname=%B keeps the output named the way the caller expects. Overleaf looks
+# for output.pdf and reports "no PDF" if pdflatex writes some other name.
+#
 # MINWORDSBLOCK=1 preserves short shared phrases such as "system provides".
-# -jobname=%B ensures the generated PDF has the name latexmk expects.
-$pdflatex = q{if [ "%B" = "texchanges-review" ]; then latexdiff --flatten --type=UNDERLINE --config MINWORDSBLOCK=1 texchanges-original.tex texchanges-revised.tex > review-generated.tex; pdflatex -recorder %O -jobname=%B review-generated.tex; else pdflatex -recorder %O %S; fi};
+$pdflatex = q{case "%S" in *texchanges-review.tex) latexdiff --flatten --type=UNDERLINE --config MINWORDSBLOCK=1 texchanges-original.tex texchanges-revised.tex > review-generated.tex; pdflatex -recorder %O -jobname=%B review-generated.tex;; *) pdflatex -recorder %O -jobname=%B %S;; esac};
