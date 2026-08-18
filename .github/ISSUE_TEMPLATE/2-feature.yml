@@ -6,7 +6,7 @@ labels:
 body:
   - type: markdown
     attributes:
-      value: Thanks for sharing a feature request. Please check the [open requests](https://github.com/phucnht/texchanges/issues?q=is%3Aopen+is%3Aissue+label%3A%22feature+request%22) and the [roadmap](https://phucnht.github.io/texchanges/roadmap/) first; if a similar request exists, join the discussion there.
+      value: Thanks for sharing a feature request. Please check the [open requests](https://github.com/phucnht/texchanges/issues?q=is%3Aopen+is%3Aissue+label%3A%22feature+request%22) and the [roadmap](https://texchanges.dev/roadmap/) first; if a similar request exists, join the discussion there.
   - type: textarea
     id: description
     attributes:

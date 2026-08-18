@@ -8,7 +8,7 @@ authors:
 version: 0.3.0
 date-released: '2026-08-18'
 repository-code: 'https://github.com/phucnht/texchanges'
-url: 'https://phucnht.github.io/texchanges/'
+url: 'https://texchanges.dev/'
 abstract: >-
   LaTeX-native track changes for Overleaf, human reviewers, and AI-assisted
   review. Keeps changes in plain text, renders Word-like review markup, and

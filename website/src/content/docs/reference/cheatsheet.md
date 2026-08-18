@@ -120,6 +120,6 @@ Use `commandnameprefix=none|ifneeded|always` to control how compatibility comman
 
 ## Related
 
-- [Editor shortcuts](/texchanges/guides/editor-shortcuts/) for snippets and completion files.
-- [Accessible reviewing](/texchanges/guides/accessible-reviewing/) for screen reader and low-vision workflows.
-- [API reference](/texchanges/reference/api/) for runtime hooks and every setter.
+- [Editor shortcuts](/guides/editor-shortcuts/) for snippets and completion files.
+- [Accessible reviewing](/guides/accessible-reviewing/) for screen reader and low-vision workflows.
+- [API reference](/reference/api/) for runtime hooks and every setter.

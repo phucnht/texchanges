@@ -9,8 +9,11 @@ export function localeFrom(url: URL): Locale {
   return segment === 'vi' || segment === 'fr' ? segment : 'en';
 }
 
+// Built from Astro's base so a future base change cannot silently break every
+// internal link. BASE_URL is '/' at the site root and '/prefix/' otherwise.
 export function pathFor(locale: Locale, path: string): string {
-  return locale === 'en' ? `/texchanges${path}` : `/texchanges/${locale}${path}`;
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  return locale === 'en' ? `${base}${path}` : `${base}/${locale}${path}`;
 }
 
 export const ui = {
