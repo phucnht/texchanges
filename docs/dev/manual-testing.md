@@ -1,8 +1,6 @@
 # Manual testing
 
-Run this before tagging a release. The automated suite compares text extracted from PDFs, so it
-cannot see colour, position, or font, and it cannot reach Overleaf at all. Everything below covers
-what the suite cannot.
+Run this before tagging a release. The automated suite compares text extracted from PDFs, so it cannot see colour, position, or font, and it cannot reach Overleaf at all. Everything below covers what the suite cannot.
 
 ## 1. Automated pass first
 
@@ -10,9 +8,7 @@ what the suite cannot.
 make release-check
 ```
 
-Expect 21 green cases and `Texchanges release artifacts verified.` on the last line. This covers
-three engines, the `l3build` log comparison, version agreement across the five copies, the CLI, the
-automatic `latexdiff` path, and both archives.
+Expect 21 green cases and `Texchanges release artifacts verified.` on the last line. This covers three engines, the `l3build` log comparison, version agreement across the five copies, the CLI, the automatic `latexdiff` path, and both archives.
 
 To dig into one area:
 
@@ -37,14 +33,11 @@ open build/explicit-review/texchanges-explicit-review.pdf
 | Author label | Small superscript reading `reviewer` |
 | End of document | A summary table counting changes per author and type |
 
-`\txreplace` deliberately uses the fixed removed and added colours rather than the author colour,
-so that old and new stay distinguishable inside one change. If a replacement renders in the author
-colour, that is a regression.
+`\txreplace` deliberately uses the fixed removed and added colours rather than the author colour, so that old and new stay distinguishable inside one change. If a replacement renders in the author colour, that is a regression.
 
 ### The three modes
 
-Edit `\providecommand{\texchangesexamplemode}{...}` in
-`examples/explicit-review/texchanges-explicit-review.tex` and recompile for each value.
+Edit `\providecommand{\texchangesexamplemode}{...}` in `examples/explicit-review/texchanges-explicit-review.tex` and recompile for each value.
 
 | Mode | Must appear | Must not appear |
 |---|---|---|
@@ -61,8 +54,7 @@ cd examples/explicit-review
 python3 ../../scripts/texchanges-merge.py texchanges-explicit-review.tex --accept --dry-run
 ```
 
-Every command gains `status={accepted}` and no argument is lost. Then check the filters, which must
-touch only what they name:
+Every command gains `status={accepted}` and no argument is lost. Then check the filters, which must touch only what they name:
 
 ```bash
 python3 ../../scripts/texchanges-merge.py texchanges-explicit-review.tex --reject --id R2 --dry-run
@@ -79,8 +71,7 @@ grep -c 'txreplace\|txadd\|txremove' /tmp/final.tex   # 0
 pdflatex -output-directory=/tmp /tmp/final.tex
 ```
 
-A legacy label must survive a status update. This regressed once and the tool used to discard it
-silently:
+A legacy label must survive a status update. This regressed once and the tool used to discard it silently:
 
 ```bash
 printf '\\documentclass{article}\\usepackage{texchanges}\\begin{document}\n\\txreplace[Reviewer]{a}{b}\n\\end{document}\n' > /tmp/legacy.tex
@@ -91,15 +82,11 @@ python3 scripts/texchanges-merge.py /tmp/legacy.tex --accept --dry-run
 
 ## 4. Overleaf
 
-This is where most users are, and nothing automated reaches it. Upload
-`dist/texchanges-overleaf.zip` as a new project; the bundle holds seven files.
+This is where most users are, and nothing automated reaches it. Upload `dist/texchanges-overleaf.zip` as a new project; the bundle holds seven files.
 
-1. Set `texchanges-explicit-review.tex` as the Main document and compile. The result matches
-   section 2.
-2. Switch the Main document to `texchanges-review.tex` and compile. `latexmkrc` runs `latexdiff` at
-   word level, so the output shows removed words struck through and added words underlined.
-3. Change the TeX Live year under **Menu, Settings** to the oldest supported release and compile
-   again. Version-specific expl3 differences have broken the package here before.
+1. Set `texchanges-explicit-review.tex` as the Main document and compile. The result matches section 2.
+2. Switch the Main document to `texchanges-review.tex` and compile. `latexmkrc` runs `latexdiff` at word level, so the output shows removed words struck through and added words underlined.
+3. Change the TeX Live year under **Menu, Settings** to the oldest supported release and compile again. Version-specific expl3 differences have broken the package here before.
 
 ## 5. Website
 
