@@ -223,6 +223,9 @@ case_versions() {
   assert_contains "$PROJECT_ROOT/scripts/texchanges-merge.py" "VERSION = \"$sty_version\""
   assert_contains "$PROJECT_ROOT/build.lua" "version = \"$sty_version\""
   assert_contains "$PROJECT_ROOT/website/package.json" "\"version\": \"$sty_version\""
+  # The lockfile carries its own copy of the package version and npm only
+  # refreshes it on install, so it drifts silently without this check.
+  assert_contains "$PROJECT_ROOT/website/package-lock.json" "\"version\": \"$sty_version\""
   test -x "$PROJECT_ROOT/scripts/texchanges-merge.py"
   test "$("$PROJECT_ROOT/scripts/texchanges-merge.py" --version)" = "texchanges-merge $sty_version"
 }
