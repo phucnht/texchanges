@@ -61,6 +61,17 @@ overleaf-check: dist
 	  pdftotext texchanges-review.pdf - | grep -Fq 'selected' && \
 	  pdftotext texchanges-review.pdf - | grep -Fq 'adaptive' && \
 	  test -f review-generated.tex)
+	@task_tmp=$$(mktemp -d "$${TMPDIR:-/tmp}/texchanges-overleaf-jobname.XXXXXX"); \
+	trap 'rm -rf "$$task_tmp"' EXIT; \
+	unzip -q $(DIST_DIR)/$(PACKAGE)-overleaf.zip -d "$$task_tmp"; \
+	(cd "$$task_tmp" && \
+	  latexmk -pdf -jobname=output -halt-on-error -interaction=nonstopmode texchanges-explicit-review.tex >/dev/null && \
+	  test -f output.pdf && \
+	  rm -f output.* && \
+	  latexmk -pdf -jobname=output -halt-on-error -interaction=nonstopmode texchanges-review.tex >/dev/null && \
+	  test -f output.pdf && \
+	  test -f review-generated.tex && \
+	  pdftotext output.pdf - | grep -Fq 'adaptive')
 
 ctan: doc
 	./scripts/ctan-release.sh

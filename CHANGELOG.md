@@ -23,6 +23,7 @@ All notable changes to this project are documented in this file. The format is b
 - `texchanges-merge` recognizes `\end {verbatim}` with interior whitespace when skipping verbatim environments.
 - `authormarkuptext=name` works on TeX Live 2023, whose expl3 does not predefine the `\prop_item:NV` variant.
 - The documentation homepage no longer runs a replaced word into the following word in final mode.
+- The Overleaf `latexmkrc` names its output the way the caller expects, so Overleaf no longer reports "no PDF" for either Main document. It also selects the automatic comparison by source filename rather than by job name, which Overleaf sets to `output`, so the `latexdiff` path now runs there instead of only on a local build.
 
 ### Changed
 
