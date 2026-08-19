@@ -61,6 +61,9 @@ html[data-has-sidebar] {
   --tx-red: #c62828;
   --tx-orange: #a54800;
   --tx-highlight: #fff2a8;
+  /* Author colours from \txdefineauthor are picked against paper, so the light
+     theme uses them as they are and the dark theme lifts them toward the ink. */
+  --tx-author-lift: 0%;
 
   --tx-paper: #ffffff;
   --tx-paper-sunk: #f4f2ec;
@@ -95,6 +98,7 @@ html[data-has-sidebar] {
   --tx-red: #f09b95;
   --tx-orange: #e2a86a;
   --tx-highlight: #6b5f2a;
+  --tx-author-lift: 52%;
 
   --tx-paper: #1a1814;
   --tx-paper-sunk: #14120f;
@@ -129,6 +133,7 @@ html[data-has-sidebar] {
     --tx-red: #f09b95;
     --tx-orange: #e2a86a;
     --tx-highlight: #6b5f2a;
+    --tx-author-lift: 52%;
 
     --tx-paper: #1a1814;
     --tx-paper-sunk: #14120f;
@@ -1336,5 +1341,274 @@ body:has(.tx-hero) .sl-markdown-content > * {
     .right-group label .caret {
       transition: none;
     }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Playground
+
+   The preview is drawn in JavaScript rather than by LaTeX, so the markup here
+   reuses the same ink as the mode demo and as texchanges.sty itself: struck
+   old text in red, underlined new text in blue, the author label in the
+   author's own colour, which the renderer sets inline from \txdefineauthor.
+   -------------------------------------------------------------------------- */
+
+/* An editor beside its output needs more room than a column of prose, so this
+   one page widens. Starlight reads --sl-content-width when it sizes the main
+   pane, and the pane inherits from body, so setting it here is enough. */
+body:has(.tx-play) {
+  --sl-content-width: 60rem;
+}
+
+/* An element cannot query itself, so the container is the wrapper around the
+   playground. Scoped to this page so no other content gains containment. */
+body:has(.tx-play) .sl-markdown-content {
+  container-type: inline-size;
+}
+
+.tx-play {
+  display: grid;
+  gap: 1.25rem;
+  margin-block: 1.5rem;
+}
+
+/* Split on the width this component actually has, not the width of the window.
+   A viewport query splits at 62rem of screen while the column around it may
+   still be 48rem, which leaves two panes too narrow to type in. Where
+   container queries are missing the single column stands, which is the layout
+   that works everywhere. */
+@container (min-width: 46rem) {
+  .tx-play {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.tx-play__pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.tx-play__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-block-end: 0.5rem;
+}
+
+.tx-play__label {
+  color: var(--tx-ink-faint);
+  font-family: var(--tx-mono);
+  font-size: var(--tx-text-meta);
+  font-weight: 500;
+}
+
+.tx-play__count,
+.tx-play__reset {
+  color: var(--tx-ink-faint);
+  font-size: var(--tx-text-meta);
+}
+
+.tx-play__reset {
+  min-height: 44px;
+  padding-inline: 0.5rem;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+
+.tx-play__reset:hover {
+  color: var(--sl-color-white);
+}
+
+.tx-play__inserts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-block-end: 0.5rem;
+}
+
+.tx-play__inserts button,
+.tx-play__modes button {
+  min-height: 44px;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--tx-rule);
+  border-radius: var(--tx-radius);
+  background: var(--tx-paper);
+  color: var(--sl-color-gray-2);
+  font-family: var(--tx-mono);
+  font-size: var(--tx-text-meta);
+  cursor: pointer;
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+}
+
+.tx-play__inserts button:hover,
+.tx-play__modes button:hover {
+  border-color: var(--tx-rule-strong);
+  color: var(--sl-color-white);
+}
+
+.tx-play__modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-block-end: 0.5rem;
+}
+
+/* --sl-color-black is the paper in both themes, so it is what reads on an
+   accent fill: near-white on the light theme's deep blue, near-black on the
+   dark theme's pale blue. A literal white fails at 2.1:1 after dark. */
+.tx-play__modes button[aria-selected='true'] {
+  border-color: var(--tx-blue);
+  background: var(--tx-blue);
+  color: var(--sl-color-black);
+}
+
+.tx-play__source {
+  width: 100%;
+  padding: 0.9rem;
+  border: 1px solid var(--tx-rule);
+  border-radius: var(--tx-radius);
+  background: var(--tx-paper-sunk);
+  color: var(--sl-color-white);
+  font-family: var(--tx-mono);
+  /* 16px keeps iOS from zooming the page when the field takes focus. */
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: vertical;
+  field-sizing: content;
+  max-height: 32rem;
+}
+
+.tx-play__source:focus-visible {
+  outline: 2px solid var(--tx-blue);
+  outline-offset: 2px;
+}
+
+.tx-play__hint,
+.tx-play__note {
+  margin-block: 0.5rem 0;
+  color: var(--tx-ink-faint);
+  font-size: var(--tx-text-meta);
+  line-height: 1.5;
+}
+
+.tx-play__output {
+  min-height: 12rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--tx-rule);
+  border-radius: var(--tx-radius);
+  background: var(--tx-paper);
+  font-family: var(--tx-serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  overflow-wrap: break-word;
+}
+
+.tx-play__output p {
+  margin: 0 0 0.8rem;
+}
+
+.tx-play__output p:last-child {
+  margin-block-end: 0;
+}
+
+/* The renderer sets --tx-author-color inline from \txdefineauthor, whose
+   colours are chosen against paper. Lifting them toward the ink here keeps
+   them legible after dark without the renderer having to know which theme is
+   on screen, and without a second palette to maintain. */
+.tx-play__ins,
+.tx-play__del,
+.tx-play__author {
+  color: color-mix(
+    in oklab,
+    var(--tx-author-color, var(--tx-blue)),
+    var(--sl-color-white) var(--tx-author-lift)
+  );
+}
+
+.tx-play__ins {
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+
+.tx-play__del {
+  text-decoration: line-through;
+  text-decoration-thickness: 0.08em;
+}
+
+/* A replacement uses the fixed removed and added colours rather than the
+   author's, so that old and new stay distinguishable inside one change. This
+   is what the package does, and it is deliberate. */
+.tx-play__del--fixed {
+  color: var(--tx-red);
+}
+
+.tx-play__ins--fixed {
+  margin-inline-start: 0.3em;
+  color: var(--tx-blue);
+}
+
+/* Starlight's palette names are inverted in the light theme: --sl-color-white
+   is the ink and --sl-color-black is the paper. The ink is what a highlight
+   needs on top of it. */
+.tx-play__mark {
+  background: var(--tx-highlight);
+  color: var(--sl-color-white);
+  padding-inline: 0.15em;
+}
+
+.tx-play__comment {
+  color: var(--tx-orange);
+  font-family: var(--tx-mono);
+  font-size: 0.85em;
+}
+
+.tx-play__author {
+  margin-inline-start: 0.1em;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.6em;
+}
+
+.tx-play__handoff {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-block: 1.5rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--tx-rule);
+  border-radius: var(--tx-radius);
+  background: var(--tx-paper-sunk);
+}
+
+.tx-play__handoff p {
+  flex: 1 1 22rem;
+  margin: 0;
+  color: var(--sl-color-gray-2);
+  font-size: var(--tx-text-meta);
+  line-height: 1.6;
+}
+
+.tx-play__handoff button {
+  min-height: 44px;
+  padding: 0.5rem 1.1rem;
+  border: 0;
+  border-radius: var(--tx-radius);
+  background: var(--tx-blue);
+  color: var(--sl-color-black);
+  font-size: var(--tx-text-meta);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tx-play__inserts button,
+  .tx-play__modes button {
+    transition: none;
   }
 }

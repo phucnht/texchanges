@@ -288,6 +288,18 @@ case_editor_files() {
   assert_contains "$PROJECT_ROOT/editors/texstudio/texchanges.cwl" '\replaced{new}{old}'
 }
 
+case_playground() {
+  # The website playground reimplements the package's mode semantics in
+  # JavaScript so a visitor sees them without a TeX installation. Hold that
+  # second implementation to the same fixtures the compiled cases use, so it
+  # cannot quietly drift from texchanges.sty.
+  if ! command -v node >/dev/null 2>&1; then
+    printf 'node not installed; skipping the playground renderer check\n' >&2
+    return 0
+  fi
+  node "$PROJECT_ROOT/website/scripts/render-check.mjs" >/dev/null
+}
+
 case_l3build() {
   if ! command -v l3build >/dev/null 2>&1; then
     printf 'l3build not installed; skipping log-level regression tests\n' >&2
@@ -361,6 +373,7 @@ run_case manpage
 run_case style_matrix
 run_case compat_prefixes
 run_case editor_files
+run_case playground
 run_case l3build
 run_case latexdiff
 

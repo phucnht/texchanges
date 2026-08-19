@@ -19,6 +19,7 @@ export function pathFor(locale: Locale, path: string): string {
 export const ui = {
   en: {
     navDocs: 'Docs',
+    navPlayground: 'Playground',
     navExamples: 'Examples',
     navCheatsheet: 'Cheatsheet',
     navRoadmap: 'Roadmap',
@@ -80,6 +81,7 @@ export const ui = {
 
   vi: {
     navDocs: 'Tài liệu',
+    navPlayground: 'Thử nghiệm',
     navExamples: 'Ví dụ',
     navCheatsheet: 'Tra cứu nhanh',
     navRoadmap: 'Lộ trình',
@@ -141,6 +143,7 @@ export const ui = {
 
   fr: {
     navDocs: 'Docs',
+    navPlayground: 'Bac à sable',
     navExamples: 'Exemples',
     navCheatsheet: 'Aide-mémoire',
     navRoadmap: 'Feuille de route',

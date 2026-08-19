@@ -4,6 +4,15 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Added
+
+- A playground on the documentation site: edit Texchanges markup and watch the same source render as a review, as the final document, and as the original. The preview is drawn in JavaScript rather than by LaTeX, and an Open in Overleaf button sends the same source to a real compiler with the package travelling alongside it.
+
+### Fixed
+
+- The documentation site stops widening past its design width. The sidebar, the content, the table of contents and the header bar now share one pair of outer edges on a large monitor instead of leaving an empty gutter on the right.
+- The theme and language pickers show one caret arrow rather than two.
+
 ## [0.3.0] - 2026-08-18
 
 ### Added
