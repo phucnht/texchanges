@@ -20,6 +20,11 @@
   --tx-measure: 68rem;
   --tx-section-gap: 2.75rem;
 
+  /* Distance from the viewport edge to the shell once the shell stops growing.
+     Zero until the breakpoint below, so every calc that reads it is inert on a
+     normal screen. */
+  --tx-shell-gutter: 0px;
+
   /* One type scale, stated once. A single display size carries the page; every
      other step is tight and small, which is what keeps it minimal but striking.
      13 / 16 / 18 / 22 / 28 plus the display jump. */
@@ -262,6 +267,55 @@ body {
   .header .right-group {
     gap: 0.75rem;
   }
+}
+
+/* The shell stops growing and centres.
+
+   Starlight pins the header and the sidebar to the viewport with
+   `position: fixed; inset-inline-start: 0`, and hands the table of contents
+   container half of whatever width is left over. The table of contents is left
+   aligned inside it, so on a wide monitor all that growth turns into empty
+   gutter on the right while the sidebar still hugs the far left edge.
+
+   A `max-width` cannot fix it, because a fixed element resolves against the
+   viewport and ignores an ancestor's width. So the gutter is computed once and
+   applied to each pinned element instead.
+
+   The design widths total 18.75rem of sidebar, 48rem of content and 18.75rem of
+   table of contents, so past about 90rem the extra space has nowhere useful to
+   go. `100vw` counts the classic scrollbar, which makes the gutter a few pixels
+   wide; it only ever feeds padding and an offset, never a width, so it cannot
+   cause horizontal overflow. */
+@media (min-width: 90rem) {
+  :root {
+    --tx-shell-gutter: calc((100vw - 90rem) / 2);
+  }
+
+  /* Starlight decides which pages carry an offset at all, so move its variable
+     rather than the padding property it feeds. */
+  html[data-has-sidebar] {
+    --sl-content-inline-start: calc(var(--sl-sidebar-width) + var(--tx-shell-gutter));
+  }
+
+  html:not([data-has-sidebar]) .main-frame {
+    padding-inline-start: var(--tx-shell-gutter);
+  }
+
+  .sidebar-pane {
+    inset-inline-start: var(--tx-shell-gutter);
+  }
+
+  /* Starlight names both the fixed outer element and the flex row inside it
+     `header`, so this has to say which one carries the gutter. Matching the
+     class alone applies the padding twice and the right group stops short of
+     the shell edge. */
+  header.header {
+    padding-inline: calc(var(--sl-nav-pad-x) + var(--tx-shell-gutter));
+  }
+}
+
+.main-frame {
+  padding-inline-end: var(--tx-shell-gutter);
 }
 
 /* --------------------------------------------------------------------------
@@ -1210,12 +1264,21 @@ body:has(.tx-hero) .sl-markdown-content > * {
       font-size: var(--tx-text-meta);
     }
 
+    /* Starlight already draws a caret: Select.astro renders a down-caret icon
+       as a sibling of the select and reserves room for it in the select's
+       padding. Opting into base-select makes the browser draw ::picker-icon on
+       top of that, so each picker showed two arrows. Keep the icon, which
+       belongs to the same family as the globe and theme glyphs beside it, and
+       drop the browser's. */
     .right-group select::picker-icon {
-      color: var(--sl-color-gray-3);
+      display: none;
+    }
+
+    .right-group label .caret {
       transition: rotate 180ms ease;
     }
 
-    .right-group select:open::picker-icon {
+    .right-group label:has(select:open) .caret {
       rotate: 180deg;
     }
 
@@ -1270,7 +1333,7 @@ body:has(.tx-hero) .sl-markdown-content > * {
 
   @media (prefers-reduced-motion: reduce) {
     .right-group ::picker(select),
-    .right-group select::picker-icon {
+    .right-group label .caret {
       transition: none;
     }
   }
