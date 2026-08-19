@@ -33,7 +33,7 @@ export default defineConfig({
         {
           label: 'Overview',
           translations: { vi: 'Tổng quan', fr: 'Vue d’ensemble' },
-          items: ['index', 'roadmap']
+          items: ['index', 'playground', 'roadmap']
         },
         {
           label: 'Start here',

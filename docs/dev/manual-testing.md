@@ -8,7 +8,7 @@ Run this before tagging a release. The automated suite compares text extracted f
 make release-check
 ```
 
-Expect 21 green cases and `Texchanges release artifacts verified.` on the last line. This covers three engines, the `l3build` log comparison, version agreement across the five copies, the CLI, the automatic `latexdiff` path, and both archives.
+Expect 22 green cases and `Texchanges release artifacts verified.` on the last line. This covers three engines, the `l3build` log comparison, version agreement across the five copies, the CLI, the automatic `latexdiff` path, and both archives.
 
 To dig into one area:
 
@@ -97,6 +97,8 @@ npm --prefix website run dev -- --host 127.0.0.1
 | Check | Expected |
 |---|---|
 | Mode demo | The three buttons swap the sentence, and words keep their spaces in every mode |
+| Playground | Editing the source redraws the preview; the three modes agree with section 2; the insert buttons wrap the selected words |
+| Open in Overleaf | The button opens a project that compiles without asking for `texchanges.sty`, since the snippet carries the package |
 | Language picker | Styled to the site palette rather than the operating system, with a visible check mark |
 | `/vi/` and `/fr/` | Translated content and navigation |
 | An untranslated path such as `/vi/reference/api/` | English content with the fallback notice |

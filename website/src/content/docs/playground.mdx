@@ -1,0 +1,40 @@
+---
+title: Playground
+description: Write Texchanges markup and watch the same source render as a review, as the final document, and as the original.
+---
+
+import Playground from '../../components/Playground.astro';
+
+One source, three documents. Edit the text below and switch between the modes: nothing is duplicated, nothing is stored anywhere else, and the review decisions stay in the file.
+
+<Playground />
+
+## What you are looking at
+
+The preview is drawn by this page rather than by LaTeX, so it shows the structure of each mode rather than the exact typesetting. Colours, underlining and strike-through match what the package produces; page breaks, fonts and spacing do not. The **Open in Overleaf** button sends the same source to a real compiler when you want the actual PDF.
+
+## Things worth trying
+
+Change a `status=accepted` to `status=rejected` and switch to Final. The rejected change keeps its original wording while the accepted one takes the new text, which is the whole point of recording a decision in the source instead of a comment thread.
+
+Switch to Review with an accepted change on screen. It renders as ordinary prose, not as markup: once a decision is made, the reviewer stops seeing it as an open question. Only pending changes stay marked up.
+
+Delete the `author=` key from a command. The change still works; it just loses its colour and its label. Authors are optional, and a document with one reviewer rarely needs them.
+
+## The commands
+
+| Command | Meaning |
+|---|---|
+| `\txadd{new}` | Text to insert |
+| `\txremove{old}` | Text to delete |
+| `\txreplace{old}{new}` | Swap one wording for another. Old first. |
+| `\txhighlight{text}` | Draw attention without proposing an edit |
+| `\txcomment{note}` | A note to the other reviewer |
+
+Each takes an optional `[author=…, id=…, comment=…, status=…]`. The [cheatsheet](/reference/cheatsheet/) lists every key, and the [API reference](/reference/api/) documents them in full.
+
+## Then what
+
+The preview stops at showing you the modes. In a real document you compile with `review` while decisions are open, hand the file to a co-author who edits the same source, and switch to `final` when you are done. When you want the markup gone for good rather than merely hidden, [`texchanges-merge`](/guides/merge-cli/) rewrites the source with the decisions applied.
+
+If you are reviewing on Overleaf, [the Overleaf guide](/guides/overleaf/) covers the bundle and both example projects. If you are working locally, [Installation](/getting-started/installation/) is one `tlmgr` command.

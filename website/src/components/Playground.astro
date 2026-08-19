@@ -1,0 +1,227 @@
+---
+/**
+ * An editable source box rendered in the three document modes.
+ *
+ * The rendering runs in JavaScript rather than in a TeX engine, so it is an
+ * approximation of the compiled PDF and the page says so. The Open in Overleaf
+ * button hands the same source to a real compiler for anyone who wants the
+ * actual output.
+ */
+
+const SAMPLE = String.raw`\txdefineauthor[name={Dana}, color=orange]{dana}
+\txdefineauthor[name={Sam}, color=blue]{sam}
+
+The survey \txreplace[author=dana, id=R1]{covered}{sampled} forty-one
+laboratories. \txadd[author=sam, id=A1]{Response rates are reported in
+Table 2.} The instrument \txremove[author=dana, id=D1]{was piloted twice
+and} required no revision.
+
+\txhighlight[author=sam, id=H1]{Check this figure against the appendix.}
+\txcomment[author=dana, id=C1]{Sam, is Table 2 the right reference?}
+
+An accepted change reads as settled prose:
+\txreplace[author=sam, id=R2, status=accepted]{roughly}{precisely} forty-one.
+A rejected one keeps the original wording:
+\txreplace[author=dana, id=R3, status=rejected]{laboratories}{sites}.`;
+
+const MODES = [
+  { id: 'review', label: 'Review', note: 'Every pending change is marked up and attributed. Decisions that are already accepted or rejected read as settled prose.' },
+  { id: 'final', label: 'Final', note: 'The document as it would be published. Pending and accepted changes take the new wording, rejected ones keep the old.' },
+  { id: 'original', label: 'Original', note: 'The document before review. Every change reverts to the wording it started with.' }
+];
+
+const INSERTS = [
+  { label: 'Add', snippet: '\\txadd[author=dana]{TEXT}', hint: 'Insert new text' },
+  { label: 'Remove', snippet: '\\txremove[author=dana]{TEXT}', hint: 'Mark text for deletion' },
+  { label: 'Replace', snippet: '\\txreplace[author=dana]{OLD}{NEW}', hint: 'Swap one wording for another' },
+  { label: 'Highlight', snippet: '\\txhighlight[author=dana]{TEXT}', hint: 'Draw attention without changing anything' },
+  { label: 'Comment', snippet: '\\txcomment[author=dana]{TEXT}', hint: 'Leave a note for the other reviewer' }
+];
+---
+
+<div class="tx-play" data-sample={SAMPLE}>
+  <div class="tx-play__pane">
+    <div class="tx-play__bar">
+      <label class="tx-play__label" for="tx-play-source">Source</label>
+      <button type="button" class="tx-play__reset" data-action="reset">Reset</button>
+    </div>
+
+    <div class="tx-play__inserts" role="group" aria-label="Insert a change command">
+      {INSERTS.map((insert) => (
+        <button type="button" data-snippet={insert.snippet} title={insert.hint}>{insert.label}</button>
+      ))}
+    </div>
+
+    <textarea
+      id="tx-play-source"
+      class="tx-play__source"
+      spellcheck="false"
+      autocomplete="off"
+      rows="18"
+      aria-describedby="tx-play-source-hint">{SAMPLE}</textarea>
+    <p class="tx-play__hint" id="tx-play-source-hint">
+      This is the body of the document. Select some words and press one of the buttons above to wrap them.
+    </p>
+  </div>
+
+  <div class="tx-play__pane">
+    <div class="tx-play__bar">
+      <span class="tx-play__label" id="tx-play-modes-label">Mode</span>
+      <span class="tx-play__count" data-role="count"></span>
+    </div>
+
+    <div class="tx-play__modes" role="tablist" aria-labelledby="tx-play-modes-label">
+      {MODES.map((mode, index) => (
+        <button
+          type="button"
+          role="tab"
+          id={`tx-play-tab-${mode.id}`}
+          aria-controls="tx-play-output"
+          aria-selected={index === 0 ? 'true' : 'false'}
+          tabindex={index === 0 ? 0 : -1}
+          data-mode={mode.id}
+        >
+          {mode.label}
+        </button>
+      ))}
+    </div>
+
+    <div
+      class="tx-play__output"
+      id="tx-play-output"
+      role="tabpanel"
+      aria-live="polite"
+      aria-labelledby="tx-play-tab-review"></div>
+
+    <p class="tx-play__note" data-role="note">{MODES[0].note}</p>
+  </div>
+</div>
+
+<form
+  class="tx-play__handoff"
+  action="https://www.overleaf.com/docs"
+  method="post"
+  target="_blank">
+  <input type="hidden" name="engine" value="pdflatex" />
+  <input type="hidden" name="encoded_snip" data-role="snip" />
+  <p>
+    The preview above is drawn by the website, not by LaTeX, so it approximates the compiled
+    result. To see the real thing, send this source to Overleaf and compile it there. The package
+    travels with it, so this works before Overleaf's next yearly TeX Live update picks Texchanges
+    up from CTAN.
+  </p>
+  <button type="submit">Open in Overleaf</button>
+</form>
+
+<script>
+  import { render } from '../scripts/txrender.js';
+
+  const PREAMBLE = [
+    '\\documentclass{article}',
+    '\\usepackage[review]{texchanges}',
+    '\\begin{document}'
+  ].join('\n');
+
+  /**
+   * Overleaf rebuilds its TeX Live once a year, and Texchanges reached CTAN
+   * after the most recent freeze, so `\usepackage{texchanges}` alone would fail
+   * there with a missing file. Carry the package inside the snippet instead:
+   * `filecontents*` writes it out before `\documentclass` runs, which needs
+   * nothing from Overleaf beyond a standard LaTeX kernel. If the fetch fails
+   * the plain snippet still goes, which is the right answer once Overleaf does
+   * ship the package.
+   */
+  let packageSource: string | null = null;
+
+  const buildSnippet = (body: string) => {
+    const document = `${PREAMBLE}\n${body}\n\\end{document}\n`;
+    if (!packageSource) return document;
+    return `\\begin{filecontents*}[overwrite]{texchanges.sty}\n${packageSource}\\end{filecontents*}\n${document}`;
+  };
+
+  type Mode = 'review' | 'final' | 'original';
+
+  const NOTES: Record<Mode, string> = {
+    review: 'Every pending change is marked up and attributed. Decisions that are already accepted or rejected read as settled prose.',
+    final: 'The document as it would be published. Pending and accepted changes take the new wording, rejected ones keep the old.',
+    original: 'The document before review. Every change reverts to the wording it started with.'
+  };
+
+  for (const play of document.querySelectorAll<HTMLElement>('.tx-play')) {
+    const source = play.querySelector<HTMLTextAreaElement>('.tx-play__source')!;
+    const output = play.querySelector<HTMLElement>('.tx-play__output')!;
+    const note = play.querySelector<HTMLElement>('[data-role="note"]')!;
+    const count = play.querySelector<HTMLElement>('[data-role="count"]')!;
+    const tabs = [...play.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const snip = document.querySelector<HTMLInputElement>('[data-role="snip"]');
+    const sample = play.dataset.sample ?? '';
+    let mode: Mode = 'review';
+
+    const draw = () => {
+      const result = render(source.value, mode);
+      output.innerHTML = result.html;
+      note.textContent = NOTES[mode];
+      count.textContent = result.changes === 1 ? '1 change' : `${result.changes} changes`;
+      if (snip) snip.value = buildSnippet(source.value);
+    };
+
+    const select = (index: number) => {
+      mode = (tabs[index].dataset.mode as Mode) ?? 'review';
+      tabs.forEach((tab, i) => {
+        tab.setAttribute('aria-selected', String(i === index));
+        tab.tabIndex = i === index ? 0 : -1;
+      });
+      output.setAttribute('aria-labelledby', tabs[index].id);
+      draw();
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => select(index));
+      tab.addEventListener('keydown', (event) => {
+        const offset = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+        if (!offset) return;
+        event.preventDefault();
+        const next = (index + offset + tabs.length) % tabs.length;
+        select(next);
+        tabs[next].focus();
+      });
+    });
+
+    source.addEventListener('input', draw);
+
+    play.querySelector('[data-action="reset"]')?.addEventListener('click', () => {
+      source.value = sample;
+      draw();
+      source.focus();
+    });
+
+    for (const button of play.querySelectorAll<HTMLButtonElement>('[data-snippet]')) {
+      button.addEventListener('click', () => {
+        const snippet = button.dataset.snippet ?? '';
+        const start = source.selectionStart;
+        const end = source.selectionEnd;
+        const selected = source.value.slice(start, end);
+        // Wrap the selection when there is one: the first placeholder becomes
+        // the selected words, which is how the editor snippets behave too.
+        const text = selected
+          ? snippet.replace(/OLD|TEXT/, selected)
+          : snippet;
+        source.setRangeText(text, start, end, 'end');
+        draw();
+        source.focus();
+      });
+    }
+
+    // Fetched once, lazily, so the page does not carry the package's weight for
+    // every visitor who never presses the button.
+    fetch(`${import.meta.env.BASE_URL}texchanges.sty`.replace('//', '/'))
+      .then((response) => (response.ok ? response.text() : null))
+      .then((text) => {
+        packageSource = text;
+        draw();
+      })
+      .catch(() => {});
+
+    draw();
+  }
+</script>
