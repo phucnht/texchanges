@@ -215,19 +215,61 @@ case_python_unit() {
 }
 
 case_versions() {
-  # texchanges.sty is the single source of truth for the package version;
-  # every other copy must agree with it.
-  local sty_version
+  # texchanges.sty is the single source of truth for both the version and the
+  # release date; every other copy must agree with it.
+  #
+  # This case is deliberately in two halves. The positive checks below name the
+  # files that must state the version, and the negative sweep at the end catches
+  # any file that states one without being named here. An earlier version of
+  # this case had only the positive half over four files, and three other files
+  # carrying the version drifted to a stale release without the suite noticing.
+  # CTAN caught it instead.
+  local sty_version sty_slash sty_iso sty_long
   sty_version="$(sed -n 's/.*\\ProvidesExplPackage{texchanges}{[^}]*}{\([^}]*\)}.*/\1/p' "$PROJECT_ROOT/texchanges.sty")"
+  sty_slash="$(sed -n 's/.*\\ProvidesExplPackage{texchanges}{\([^}]*\)}.*/\1/p' "$PROJECT_ROOT/texchanges.sty")"
   test -n "$sty_version"
+  test -n "$sty_slash"
+  sty_iso="${sty_slash//\//-}"
+  sty_long="$(python3 -c 'import datetime,sys; d=datetime.datetime.strptime(sys.argv[1], "%Y/%m/%d"); print(f"{d.day} {d:%B} {d.year}")' "$sty_slash")"
+
+  # Version, everywhere it is stated.
   assert_contains "$PROJECT_ROOT/scripts/texchanges-merge.py" "VERSION = \"$sty_version\""
   assert_contains "$PROJECT_ROOT/build.lua" "version = \"$sty_version\""
   assert_contains "$PROJECT_ROOT/website/package.json" "\"version\": \"$sty_version\""
   # The lockfile carries its own copy of the package version and npm only
   # refreshes it on install, so it drifts silently without this check.
   assert_contains "$PROJECT_ROOT/website/package-lock.json" "\"version\": \"$sty_version\""
+  assert_contains "$PROJECT_ROOT/CITATION.cff" "version: $sty_version"
+  assert_contains "$PROJECT_ROOT/texchanges-merge.1" "\"texchanges $sty_version\""
+  assert_contains "$PROJECT_ROOT/texchanges-doc.tex" "pdftitle={Texchanges $sty_version Manual}"
+  assert_contains "$PROJECT_ROOT/texchanges-doc.tex" "\\date{Version $sty_version,"
+
+  # Release date, which is a second axis nothing used to check. It appears in
+  # three spellings, so compare each against the one in texchanges.sty.
+  assert_contains "$PROJECT_ROOT/CITATION.cff" "date-released: '$sty_iso'"
+  assert_contains "$PROJECT_ROOT/texchanges-merge.1" "\"$sty_iso\""
+  assert_contains "$PROJECT_ROOT/texchanges-doc.tex" "\\date{Version $sty_version, $sty_long}"
+
   test -x "$PROJECT_ROOT/scripts/texchanges-merge.py"
   test "$("$PROJECT_ROOT/scripts/texchanges-merge.py" --version)" = "texchanges-merge $sty_version"
+
+  # Negative sweep. Nothing tracked may name a version of this package other
+  # than the current one. The pattern is anchored on the package name or the
+  # word "Version" so that dependency versions such as "@astrojs/yaml2ts 0.2.4"
+  # in the lockfile do not match. CHANGELOG.md is excluded because recording
+  # older releases is its purpose.
+  #
+  # A new file that states the version is covered the moment it is committed,
+  # with nobody having to remember to extend the list above.
+  local stale
+  stale="$(cd "$PROJECT_ROOT" && git ls-files \
+    | grep -vx 'CHANGELOG.md' \
+    | xargs grep -inE '(texchanges[ -]|Version )[0-9]+\.[0-9]+\.[0-9]+' 2>/dev/null \
+    | grep -v "$sty_version" || true)"
+  if [ -n "$stale" ]; then
+    printf 'Files naming a version other than %s:\n%s\n' "$sty_version" "$stale" >&2
+    exit 1
+  fi
 }
 
 case_cli_help() {
