@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
-    "build": "ASTRO_TELEMETRY_DISABLED=1 astro check && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/check-links.mjs",
-    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview"
+    "dev": "node scripts/sync-sty.mjs && ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "build": "node scripts/sync-sty.mjs && ASTRO_TELEMETRY_DISABLED=1 astro check && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/check-links.mjs",
+    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
+    "sync-sty": "node scripts/sync-sty.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.3",

@@ -19,3 +19,6 @@ node_modules/
 .astro/
 
 examples/automatic-diff/review-generated.tex
+
+# Copied from the package root at build time; never edit or commit this copy.
+website/public/texchanges.sty
