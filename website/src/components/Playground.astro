@@ -106,9 +106,9 @@ const INSERTS = [
   <input type="hidden" name="encoded_snip" data-role="snip" />
   <p>
     The preview above is drawn by the website, not by LaTeX, so it approximates the compiled
-    result. To see the real thing, send this source to Overleaf and compile it there. The package
-    travels with it, so this works before Overleaf's next yearly TeX Live update picks Texchanges
-    up from CTAN.
+    result. To see the real thing, send this source to Overleaf and compile it there. This version
+    of the package travels with the snippet, so what you get back is the release documented here
+    rather than whichever version the compiler happens to have installed.
   </p>
   <button type="submit">Open in Overleaf</button>
 </form>
@@ -123,13 +123,16 @@ const INSERTS = [
   ].join('\n');
 
   /**
-   * Overleaf rebuilds its TeX Live once a year, and Texchanges reached CTAN
-   * after the most recent freeze, so `\usepackage{texchanges}` alone would fail
-   * there with a missing file. Carry the package inside the snippet instead:
-   * `filecontents*` writes it out before `\documentclass` runs, which needs
-   * nothing from Overleaf beyond a standard LaTeX kernel. If the fetch fails
-   * the plain snippet still goes, which is the right answer once Overleaf does
-   * ship the package.
+   * Carry the package inside the snippet rather than relying on the one the
+   * compiler has installed. TeX Live 2026 ships Texchanges, but at whatever
+   * version CTAN held when that distribution was built, which is not the
+   * version this site documents. Sending the package along keeps the playground
+   * and the compiled result in agreement.
+   *
+   * `filecontents*` writes the file out before `\documentclass` runs and needs
+   * nothing beyond a standard LaTeX kernel. A project-local file takes
+   * precedence over the installed one. If the fetch fails the plain snippet
+   * still goes, which works wherever the package is installed.
    */
   let packageSource: string | null = null;
 
