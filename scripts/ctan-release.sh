@@ -75,6 +75,22 @@ ln -s "$VERIFY_DIR/texchanges/scripts/texchanges-merge.py" "$TASK_TMP_DIR/texcha
 (cd "$TASK_TMP_DIR" && COLUMNS=10 ./texchanges-merge --help) \
   | grep -F 'Resolve or merge Texchanges markup without third-party dependencies.' >/dev/null
 
+# The manual's title page is what a CTAN reviewer reads first, and it comes
+# from a compiled artefact rather than from source, so assert on the artefact
+# that is actually going into the archive. The 0.3.0 upload was held because
+# this page still said 0.2.4 while every checked source file said 0.3.0.
+# Compared with whitespace removed: poppler infers spaces from glyph
+# positions, and different builds disagree about where they fall.
+MANUAL_TEXT="$(pdftotext "$VERIFY_DIR/texchanges/texchanges-doc.pdf" -)"
+if ! printf '%s' "$MANUAL_TEXT" | tr -d '[:space:]' | grep -Fq "Version$VERSION"; then
+  printf 'The manual in the archive does not state version %s.\n' "$VERSION" >&2
+  printf 'Its title page reads: %s\n' "$(printf '%s' "$MANUAL_TEXT" | head -6 | tr '\n' ' ')" >&2
+  printf 'Rebuild it with make doc after updating texchanges-doc.tex.\n' >&2
+  exit 1
+fi
+# The man page ships beside the CLI whose --version is already checked above.
+grep -Fq "\"texchanges $VERSION\"" "$VERIFY_DIR/texchanges/texchanges-merge.1"
+
 if command -v sha256sum >/dev/null 2>&1; then
   sha256sum "$ARCHIVE" > "$ARCHIVE.sha256"
 else
