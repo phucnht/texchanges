@@ -2,9 +2,9 @@
  * Copy the package into the site's static assets.
  *
  * The playground's Open in Overleaf button carries texchanges.sty with the
- * snippet, because Overleaf rebuilds its TeX Live once a year and a package
- * that reached CTAN after the freeze is not installed there yet. Copying at
- * build time rather than committing a second copy keeps the two from drifting.
+ * snippet, so the compiled result matches the version this site documents
+ * rather than whichever version the compiler has installed. Copying at build
+ * time rather than committing a second copy keeps the two from drifting.
  */
 
 import { copyFileSync, mkdirSync } from 'node:fs';
