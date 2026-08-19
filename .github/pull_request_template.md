@@ -1,9 +1,10 @@
 <!--
-Thanks for contributing to Texchanges! Before opening the PR, please read the contribution guidelines: https://github.com/phucnht/texchanges/blob/main/CONTRIBUTING.md
+Thanks for contributing to Texchanges! The contribution guide is here:
+https://github.com/phucnht/texchanges/blob/main/CONTRIBUTING.md
 
 In short:
-- One fix or one feature per PR, with a test fixture for every new behavior.
-- Run `make check` locally before pushing.
-- Update CHANGELOG.md.
-- We do not accept contributions implemented by an AI model, and we ask that you write this description yourself.
+- One fix or one feature per pull request, with a fixture for new behaviour.
+- Run `make check` before pushing.
+- Add a line to CHANGELOG.md.
+- Use whatever tools help you, but please write this description yourself.
 -->
