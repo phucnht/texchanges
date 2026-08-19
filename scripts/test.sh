@@ -262,10 +262,13 @@ case_versions() {
   # A new file that states the version is covered the moment it is committed,
   # with nobody having to remember to extend the list above.
   local stale
-  stale="$(cd "$PROJECT_ROOT" && git ls-files \
-    | grep -vx 'CHANGELOG.md' \
-    | xargs grep -inE '(texchanges[ -]|Version )[0-9]+\.[0-9]+\.[0-9]+' 2>/dev/null \
-    | grep -v "$sty_version" || true)"
+  stale="$(
+    cd "$PROJECT_ROOT" || exit 1
+    git ls-files \
+      | grep -vx 'CHANGELOG.md' \
+      | xargs grep -inE '(texchanges[ -]|Version )[0-9]+\.[0-9]+\.[0-9]+' 2>/dev/null \
+      | grep -v "$sty_version" || true
+  )"
   if [ -n "$stale" ]; then
     printf 'Files naming a version other than %s:\n%s\n' "$sty_version" "$stale" >&2
     exit 1
