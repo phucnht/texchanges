@@ -173,7 +173,7 @@ The suite covers all modes, metadata, reports, styles, compatibility syntax, the
 
 ## Contributing
 
-Bug reports and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to land a change, the compatibility rules, and what reviewers look for. Report issues at <https://github.com/phucnht/texchanges/issues>.
+Bug reports and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for where to start, how to run the suite, and the compatibility rules. Report issues at <https://github.com/phucnht/texchanges/issues>.
 
 ## Limitations
 
