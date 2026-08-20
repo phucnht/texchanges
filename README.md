@@ -16,13 +16,15 @@ Compared to the `changes` package, texchanges adds review decisions (`pending`/`
 
 ## Installation
 
+Texchanges runs on pdfTeX, XeTeX, and LuaTeX, and needs no packages beyond a TeX Live installation. Every release is verified against TeX Live 2023, 2024, 2025, and the current release.
+
 Texchanges is on [CTAN](https://ctan.org/pkg/texchanges) and distributed through TeX Live:
 
 ```bash
 tlmgr install texchanges
 ```
 
-Then load it normally:
+Then load it:
 
 ```latex
 \usepackage[review]{texchanges}
@@ -111,7 +113,7 @@ Presets are `texchanges`, `default`, `underlined`, `bfit`, and `nocolor`.
 - Comment styles: `inline`, `todo`, `margin`, `footnote`, and `uwave`.
 - Author styles: `superscript`, `subscript`, `brackets`, `footnote`, and `none`.
 
-Additions, removals, and highlights render in the author's registered color. Replacements deliberately use the fixed removed/added palette so the old and new text stay distinguishable within one change; the author label still carries the author's color.
+Additions, removals, and highlights render in the author's registered color. Replacements use the fixed removed/added palette so the old and new text stay distinguishable within one change; the author label still carries the author's color.
 
 Runtime hooks such as `\txsetaddedmarkup`, `\txsetcommentmarkup`, `\txsetauthormarkup`, and the width/auxiliary-file setters are documented in the [online API reference](https://texchanges.dev/reference/api/).
 
@@ -126,7 +128,7 @@ Compatibility is opt-in because replacement arguments use the opposite order:
 \replaced[id=phuc,changeid=R12]{new text}{old text}
 ```
 
-Use `commandnameprefix=none|ifneeded|always` for compatibility commands. Native `\txreplace` always remains `old` then `new`.
+Use `commandnameprefix=none|ifneeded|always` for compatibility commands. Native `\txreplace` remains `old` then `new` in every mode.
 
 ## Resolve source markup
 
@@ -145,7 +147,7 @@ In-place updates create a `.bak` file. Interactive mode, nested braces, Unicode,
 
 ## Automatic `latexdiff`
 
-`examples/automatic-diff/` compares `texchanges-original.tex` and `texchanges-revised.tex` through Overleaf's `latexmkrc` mechanism, with `texchanges-review.tex` as the Main document. It uses word-level matching, so short shared phrases remain unchanged. The same `latexmkrc` compiles `texchanges-explicit-review.tex` normally when that document is selected as Main.
+`examples/automatic-diff/` compares `texchanges-original.tex` and `texchanges-revised.tex` through Overleaf's `latexmkrc` mechanism, with `texchanges-review.tex` as the Main document. It uses word-level matching, so short shared phrases remain unchanged. The same `latexmkrc` compiles `texchanges-explicit-review.tex` directly, without running `latexdiff`, when that document is selected as Main.
 
 Run `make dist` to build the single `dist/texchanges-overleaf.zip` upload bundle. Its [workflow guide](examples/overleaf-workflow/README.md) explains both Main-document choices.
 
@@ -174,6 +176,10 @@ The suite covers all modes, metadata, reports, styles, compatibility syntax, the
 ## Contributing
 
 Bug reports and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for where to start, how to run the suite, and the compatibility rules. Report issues at <https://github.com/phucnht/texchanges/issues>.
+
+## Sponsor
+
+Texchanges is free and stays free. If it saves you time, [sponsoring its development](https://github.com/sponsors/phucnht) helps keep it maintained.
 
 ## Limitations
 
