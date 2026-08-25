@@ -1,0 +1,38 @@
+% Moving-argument and boxed contexts: headings with IDs, captions, running
+% headers, margin comments inside boxes, and simple math. Each was measured
+% to fail before the replay guard and the margin fallback existed; the
+% assertions in scripts/test.sh case_robust pin the corrected behaviour.
+\documentclass{article}
+\usepackage[review,commentmarkup=margin]{texchanges}
+\usepackage{hyperref}
+\pagestyle{headings}
+\txdefineauthor[name={Robust Reviewer}, color=orange]{rob}
+\begin{document}
+\tableofcontents
+\listoffigures
+
+\section{Alpha \txreplace[author=rob, id=RH1]{HOLDTOKEN}{HNEWTOKEN} title}
+Body text mentions the heading change once.
+
+\section{Beta \txreplace[author=rob, id=RH2, status=rejected]{HKEPTOLD}{HDROPNEW} kept}
+A rejected heading change resolves to its original text in the contents.
+
+Inline math $a + \txreplace[author=rob, id=RM1]{x^2}{y^2} = b$ and display:
+\begin{equation}
+E = \txadd[author=rob, id=RM2]{mc^2}
+\end{equation}
+
+\begin{figure}[h]
+\centering
+Float body \txremove[author=rob, id=RF1]{FLOATCUT} here,
+with a boxed margin comment \txcomment[author=rob, id=RC1]{BOXNOTE}.
+\caption{Caption \txadd[author=rob, id=RCAP1]{CAPTOKEN} text}
+\end{figure}
+
+Galley margin comment \txcomment[author=rob, id=RC2]{GALLEYNOTE} stays in the margin.
+
+\newpage
+Second page exercises the running header.
+
+\txlistofchanges
+\end{document}
