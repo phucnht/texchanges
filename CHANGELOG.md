@@ -10,6 +10,10 @@ All notable changes to this project are documented in this file. The format is b
 
 ### Fixed
 
+- Change commands survive the contexts a document actually moves them through. A change with an `id` inside a heading, a caption, or anywhere else that gets read a second time (a table of contents, a running header) no longer fails compilation with a duplicate-ID error, no longer records the change once per echo in the change report, and no longer leaves struck-through markup in a heading's PDF bookmark; hyperref's bookmark now shows the same resolved text a table of contents does. A margin or todo comment inside a float, a footnote, or a minipage no longer aborts the document with "Float(s) lost"; it falls back to an inline comment with a one-time warning, since `\marginpar` cannot be placed there. Report entries for a change written in math mode, or containing any token that only works in the context it came from, are shown as literal source text instead of being retypeset outside that context.
+
+### Fixed
+
 - The documentation site stops widening past its design width. The sidebar, the content, the table of contents and the header bar now share one pair of outer edges on a large monitor instead of leaving an empty gutter on the right.
 - The theme and language pickers show one caret arrow rather than two.
 

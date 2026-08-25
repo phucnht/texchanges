@@ -333,6 +333,42 @@ case_editor_files() {
   assert_contains "$PROJECT_ROOT/editors/texstudio/texchanges.cwl" '\replaced{new}{old}'
 }
 
+case_robust() {
+  # Moving arguments and boxed contexts. Before the replay guard existed, a
+  # heading change with an id was a fatal duplicate-ID error on the second
+  # pass, one heading change produced one report line per page header plus
+  # one per contents listing, and a margin comment inside a float aborted
+  # with "Float(s) lost". Each assertion below pins one of those against the
+  # fixture in tests/robust.tex.
+  compile_named robust 2
+
+  # One report line and a count of exactly 1 per change, however many times
+  # the heading echoes through the contents and the running headers.
+  test "$(grep -c txreportline "$TASK_TMP_DIR/robust.txc")" = 8
+  assert_contains "$TASK_TMP_DIR/robust.txs" "{rob/replaced/pending}{2}"
+  assert_contains "$TASK_TMP_DIR/robust.txs" "{rob/replaced/rejected}{1}"
+  assert_contains "$TASK_TMP_DIR/robust.txs" "{rob/added/pending}{2}"
+  assert_contains "$TASK_TMP_DIR/robust.txs" "{rob/removed/pending}{1}"
+  assert_contains "$TASK_TMP_DIR/robust.txs" "{rob/commented/pending}{2}"
+
+  # The contents resolve markup: the pending heading shows only its new text
+  # there, so the old token appears exactly once, in the marked-up body.
+  test "$(grep -o HOLDTOKEN "$TASK_TMP_DIR/robust.txt" | wc -l | tr -d ' ')" = 1
+  # A rejected heading change resolves to its original text in the contents,
+  # so the discarded new text never reaches the contents line.
+  test "$(grep -o HDROPNEW "$TASK_TMP_DIR/robust.txt" | wc -l | tr -d ' ')" = 1
+
+  # hyperref bookmarks carry the resolved title, not the concatenated pair.
+  assert_contains "$TASK_TMP_DIR/robust.out" "H\000N\000E\000W"
+  assert_not_contains "$TASK_TMP_DIR/robust.out" "H\000O\000L\000D"
+
+  # The boxed margin comment fell back inline with a warning instead of
+  # losing the float; the galley one stayed a real margin note.
+  assert_contains "$TASK_TMP_DIR/robust.log" "Falling back to an inline comment"
+  assert_contains "$TASK_TMP_DIR/robust.txt" "BOXNOTE"
+  assert_contains "$TASK_TMP_DIR/robust.txt" "GALLEYNOTE"
+}
+
 case_playground() {
   # The website playground reimplements the package's mode semantics in
   # JavaScript so a visitor sees them without a TeX installation. Hold that
@@ -418,6 +454,7 @@ run_case manpage
 run_case style_matrix
 run_case compat_prefixes
 run_case editor_files
+run_case robust
 run_case playground
 run_case l3build
 run_case latexdiff

@@ -37,6 +37,22 @@
 \bool_new:N \g_tx_color_bool
 \bool_new:N \g_tx_pending_bool
 \bool_new:N \g_tx_todonotes_loaded_bool
+% Depth of replay contexts: reading a contents file back, or building the
+% running header and footer. Change commands re-execute there because their
+% tokens travel through moving arguments and marks, so side effects (ID
+% validation, counting, report lines, labels) must fire only at depth zero,
+% and markup renders as resolved text. An integer rather than a boolean so a
+% page break inside a long contents listing cannot clear the outer state.
+\int_new:N \g_tx_replay_int
+\bool_new:N \g_tx_margin_warned_bool
+% True while typesetting inside a footnote or a float box. Set locally by the
+% kernel hooks near the end of this file, so the group closing the box also
+% clears the flag. Mode conditionals cannot detect these contexts: a
+% paragraph inside a \vbox is unrestricted horizontal mode, so \ifinner is
+% false exactly where \marginpar silently loses the float.
+\bool_new:N \l_tx_boxed_bool
+\prg_new_conditional:Npnn \tx_if_replay: {T,F,TF}
+  {\int_compare:nNnTF {\g_tx_replay_int} > {0} {\prg_return_true:} {\prg_return_false:}}
 \dim_new:N \g_tx_truncate_width_dim
 \dim_new:N \g_tx_summary_width_dim
 
@@ -189,10 +205,22 @@
     \tl_if_blank:nF {#1}
       {
         \tl_if_in:nnTF {#1}{=}
-          {\keys_set:nn {tx/change}{#1}}
+          {
+            % article's \ps@headings passes section marks through
+            % \MakeUppercase, so by the time a change replays in the running
+            % header its keys read AUTHOR=ROB, STATUS=REJECTED. Lowercase the
+            % whole list there before parsing: the status value is what the
+            % resolved rendering needs, and everything else in a replay is
+            % unused. Outside replay the list is parsed exactly as written.
+            \tx_if_replay:TF
+              {\exp_args:Nne \keys_set:nn {tx/change}{\str_lowercase:n{#1}}}
+              {\keys_set:nn {tx/change}{#1}}
+          }
           {\tl_set:Nn \l_tx_label_tl {#1}\bool_set_true:N \l_tx_legacy_label_bool}
       }
-    \tx_change_validate:
+    % A replayed change was already validated where it was written; checking
+    % again would register its ID a second time and fail as a duplicate.
+    \tx_if_replay:F {\tx_change_validate:}
   }
 \cs_new_protected:Npn \tx_change_validate:
   {
@@ -320,15 +348,50 @@
   }
 \cs_new_protected:Npn \tx_author_at:n #1
   {\str_if_eq:VnT \g_tx_author_position_tl {#1}{\tl_if_blank:eF {\tx_author_name:}{{\color{txCurrentColor}\tx_author_markup:n{\tx_author_name:}}}}}
+% A margin note is a \marginpar underneath, and \marginpar is illegal inside
+% a box: a float, a footnote, a minipage. TeX is in internal mode there, so
+% the note falls back to an inline comment instead of losing the float. The
+% warning fires once per document, naming the fix.
+\cs_new_protected:Npn \tx_inner_fallback_warn:
+  {
+    \bool_if:NF \g_tx_margin_warned_bool
+      {
+        \bool_gset_true:N \g_tx_margin_warned_bool
+        \PackageWarning{texchanges}{Margin~and~todo~comments~cannot~be~placed~inside~a~float,~footnote,~or~minipage.~Falling~back~to~an~inline~comment~here.~Use~commentmarkup=inline~to~silence~this~warning}
+      }
+  }
+% \marginpar is legal only in the main galley. The blocked contexts are a
+% float box, a footnote, a minipage, and any smaller box; each is detected by
+% a signal measured to be present exactly there: the kernel hooks set
+% \l_tx_boxed_bool for floats and footnotes, \@captype exists only inside a
+% float environment, \@mpfn reads mpfootnote only inside a minipage, and
+% \mode_if_inner: covers restricted horizontal boxes such as \mbox.
+\prg_new_conditional:Npnn \tx_if_margin_blocked: {TF}
+  {
+    \bool_lazy_any:nTF
+      {
+        {\l_tx_boxed_bool}
+        {\cs_if_exist_p:N \@captype}
+        {\str_if_eq_p:on {\@mpfn} {mpfootnote}}
+        {\mode_if_inner_p:}
+      }
+      {\prg_return_true:} {\prg_return_false:}
+  }
+\cs_new_protected:Npn \tx_margin_or_inline:n #1
+  {
+    \tx_if_margin_blocked:TF
+      {\tx_inner_fallback_warn:{\color{texchangesComment}\textbf{[\tx_author_name:\space}#1\textbf{]}}}
+      {\marginpar{{\color{txCurrentColor}\textbf{[\tx_author_name:]}~#1}}}
+  }
 \cs_new_protected:Npn \tx_comment_markup:n #1
   {
     \str_case:VnF \g_tx_comment_style_tl
       {
         {inline}{{\color{texchangesComment}\textbf{[\tx_author_name:\space}#1\textbf{]}}}
-        {margin}{\marginpar{{\color{txCurrentColor}\textbf{[\tx_author_name:]}~#1}}}
+        {margin}{\tx_margin_or_inline:n {#1}}
         {footnote}{\footnote{\textbf{[\tx_author_name:]}~#1}}
         {uwave}{{\color{txCurrentColor}\uwave{\textbf{[\tx_author_name:]}~#1}}}
-        {todo}{\bool_if:NTF \g_tx_todonotes_loaded_bool {\todo[color=txCurrentColor!10,bordercolor=txCurrentColor,nolist]{#1}}{{\color{texchangesComment}[#1]}}}
+        {todo}{\bool_if:NTF \g_tx_todonotes_loaded_bool {\tx_if_margin_blocked:TF {\tx_inner_fallback_warn:{\color{texchangesComment}[#1]}} {\todo[color=txCurrentColor!10,bordercolor=txCurrentColor,nolist]{#1}}}{{\color{texchangesComment}[#1]}}}
       }{{\color{texchangesComment}[#1]}}
   }
 \NewDocumentCommand \txsetaddedmarkup { m } {\cs_gset:Npn \tx_added_markup:n ##1 {#1}}
@@ -358,6 +421,10 @@
   }
 \cs_new_protected:Npn \tx_record:nn #1#2
   {
+    % Counting, the report line, and the anchor belong to the change where it
+    % was written, not to its echo in a contents line or a page header.
+    \tx_if_replay:F
+      {
     \str_if_eq:VnT \g_tx_mode_tl {review}
       {
         \tx_count:n {#1}
@@ -366,12 +433,14 @@
         \exp_args:NV \addtocontents \g_tx_loc_ext_tl
           {\protect\txreportline{#1}{\l_tx_status_tl}{\l_tx_author_tl}{\l_tx_id_tl}{#2}}
       }
+      }
   }
 \cs_new_protected:Npn \tx_change_begin:nn #1#2
   {
     \tx_change_parse:n {#2}
     \tl_set:Nn \l_tx_type_tl {#1}
-    \tx_set_color:
+    % Resolved replay text carries no colour, so skip the lookup entirely.
+    \tx_if_replay:F {\tx_set_color:}
   }
 \cs_new_protected:Npn \tx_pending_markup:nn #1#2
   {
@@ -387,13 +456,30 @@
     \tx_author_at:n {right}
     \tl_if_blank:VF \l_tx_comment_tl {\tx_comment_markup:n{\l_tx_comment_tl}}
   }
+% What a change contributes inside a contents line or a page header: its
+% resolved text, never markup. Struck-through ink has no place in a table of
+% contents, and ulem's boxes are fragile there. Pending and accepted read as
+% the proposed text, rejected keeps the original, and original mode keeps the
+% original throughout, which matches how final and original mode already
+% resolve.
+\cs_new_protected:Npn \tx_render_resolved:nn #1#2
+  {
+    \bool_lazy_or:nnTF
+      {\str_if_eq_p:Vn \g_tx_mode_tl {original}}
+      {\str_if_eq_p:Vn \l_tx_status_tl {rejected}}
+      {\str_case:Vn \l_tx_type_tl {{removed}{#1}{replaced}{#1}{highlighted}{#2}}}
+      {\str_case:Vn \l_tx_type_tl {{added}{#2}{replaced}{#2}{highlighted}{#2}}}
+  }
 \cs_new_protected:Npn \tx_render:nn #1#2
   {
+    \tx_if_replay:TF {\tx_render_resolved:nn{#1}{#2}}
+      {
     \str_case:Vn \g_tx_mode_tl
       {
         {original}{\str_case:Vn \l_tx_type_tl {{removed}{#1}{replaced}{#1}{highlighted}{#2}}}
         {final}{\str_if_eq:VnTF \l_tx_status_tl {rejected}{\str_case:Vn \l_tx_type_tl {{removed}{#1}{replaced}{#1}{highlighted}{#2}}}{\str_case:Vn \l_tx_type_tl {{added}{#2}{replaced}{#2}{highlighted}{#2}}}}
         {review}{\str_if_eq:VnTF \l_tx_status_tl {pending}{\tx_pending_markup:nn{#1}{#2}}{\str_if_eq:VnTF \l_tx_status_tl {accepted}{\str_case:Vn \l_tx_type_tl {{added}{#2}{replaced}{#2}{highlighted}{#2}}}{\str_case:Vn \l_tx_type_tl {{removed}{#1}{replaced}{#1}{highlighted}{#2}}}}}
+      }
       }
   }
 \cs_new_protected:Npn \tx_change:nnnn #1#2#3#4
@@ -433,12 +519,37 @@
     status .clist_set:N = \l_tx_list_status_clist,
     author .clist_set:N = \l_tx_list_author_clist
   }
+% A change written in math mode arrives in the report as {y^2}, and
+% typesetting that outside math mode is a fatal "Missing $ inserted"; an
+% alignment tab is a fatal "Misplaced alignment tab" the same way. Scan the
+% recorded text at every brace depth for tokens that only work in the context
+% they came from (math shift, alignment, superscript, subscript) and show
+% such an entry as literal source text instead. Everything else, including
+% non-ASCII prose, keeps typesetting as before; blanket detokenizing was
+% measured to mangle UTF-8 text under pdfTeX, where accented characters are
+% active and arrive as raw bytes.
+\bool_new:N \l_tx_report_detok_bool
+\cs_new_protected:Npn \tx_report_text:n #1
+  {
+    \bool_set_false:N \l_tx_report_detok_bool
+    \tl_analysis_map_inline:nn {#1}
+      {
+        \int_case:nn {"##3}
+          {
+            {3}{\bool_set_true:N \l_tx_report_detok_bool}
+            {4}{\bool_set_true:N \l_tx_report_detok_bool}
+            {7}{\bool_set_true:N \l_tx_report_detok_bool}
+            {8}{\bool_set_true:N \l_tx_report_detok_bool}
+          }
+      }
+    \bool_if:NTF \l_tx_report_detok_bool {\detokenize{#1}} {#1}
+  }
 \cs_new:Npn \txreportline #1#2#3#4#5
   {
     \clist_if_in:NnT \l_tx_list_show_clist {#1}
       {\clist_if_in:NnT \l_tx_list_status_clist {#2}
         {\clist_if_in:NnT \l_tx_list_author_clist {#3}
-          {\par\noindent\textbf{\tx_type_name:n{#1}}\tl_if_blank:nF{#4}{~(#4)}:~\truncate{\g_tx_truncate_width_dim}{#5}\tl_if_blank:nF{#4}{\dotfill\pageref{tx:#4}}\par}}}
+          {\par\noindent\textbf{\tx_type_name:n{#1}}\tl_if_blank:nF{#4}{~(#4)}:~\truncate{\g_tx_truncate_width_dim}{\tx_report_text:n{#5}}\tl_if_blank:nF{#4}{\dotfill\pageref{tx:#4}}\par}}}
   }
 \cs_new:Npn \tx_type_name:n #1 {\str_case:nnF{#1}{{added}{\txaddedname}{removed}{\txremovedname}{replaced}{\txreplacedname}{highlighted}{\txhighlightedname}{commented}{\txcommentedname}}{#1}}
 \cs_new:Npn \tx_status_name:n #1 {\str_case:nnF{#1}{{pending}{\txpendingname}{accepted}{\txacceptedname}{rejected}{\txrejectedname}}{#1}}
@@ -547,6 +658,60 @@
   }
 
 \cs_new:Npn \texchangesmode {\g_tx_mode_tl}
+
+% --------------------------------------------------------------------------
+% Replay contexts
+%
+% Change commands are protected, so their tokens survive into .toc-family
+% files and into page marks unexecuted, and run again when those are read
+% back or when the header is built. \@starttoc covers every contents file,
+% including this package's own report files; \@outputpage covers the running
+% header and footer. A depth counter rather than a set/clear pair, because a
+% page can break inside a long contents listing, which nests one context
+% inside the other.
+% --------------------------------------------------------------------------
+\AddToHook{cmd/@starttoc/before}{\int_gincr:N \g_tx_replay_int}
+\AddToHook{cmd/@starttoc/after}{\int_gdecr:N \g_tx_replay_int}
+\AddToHook{cmd/@outputpage/before}{\int_gincr:N \g_tx_replay_int}
+\AddToHook{cmd/@outputpage/after}{\int_gdecr:N \g_tx_replay_int}
+
+% Both hooks run inside the box group they mark, so the local flag clears
+% itself when the group ends. \@makefntext is the kernel's footnote-text
+% wrapper; \@floatboxreset runs at the top of every float box.
+\AddToHook{cmd/@makefntext/before}{\bool_set_true:N \l_tx_boxed_bool}
+\AddToHook{cmd/@floatboxreset/before}{\bool_set_true:N \l_tx_boxed_bool}
+
+% hyperref builds PDF bookmark strings by expanding the heading text with all
+% robust commands disabled; without help it drops the change command and
+% keeps every argument, so a replaced heading bookmarks as "OLDNEW". These
+% expandable stand-ins resolve each change the same way the replay renderer
+% does for the document's mode, minus colour, which a bookmark cannot carry.
+% Bookmarks cannot inspect per-change status (the key list is unexpandable
+% there), so they resolve by document mode alone: original keeps old text,
+% review and final show the proposed text. These are fully expandable, which
+% is what survives hyperref's string expansion. The disable list below only
+% \let-remaps the public names onto them; storing macro parameters inside
+% that list is a hash-doubling trap, so no parameter tokens appear there.
+\NewExpandableDocumentCommand \txbookmarkadd { O{} m }
+  {\str_if_eq:VnTF \g_tx_mode_tl {original} {} {#2}}
+\NewExpandableDocumentCommand \txbookmarkremove { O{} m }
+  {\str_if_eq:VnTF \g_tx_mode_tl {original} {#2} {}}
+\NewExpandableDocumentCommand \txbookmarkreplace { O{} m m }
+  {\str_if_eq:VnTF \g_tx_mode_tl {original} {#2} {#3}}
+\NewExpandableDocumentCommand \txbookmarkkeep { O{} m } {#2}
+\NewExpandableDocumentCommand \txbookmarkdrop { O{} m } {}
+\AddToHook{package/hyperref/after}
+  {
+    \pdfstringdefDisableCommands
+      {
+        \let \txadd \txbookmarkadd
+        \let \txremove \txbookmarkremove
+        \let \txreplace \txbookmarkreplace
+        \let \txhighlight \txbookmarkkeep
+        \let \txcomment \txbookmarkdrop
+      }
+  }
+
 \PackageInfo{texchanges}{Rendering~changes~in~\g_tx_mode_tl~mode}
 \ExplSyntaxOff
 \endinput
