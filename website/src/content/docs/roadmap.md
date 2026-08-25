@@ -23,9 +23,9 @@ This is a living checklist. Features will be grouped into future minor releases 
   - [ ] GitHub review annotations and CI summaries
 
 - [ ] Robust and accessible authoring
-  - [ ] Safe markup in headings, captions, footnotes, floats, and math
+  - [x] Safe markup in headings, captions, footnotes, floats, and math
+  - [x] Clear diagnostics for the contexts a change cannot survive: verbatim, alignment tabs, and footnotes. Citations, indexing, and cross-references were measured to work already and needed no change.
   - [ ] Accessible visual presets and tagged-PDF support where available
-  - [ ] Clear diagnostics for unsupported citation and verbatim contexts
 
 - [ ] Editor and optional browser tooling
   - [ ] Standard-library language server and thin VS Code client

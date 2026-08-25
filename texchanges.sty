@@ -435,6 +435,76 @@
       }
       }
   }
+% --------------------------------------------------------------------------
+% Diagnostics for contexts a change cannot survive
+%
+% Each construct below aborts compilation with an error naming TeX or xcolor
+% internals rather than this package, leaving no clue which construct
+% offended. Every one was measured, and the message quoted in each comment is
+% what a user saw before these guards existed.
+%
+% Three of them fail the same way inside plain \textbf, so they are LaTeX
+% limits this package inherits rather than defects of its own; the guards
+% exist to name them, not to make them work. The footnote case is different
+% and is explained at its own guard.
+% --------------------------------------------------------------------------
+\cs_new_protected:Npn \tx_error_context:nn #1#2
+  {\PackageError{texchanges}{#1~cannot~be~used~inside~a~change}{#2}}
+
+% \verb reached this far only because the argument was already tokenized when
+% xparse read it, so its catcode trickery cannot work. LaTeX's own guard does
+% not fire here, and the failure surfaced as "Argument of \XC@col@rlet has an
+% extra }". Redefined inside the change's group, so it is restored on exit.
+\cs_new_protected:Npn \tx_guard_verbatim:
+  {
+    \cs_set_protected:Npn \verb
+      {\tx_error_context:nn {\string\verb}{Move~the~verbatim~text~outside~the~change,~or~mark~the~change~at~a~larger~boundary~such~as~the~whole~paragraph.}}
+    \clist_map_inline:nn {verbatim,verbatim*,Verbatim,lstlisting,minted}
+      {
+        \cs_if_exist:cT {##1}
+          {\cs_set_protected:cpn {##1}
+            {\tx_error_context:nn {The~##1~environment}{Move~the~environment~outside~the~change,~or~mark~the~change~at~a~larger~boundary~such~as~the~whole~paragraph.}}}
+      }
+  }
+
+% An alignment tab inside a change means the change spans table cells, which
+% cannot work: the argument is one balanced group and & only has meaning to
+% the alignment that encloses it. Failed as "Missing } inserted". Detected by
+% catcode rather than by character, so an escaped \& in ordinary prose, which
+% is catcode 12, does not trip it.
+\bool_new:N \l_tx_found_align_bool
+\cs_new_protected:Npn \tx_check_alignment:n #1
+  {
+    \tl_analysis_map_inline:nn {#1}
+      {\int_compare:nNnT {"##3} = {4} {\bool_set_true:N \l_tx_found_align_bool}}
+  }
+
+% A footnote inside a change breaks the change report, not the markup. The
+% report line is written with \addtocontents, and a footnote in written text
+% derails the write: reproduced with no part of this package involved, as
+% \addtocontents{x}{\protect\cmd{text\footnote{n}}}, which fails with the
+% same error. Writing the text unexpanded does not help. The construct is
+% also ambiguous by nature, since a report entry has no sensible footnote of
+% its own, so this is a diagnosis rather than a defect to fix. Placing the
+% footnote immediately after the change was verified to compile.
+\cs_new_protected:Npn \tx_check_footnote:n #1
+  {
+    \tl_if_in:nnT {#1} {\footnote}
+      {\tx_error_context:nn {A~footnote}{Put~the~\string\footnote~immediately~after~the~change~instead~of~inside~it.}}
+  }
+
+\cs_new_protected:Npn \tx_check_context:nn #1#2
+  {
+    \bool_set_false:N \l_tx_found_align_bool
+    \tx_check_alignment:n {#1}
+    \tx_check_alignment:n {#2}
+    \bool_if:NT \l_tx_found_align_bool
+      {\tx_error_context:nn {An~alignment~tab~(&)}{A~change~cannot~span~table~cells.~Mark~each~cell~separately.}}
+    \tx_check_footnote:n {#1}
+    \tx_check_footnote:n {#2}
+    \tx_guard_verbatim:
+  }
+
 \cs_new_protected:Npn \tx_change_begin:nn #1#2
   {
     \tx_change_parse:n {#2}
@@ -483,10 +553,11 @@
       }
   }
 \cs_new_protected:Npn \tx_change:nnnn #1#2#3#4
-  {\group_begin:\tx_change_begin:nn{#1}{#2}\tx_record:nn{#1}{#4}\tx_render:nn{#3}{#4}\group_end:}
+  {\group_begin:\tx_check_context:nn{#3}{#4}\tx_change_begin:nn{#1}{#2}\tx_record:nn{#1}{#4}\tx_render:nn{#3}{#4}\group_end:}
 \cs_new_protected:Npn \tx_compat_change:nnnn #1#2#3#4
   {
     \group_begin:
+    \tx_check_context:nn{#3}{#4}
     \tx_change_reset:
     \keys_set:nn {tx/compat-change}{#2}
     \tx_change_validate:
