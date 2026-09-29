@@ -33,6 +33,7 @@ cp "$PROJECT_ROOT/examples/automatic-diff/README.md" \
   "$PROJECT_ROOT/examples/automatic-diff/texchanges-original.tex" \
   "$PROJECT_ROOT/examples/automatic-diff/texchanges-review.tex" \
   "$PROJECT_ROOT/examples/automatic-diff/texchanges-revised.tex" \
+  "$PROJECT_ROOT/examples/automatic-diff/texchanges-revised-body.tex" \
   "$PACKAGE_DIR/examples/automatic-diff/"
 cp "$PROJECT_ROOT/examples/overleaf-workflow/README.md" \
   "$PACKAGE_DIR/examples/overleaf-workflow/"

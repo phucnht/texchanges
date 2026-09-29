@@ -5,16 +5,19 @@ This example compares two complete LaTeX revisions and generates a visual PDF di
 ## Files
 
 - [`texchanges-original.tex`](texchanges-original.tex), the earlier revision.
-- [`texchanges-revised.tex`](texchanges-revised.tex), the later revision.
+- [`texchanges-revised.tex`](texchanges-revised.tex), a thin wrapper around the later revision. Leave it alone.
+- [`texchanges-revised-body.tex`](texchanges-revised-body.tex), the later revision's text. **This is the file to edit.**
 - [`texchanges-review.tex`](texchanges-review.tex), select this as the Overleaf Main document.
 - [`latexmkrc`](latexmkrc), runs `latexdiff` before pdfLaTeX compiles the generated review document.
 
+The revision is split in two because Overleaf compiles whichever open file contains `\documentclass`, ignoring the Main document setting. The body file has none, so you can keep it open, edit it, and every recompile still produces the diff. `latexdiff --flatten` expands the `\input` before comparing.
+
 ## Try it on Overleaf
 
-1. Upload all four files to a blank Overleaf project.
+1. Upload all five files to a blank Overleaf project.
 2. Select `texchanges-review.tex` as the Main document.
 3. Compile with pdfLaTeX.
-4. Recompile after changing either revision to generate a fresh visual diff.
+4. Open `texchanges-revised-body.tex`, edit it, and recompile for a fresh visual diff.
 
 Edit the two filenames in `latexmkrc` to match a real project. Keep filenames free of shell metacharacters because they are part of a compile command.
 
