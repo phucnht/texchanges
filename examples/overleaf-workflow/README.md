@@ -12,7 +12,7 @@ This bundle supports explicit Texchanges review markup and automatic `latexdiff`
 
 1. Select `texchanges-review.tex` as the Overleaf Main document.
 2. Compile with pdfLaTeX.
-3. The top-level `latexmkrc` creates `review-generated.tex` from `texchanges-original.tex` and `texchanges-revised.tex`, then compiles the visual diff.
+3. The top-level `latexmkrc` creates `review-generated.tex` from `texchanges-original.tex` and `texchanges-revised.tex`, then compiles the visual diff. Edit `texchanges-revised-body.tex` for the revised text; it has no `\documentclass`, so keeping it open does not switch Overleaf away from compiling the diff.
 
 The automatic example uses word-level matching. Short shared phrases remain unchanged, while nearby additions and removals are marked separately.
 

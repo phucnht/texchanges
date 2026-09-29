@@ -1,3 +1,8 @@
+% The wrapper exists so the revision can be edited on Overleaf. Overleaf
+% compiles whichever open file contains \documentclass, ignoring the Main
+% document setting, so keeping \documentclass out of the file a reviewer
+% actually edits is what keeps the diff as the compiled output. Edit
+% texchanges-revised-body.tex; this file stays as it is.
 \documentclass{article}
 
 \title{Texchanges Automatic Diff}
@@ -6,21 +11,5 @@
 
 \begin{document}
 \maketitle
-
-\section{Introduction}
-
-The system provides selected characteristics of indoor navigation under partial observability.
-
-The evaluation retains a concise summary for each route.
-
-The prototype reports its findings clearly, with confidence intervals.
-
-The model evaluates routes with \emph{adaptive} landmarks.
-
-\begin{itemize}
-  \item The interface announces the next turn.
-  \item The study records travel time.
-  \item The reviewer verifies route completion.
-\end{itemize}
-
+\input{texchanges-revised-body}
 \end{document}

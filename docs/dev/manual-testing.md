@@ -8,7 +8,7 @@ Run this before tagging a release. The automated suite compares text extracted f
 make release-check
 ```
 
-Expect 22 green cases and `Texchanges release artifacts verified.` on the last line. This covers three engines, the `l3build` log comparison, version agreement across the five copies, the CLI, the automatic `latexdiff` path, and both archives.
+Expect 23 green cases and `Texchanges release artifacts verified.` on the last line. This covers three engines, the `l3build` log comparison, version agreement across the five copies, the CLI, the automatic `latexdiff` path, and both archives.
 
 To dig into one area:
 
@@ -47,6 +47,23 @@ Edit `\providecommand{\texchangesexamplemode}{...}` in `examples/explicit-review
 
 In `final`, the `.log` must carry `Pending changes were accepted`. Restore `review` afterwards.
 
+### Moving arguments and boxed contexts
+
+The suite asserts these on extracted text; the visual half needs an eye. Compile a scratch document with `\usepackage[review]{texchanges}` containing a `\section` whose title holds a `\txreplace[author=x, id=T1]{old}{new}`, a `\tableofcontents`, `\pagestyle{headings}`, and a figure with `commentmarkup=margin` and a `\txcomment` inside it. Two pdflatex passes.
+
+| Element | Expected |
+|---|---|
+| Second pass | Compiles. A duplicate-ID error here is the pre-0.4.0 bug returning |
+| Table of contents line | Resolved text only ("new"), no strikethrough, no author label |
+| Running header on page 2 | Same resolved text |
+| Heading in the body | Full markup: struck "old", underlined "new", author label |
+| The margin comment in the figure | Rendered inline in the comment colour, with one `Falling back to an inline comment` warning in the log |
+| `\txlistofchanges` | Each change counted exactly once, however many pages and contents lines echo it |
+
+### Context diagnostics
+
+Put `\verb|x|` inside a `\txadd` and compile. The error must name texchanges and the construct ("\verb cannot be used inside a change"), not `\XC@col@rlet` or another internal. Same check with an `&` inside a change in a tabular, and a `\footnote` inside a change.
+
 ## 3. The merge CLI
 
 ```bash
@@ -82,11 +99,12 @@ python3 scripts/texchanges-merge.py /tmp/legacy.tex --accept --dry-run
 
 ## 4. Overleaf
 
-This is where most users are, and nothing automated reaches it. Upload `dist/texchanges-overleaf.zip` as a new project; the bundle holds seven files.
+This is where most users are, and nothing automated reaches it. Upload `dist/texchanges-overleaf.zip` as a new project; the bundle holds eight files.
 
 1. Set `texchanges-explicit-review.tex` as the Main document and compile. The result matches section 2.
 2. Switch the Main document to `texchanges-review.tex` and compile. `latexmkrc` runs `latexdiff` at word level, so the output shows removed words struck through and added words underlined.
-3. Change the TeX Live year under **Menu, Settings** to the oldest supported release and compile again. Version-specific expl3 differences have broken the package here before.
+3. Open `texchanges-revised-body.tex`, change a word, and recompile **while that file is open**. The output must still be the diff, now showing your edit. If the output is the plain revised document instead, Overleaf compiled the open file, which is the failure the body split exists to prevent.
+4. Change the TeX Live year under **Menu, Settings** to the oldest supported release and compile again. Version-specific expl3 differences have broken the package here before.
 
 ## 5. Website
 

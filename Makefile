@@ -41,13 +41,15 @@ dist: clean
 	cp texchanges.sty examples/explicit-review/texchanges-explicit-review.tex \
 	  examples/automatic-diff/texchanges-original.tex \
 	  examples/automatic-diff/texchanges-revised.tex \
+	  examples/automatic-diff/texchanges-revised-body.tex \
 	  examples/automatic-diff/texchanges-review.tex \
 	  examples/automatic-diff/latexmkrc \
 	  $(BUILD_DIR)/overleaf-workflow/
 	cp examples/overleaf-workflow/README.md $(BUILD_DIR)/overleaf-workflow/README.md
 	(cd $(BUILD_DIR)/overleaf-workflow && zip -q ../../$(DIST_DIR)/$(PACKAGE)-overleaf.zip \
 	  texchanges.sty texchanges-explicit-review.tex texchanges-original.tex \
-	  texchanges-revised.tex texchanges-review.tex latexmkrc README.md)
+	  texchanges-revised.tex texchanges-revised-body.tex \
+	  texchanges-review.tex latexmkrc README.md)
 
 overleaf-check: dist
 	@task_tmp=$$(mktemp -d "$${TMPDIR:-/tmp}/texchanges-overleaf.XXXXXX"); \

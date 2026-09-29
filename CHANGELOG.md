@@ -8,6 +8,10 @@ All notable changes to this project are documented in this file. The format is b
 
 - A playground on the documentation site: edit Texchanges markup and watch the same source render as a review, as the final document, and as the original. The preview is drawn in JavaScript rather than by LaTeX, and an Open in Overleaf button sends the same source to a real compiler with the package travelling alongside it.
 
+### Changed
+
+- The Overleaf automatic-diff example splits the revised document into a wrapper and `texchanges-revised-body.tex`, which is the file to edit. Overleaf compiles whichever open file contains `\documentclass`, so editing the old single-file revision silently switched the compiled output away from the diff; the body file has no `\documentclass`, so it can stay open while every recompile still produces the comparison.
+
 ### Fixed
 
 - A change containing something LaTeX cannot carry there now stops with a message naming the construct and the way around it, instead of a cryptic error from TeX or xcolor that never mentioned this package. This covers `\verb`, verbatim-like environments, an alignment tab that would make a change span table cells, and a footnote inside a change. Citations, indexing, cross-references, and changes within a single table cell were checked and work as before.
