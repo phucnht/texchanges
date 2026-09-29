@@ -179,7 +179,17 @@ Bug reports and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md
 
 ## Limitations
 
-- Complex display math, floats, headings, verbatim content, and some commands should be changed at a larger text boundary or reviewed with `latexdiff`.
-- The merge CLI intentionally skips comments and common verbatim-like environments. Custom verbatim environments require manual review.
+Four constructs cannot appear inside a change. Each stops compilation with a message naming the construct and the way around it, rather than a cryptic error from TeX or another package.
+
+| Inside a change | Instead |
+|---|---|
+| `\verb` | Move the verbatim text outside the change, or mark the whole paragraph. |
+| `verbatim`, `lstlisting` and similar environments | Same: mark a boundary that contains the environment rather than one inside it. |
+| An alignment tab `&` | A change cannot span table cells. Mark each cell separately. |
+| `\footnote` | Put the footnote immediately after the change rather than inside it. |
+
+The first three fail the same way inside any LaTeX command that reads its argument, `\textbf` included, so they are properties of LaTeX rather than of this package. Citations, `\index`, `\ref`, and changes within a single table cell all work.
+
+The merge CLI intentionally skips comments and common verbatim-like environments. Custom verbatim environments require manual review.
 
 Maintained by Phuc Nguyen. Released under LPPL 1.3c or later. See `LICENSE`.

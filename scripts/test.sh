@@ -189,17 +189,45 @@ case_localization() {
   assert_contains "$TASK_TMP_DIR/localization.txt" "DANH SACH"
 }
 
+# A fixture that must fail, and must fail for the stated reason. Asserting
+# only that compilation stops is not enough: every one of these constructs
+# already stopped compilation before the package diagnosed them, with an
+# error naming TeX or xcolor internals. The message assertion is what
+# distinguishes a diagnosed context from a cryptic crash.
+assert_fixture_fails() {
+  local name="$1"
+  local expected="$2"
+  if TEXINPUTS="$PROJECT_ROOT:" pdflatex -halt-on-error -interaction=nonstopmode \
+    -output-directory="$TASK_TMP_DIR" "$PROJECT_ROOT/tests/$name.tex" >/dev/null 2>&1; then
+    printf 'Expected %s to fail compilation\n' "$name" >&2
+    exit 1
+  fi
+  # TeX wraps the log at 79 columns, so a message long enough to be useful is
+  # split across lines and a line-based grep misses it. Join the log first.
+  if ! tr -d '\n' < "$TASK_TMP_DIR/$name.log" | grep -Fq "$expected"; then
+    printf 'Expected %s in %s\n' "$expected" "$TASK_TMP_DIR/$name.log" >&2
+    exit 1
+  fi
+}
+
 case_error_fixtures() {
-  if TEXINPUTS="$PROJECT_ROOT:" pdflatex -halt-on-error -interaction=nonstopmode \
-    -output-directory="$TASK_TMP_DIR" "$PROJECT_ROOT/tests/duplicate-id.tex" >/dev/null 2>&1; then
-    printf 'Expected duplicate change ID compilation to fail\n' >&2
-    exit 1
-  fi
-  if TEXINPUTS="$PROJECT_ROOT:" pdflatex -halt-on-error -interaction=nonstopmode \
-    -output-directory="$TASK_TMP_DIR" "$PROJECT_ROOT/tests/undefined-author.tex" >/dev/null 2>&1; then
-    printf 'Expected undefined author compilation to fail\n' >&2
-    exit 1
-  fi
+  assert_fixture_fails duplicate-id "Duplicate change ID"
+  assert_fixture_fails undefined-author "Undefined author"
+
+  # Contexts a change cannot survive. Each was measured to abort with an
+  # error naming TeX or xcolor internals and never texchanges, leaving the
+  # user no clue which construct offended.
+  assert_fixture_fails verb-in-change "cannot be used inside a change"
+  assert_fixture_fails verbatim-in-change "The verbatim environment cannot be used inside a change"
+  assert_fixture_fails alignment-in-change "An alignment tab (&) cannot be used inside a change"
+  assert_fixture_fails footnote-in-change "A footnote cannot be used inside a change"
+
+  # The old cryptic errors must not be what stops these documents any more.
+  local fixture
+  for fixture in verb-in-change verbatim-in-change alignment-in-change footnote-in-change; do
+    assert_not_contains "$TASK_TMP_DIR/$fixture.log" "XC@col@rlet"
+    assert_not_contains "$TASK_TMP_DIR/$fixture.log" "Not allowed in LR mode"
+  done
 }
 
 case_engines() {
