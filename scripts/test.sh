@@ -397,6 +397,37 @@ case_robust() {
   assert_contains "$TASK_TMP_DIR/robust.txt" "GALLEYNOTE"
 }
 
+case_tagged() {
+  # Tagged PDF. A heading holding a change used to title its H1 structure
+  # element "Head [author=rev, id=H1]OLDHEADNEWHEAD", and a background
+  # highlight aborted tagging outright. Older TeX Live releases do not accept
+  # tagging=on, so first prove tagging works there without this package, and
+  # skip with a note rather than fail when it does not.
+  if ! command -v pdfinfo >/dev/null 2>&1; then
+    printf 'pdfinfo not installed; skipping the tagged PDF check\n' >&2
+    return 0
+  fi
+  printf '%s\n' '\DocumentMetadata{tagging=on}' '\documentclass{article}' \
+    '\begin{document}' 'Plain.' '\end{document}' > "$TASK_TMP_DIR/tagged-baseline.tex"
+  pdflatex -interaction=nonstopmode -output-directory="$TASK_TMP_DIR" \
+    "$TASK_TMP_DIR/tagged-baseline.tex" >/dev/null 2>&1 || true
+  if ! pdfinfo "$TASK_TMP_DIR/tagged-baseline.pdf" 2>/dev/null | grep -Eq '^Tagged: +yes'; then
+    printf 'this TeX Live does not produce tagged PDF; skipping the tagged PDF check\n' >&2
+    return 0
+  fi
+  compile_named tagged 2
+  pdfinfo "$TASK_TMP_DIR/tagged.pdf" | grep -Eq '^Tagged: +yes'
+  pdfinfo -struct-text "$TASK_TMP_DIR/tagged.pdf" 2>/dev/null | LC_ALL=C tr -d '\000\376\377' \
+    > "$TASK_TMP_DIR/tagged.struct"
+  assert_contains "$TASK_TMP_DIR/tagged.struct" '"Head NEWHEAD"'
+  assert_not_contains "$TASK_TMP_DIR/tagged.struct" 'author=rev'
+  assert_contains "$TASK_TMP_DIR/tagged.txt" HLTOKEN
+  if ! tr -d '\n' < "$TASK_TMP_DIR/tagged.log" | grep -Fq 'cannot be tagged'; then
+    printf 'Expected the highlight fallback warning in tagged.log\n' >&2
+    exit 1
+  fi
+}
+
 case_playground() {
   # The website playground reimplements the package's mode semantics in
   # JavaScript so a visitor sees them without a TeX installation. Hold that
@@ -483,6 +514,7 @@ run_case style_matrix
 run_case compat_prefixes
 run_case editor_files
 run_case robust
+run_case tagged
 run_case playground
 run_case l3build
 run_case latexdiff
