@@ -253,7 +253,15 @@
       {
         \bool_if:NTF \l_tx_legacy_label_bool
           {\colorlet{txCurrentColor}{texchangesComment}}
-          {\prop_get:NVN \g_tx_author_color_prop \l_tx_author_tl \l_tx_color_tl\colorlet{txCurrentColor}{\l_tx_color_tl}}
+          {
+            % An undefined author has already been reported by
+            % \tx_change_validate:. A bare \prop_get would leave the quark
+            % \q_no_value here, which expands to itself and makes \colorlet
+            % loop forever in nonstopmode, so fall back to the default colour.
+            \prop_get:NVNF \g_tx_author_color_prop \l_tx_author_tl \l_tx_color_tl
+              {\tl_set_eq:NN \l_tx_color_tl \g_tx_default_color_tl}
+            \colorlet{txCurrentColor}{\l_tx_color_tl}
+          }
       }
   }
 
