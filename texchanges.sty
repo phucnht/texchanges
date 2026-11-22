@@ -782,6 +782,37 @@
         \let \txcomment \txbookmarkdrop
       }
   }
+% Tagged PDF builds structure titles, such as a heading's H1 title, through
+% \text_purify:n rather than through hyperref's \pdfstringdef, so the disable
+% list above does not reach it. Without these, a heading holding a change
+% was measured to title its H1 as "Head [author=rev, id=H1]OLDHEADNEWHEAD".
+% The same expandable stand-ins give it the resolved text.
+\text_declare_purify_equivalent:Nn \txadd {\txbookmarkadd}
+\text_declare_purify_equivalent:Nn \txremove {\txbookmarkremove}
+\text_declare_purify_equivalent:Nn \txreplace {\txbookmarkreplace}
+\text_declare_purify_equivalent:Nn \txhighlight {\txbookmarkkeep}
+\text_declare_purify_equivalent:Nn \txcomment {\txbookmarkdrop}
+
+% soul's \hl, the default background highlight, aborts a tagged document
+% with a tagpdf begin/end paragraph-hook error; \hl alone fails the same way
+% with this package absent, so it is a soul limit. When tagging is active,
+% switch the background style to uuline, which was measured to tag cleanly,
+% and say so once. Decided at the start of the document, when tagging is
+% known, and only where the kernel provides the test at all.
+\AtBeginDocument
+  {
+    \cs_if_exist:NT \tag_if_active:T
+      {
+        \tag_if_active:T
+          {
+            \str_if_eq:VnT \g_tx_highlight_style_tl {background}
+              {
+                \tl_gset:Nn \g_tx_highlight_style_tl {uuline}
+                \PackageWarning{texchanges}{The~background~highlight~(soul's~\string\hl)~cannot~be~tagged.~Using~highlightmarkup=uuline~in~this~tagged~document}
+              }
+          }
+      }
+  }
 
 \PackageInfo{texchanges}{Rendering~changes~in~\g_tx_mode_tl~mode}
 \ExplSyntaxOff

@@ -1,0 +1,10 @@
+% Tagged PDF: a heading holding a change must title its H1 structure element
+% with the resolved text, and a background highlight must not abort tagging.
+\DocumentMetadata{tagging=on}
+\documentclass{article}
+\usepackage[review]{texchanges}
+\txdefineauthor[name={Rev}, color=orange]{rev}
+\begin{document}
+\section{Head \txreplace[author=rev, id=H1]{OLDHEAD}{NEWHEAD}}
+Text with \txhighlight[author=rev]{HLTOKEN} inside.
+\end{document}
