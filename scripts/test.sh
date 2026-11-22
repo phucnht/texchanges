@@ -214,6 +214,29 @@ case_error_fixtures() {
   assert_fixture_fails duplicate-id "Duplicate change ID"
   assert_fixture_fails undefined-author "Undefined author"
 
+  # Without -halt-on-error TeX carries on past the error, and an undefined
+  # author used to leave the colour as the quark \q_no_value, which made
+  # \colorlet loop forever. The run must end, within a time limit, and report
+  # the author. perl's alarm kills a hung run with status 142.
+  local command rc source
+  for command in '\txadd[author=x]{new}' '\txreplace[author=x]{old}{new}'; do
+    source="$TASK_TMP_DIR/undefined-author-nonstop.tex"
+    printf '%s\n' '\documentclass{article}' '\usepackage[review]{texchanges}' \
+      '\begin{document}' "H $command x" '\end{document}' > "$source"
+    rc=0
+    TEXINPUTS="$PROJECT_ROOT:" perl -e 'alarm 60; exec @ARGV' pdflatex \
+      -interaction=nonstopmode -output-directory="$TASK_TMP_DIR" "$source" \
+      >/dev/null 2>&1 || rc=$?
+    if [ "$rc" -eq 142 ]; then
+      printf 'Compiling %s did not finish within 60 seconds\n' "$command" >&2
+      exit 1
+    fi
+    if ! tr -d '\n' < "$TASK_TMP_DIR/undefined-author-nonstop.log" | grep -Fq "Undefined author 'x'"; then
+      printf 'Expected the undefined author error for %s\n' "$command" >&2
+      exit 1
+    fi
+  done
+
   # Contexts a change cannot survive. Each was measured to abort with an
   # error naming TeX or xcolor internals and never texchanges, leaving the
   # user no clue which construct offended.
