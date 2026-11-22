@@ -403,6 +403,19 @@ case_tagged() {
   # highlight aborted tagging outright. Older TeX Live releases do not accept
   # tagging=on, so first prove tagging works there without this package, and
   # skip with a note rather than fail when it does not.
+  # The heading title fix works through \text_purify:n, so check that
+  # mechanism directly. It needs neither tagging nor pdfinfo, which matters:
+  # poppler builds disagree on how they print structure titles, and the
+  # Alpine pdfinfo in CI showed "" for a title that macOS pdfinfo read as
+  # "Head NEWHEAD" in the very same PDF.
+  printf '%s\n' '\documentclass{article}' '\usepackage[review]{texchanges}' \
+    '\ExplSyntaxOn' \
+    '\typeout{PURIFIED:\text_purify:n{Head~\txreplace[author=rev,id=H1]{OLDHEAD}{NEWHEAD}}:END}' \
+    '\ExplSyntaxOff' '\begin{document}' 'x' '\end{document}' > "$TASK_TMP_DIR/tagged-purify.tex"
+  TEXINPUTS="$PROJECT_ROOT:" pdflatex -halt-on-error -interaction=nonstopmode \
+    -output-directory="$TASK_TMP_DIR" "$TASK_TMP_DIR/tagged-purify.tex" >/dev/null
+  assert_contains "$TASK_TMP_DIR/tagged-purify.log" "PURIFIED:Head NEWHEAD:END"
+
   if ! command -v pdfinfo >/dev/null 2>&1; then
     printf 'pdfinfo not installed; skipping the tagged PDF check\n' >&2
     return 0
@@ -415,12 +428,9 @@ case_tagged() {
     printf 'this TeX Live does not produce tagged PDF; skipping the tagged PDF check\n' >&2
     return 0
   fi
+  # A highlight in a tagged document used to abort compilation.
   compile_named tagged 2
   pdfinfo "$TASK_TMP_DIR/tagged.pdf" | grep -Eq '^Tagged: +yes'
-  pdfinfo -struct-text "$TASK_TMP_DIR/tagged.pdf" 2>/dev/null | LC_ALL=C tr -d '\000\376\377' \
-    > "$TASK_TMP_DIR/tagged.struct"
-  assert_contains "$TASK_TMP_DIR/tagged.struct" '"Head NEWHEAD"'
-  assert_not_contains "$TASK_TMP_DIR/tagged.struct" 'author=rev'
   assert_contains "$TASK_TMP_DIR/tagged.txt" HLTOKEN
   if ! tr -d '\n' < "$TASK_TMP_DIR/tagged.log" | grep -Fq 'cannot be tagged'; then
     printf 'Expected the highlight fallback warning in tagged.log\n' >&2
